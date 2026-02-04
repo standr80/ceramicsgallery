@@ -72,7 +72,7 @@ export function getCourseFilterOptions(): {
     const potter = getPotterBySlug(c.potterSlug);
     if (potter) pottersMap.set(c.potterSlug, potter.name);
   }
-  const potters = [...pottersMap.entries()].map(([slug, name]) => ({ slug, name }));
+  const potters = Array.from(pottersMap.entries()).map(([slug, name]) => ({ slug, name }));
   const durations = Array.from(new Set(courses.map((c) => c.duration))).sort(
     (a, b) => durationSortOrder(a) - durationSortOrder(b)
   );
