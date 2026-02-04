@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --clay-50: #faf6f2;
+  --clay-100: #f2e9e0;
+  --clay-200: #e5d2c0;
+  --clay-500: #b07f5a;
+  --clay-700: #825541;
+  --stone-100: #ebe8e4;
+  --stone-500: #948875;
+}
+
+body {
+  @apply bg-clay-50 text-stone-900 antialiased;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-clay-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-clay-300 bg-white px-5 py-2.5 text-sm font-medium text-clay-700 hover:bg-clay-50 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2;
+  }
+  .input-field {
+    @apply block w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-stone-900 placeholder-stone-400 focus:border-clay-500 focus:ring-2 focus:ring-clay-500/20;
+  }
+}
