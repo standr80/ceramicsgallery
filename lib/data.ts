@@ -66,20 +66,20 @@ export function getCourseFilterOptions(): {
   skillLevels: string[];
   locations: string[];
 } {
-  const types = [...new Set(courses.map((c) => c.type))].sort();
+  const types = Array.from(new Set(courses.map((c) => c.type))).sort();
   const pottersMap = new Map<string, string>();
   for (const c of courses) {
     const potter = getPotterBySlug(c.potterSlug);
     if (potter) pottersMap.set(c.potterSlug, potter.name);
   }
   const potters = [...pottersMap.entries()].map(([slug, name]) => ({ slug, name }));
-  const durations = [...new Set(courses.map((c) => c.duration))].sort(
+  const durations = Array.from(new Set(courses.map((c) => c.duration))).sort(
     (a, b) => durationSortOrder(a) - durationSortOrder(b)
   );
-  const skillLevels = [...new Set(courses.flatMap((c) => (c.skillLevel ? [c.skillLevel] : [])))].sort(
+  const skillLevels = Array.from(new Set(courses.flatMap((c) => (c.skillLevel ? [c.skillLevel] : [])))).sort(
     (a, b) => skillLevelOrder(a) - skillLevelOrder(b)
   );
-  const locations = [...new Set(courses.map((c) => c.location).filter(Boolean))].sort() as string[];
+  const locations = Array.from(new Set(courses.map((c) => c.location).filter(Boolean))).sort() as string[];
   return { types, potters, durations, skillLevels, locations };
 }
 

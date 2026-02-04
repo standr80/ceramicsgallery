@@ -126,7 +126,7 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
   ]);
 
   const monthsWithCourses = useMemo(() => {
-    const keys = [...new Set(courses.map((c) => getMonthKey(c.startDate)))].sort();
+    const keys = Array.from(new Set(courses.map((c) => getMonthKey(c.startDate)))).sort();
     return keys.map((key) => {
       const [y, m] = key.split("-").map(Number);
       return { key, label: `${MONTH_LABELS[m - 1]} ${y}` };
