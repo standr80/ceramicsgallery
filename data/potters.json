@@ -103,55 +103,5 @@
         "sku": "VS-HERB-01"
       }
     ]
-  },
-  {
-    "id": "karl-greene",
-    "slug": "karlgreene",
-    "name": "Karl Greene",
-    "biography": "Hi, my name is Karl Greene. I am a studio potter working in Suffolk where I make a range of stoneware, raku and one-off pieces. I am a qualified teacher and teach ceramics at various locations as well as in my own workshop. I love being creative and sharing my passion for pottery. My workspace is a creative, nurturing space in which I seek to help people experience their own creativity as well as learning and acquiring new skills and a renewed passion for life.",
-    "image": "/images/placeholder.svg",
-    "products": [
-      {
-        "id": "kg-1",
-        "slug": "bowl-green-collaboration",
-        "name": "Bowl, Green (collaboration)",
-        "description": "Thrown by Karl and decorated by Bethany O Regan. Underglazes and underglaze crayons. Glazed stoneware. Only 6 pieces available. H 11 cm W 18 cm.",
-        "descriptionExtended": "These pieces have been made in collaboration with Bethany O Regan, a talented ceramicist now studying at the University of Cardiff. Beth has developed her practice over the last three years and her work is effortlessly expressive and brilliantly executed. I (Karl) have thrown the pots and Beth has decorated them in her own indomitable style. There are only these 6 pieces available. Each one has been decorated with underglazes and underglaze crayons giving a unique feel, finish and look to the decoration. Beth is at the start of her ceramics career and will only go on to greater things I am sure. Get a piece of her original work while you still can. They are glazed stoneware.",
-        "price": 160,
-        "currency": "GBP",
-        "image": "https://static.wixstatic.com/media/4aef4d_a76396c8acee4547a42451dc5d49339d~mv2.jpg/v1/fill/w_1160,h_840,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/4aef4d_a76396c8acee4547a42451dc5d49339d~mv2.jpg",
-        "images": [
-          "https://static.wixstatic.com/media/4aef4d_a76396c8acee4547a42451dc5d49339d~mv2.jpg/v1/fill/w_1160,h_840,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/4aef4d_a76396c8acee4547a42451dc5d49339d~mv2.jpg"
-        ],
-        "featured": true,
-        "sku": "KG-BOWL-GREEN-01"
-      },
-      {
-        "id": "kg-2",
-        "slug": "raku-vessel",
-        "name": "Raku Vessel",
-        "description": "Raku-fired ceramic vessel. Unique crackle and lustre from the raku process. One-off.",
-        "descriptionExtended": "Raku fired at the workshop for distinctive crackle and lustre. Each piece is unique—the rapid cooling and reduction create unpredictable, beautiful surfaces. Made by Karl Greene in Suffolk. Suitable for display or dried arrangements.",
-        "price": 85,
-        "currency": "GBP",
-        "image": "https://static.wixstatic.com/media/4aef4d_43b8f2ae46a14b37a5f4a63cee6cb7c6~mv2_d_1985_2296_s_2.jpg",
-        "images": ["https://static.wixstatic.com/media/4aef4d_43b8f2ae46a14b37a5f4a63cee6cb7c6~mv2_d_1985_2296_s_2.jpg"],
-        "featured": true,
-        "sku": "KG-RAKU-01"
-      },
-      {
-        "id": "kg-3",
-        "slug": "stoneware-bowl",
-        "name": "Stoneware Bowl",
-        "description": "Hand-thrown stoneware bowl. Food-safe glaze. From the Freston Studio, Ipswich.",
-        "descriptionExtended": "A simple, functional stoneware bowl thrown on the wheel. Food-safe glaze; dishwasher safe. Part of Karl's range of everyday stoneware made at his studio in Ipswich, Suffolk.",
-        "price": 45,
-        "currency": "GBP",
-        "image": "https://static.wixstatic.com/media/4aef4d_537113b9a6eb444294ee27830770a166~mv2.jpg",
-        "images": ["https://static.wixstatic.com/media/4aef4d_537113b9a6eb444294ee27830770a166~mv2.jpg"],
-        "featured": false,
-        "sku": "KG-BOWL-01"
-      }
-    ]
   }
 ]
