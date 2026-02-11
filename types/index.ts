@@ -14,6 +14,8 @@ export interface Product {
   featured?: boolean;
   /** For future Foxycart/Ecwid: product code or SKU */
   sku?: string;
+  /** Display category (e.g. Functional, Tableware) */
+  category?: string;
 }
 
 export interface Potter {

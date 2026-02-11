@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signUp } from "@/app/actions/auth";
+import { useRouter } from "next/navigation";
+import { signIn } from "@/app/actions/auth";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -13,9 +15,14 @@ export default function SignupPage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const result = await signUp(formData);
+    const result = await signIn(formData);
     if (result?.error) {
       setError(result.error);
+      return;
+    }
+    if (result?.redirectTo) {
+      router.push(result.redirectTo);
+      router.refresh();
     }
   }
 
@@ -23,10 +30,10 @@ export default function SignupPage() {
     <div className="py-14 px-4">
       <div className="mx-auto max-w-xl">
         <h1 className="font-display text-3xl font-semibold text-clay-900">
-          Join as a potter
+          Potter login
         </h1>
         <p className="mt-2 text-stone-600">
-          Create an account to list your work on Ceramics Gallery and add products.
+          Sign in to manage your products and profile.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
@@ -35,19 +42,6 @@ export default function SignupPage() {
               {error}
             </p>
           )}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1">
-              Your name / studio name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              className="input-field"
-              placeholder="e.g. Fred Bloggs"
-            />
-          </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-1">
               Email
@@ -70,42 +64,16 @@ export default function SignupPage() {
               name="password"
               type="password"
               required
-              minLength={6}
               className="input-field"
-              placeholder="At least 6 characters"
-            />
-          </div>
-          <div>
-            <label htmlFor="biography" className="block text-sm font-medium text-stone-700 mb-1">
-              Short biography
-            </label>
-            <textarea
-              id="biography"
-              name="biography"
-              rows={4}
-              required
-              className="input-field resize-y"
-              placeholder="Tell us about your practice, influences, and the type of work you make..."
-            />
-          </div>
-          <div>
-            <label htmlFor="website" className="block text-sm font-medium text-stone-700 mb-1">
-              Website or social link (optional)
-            </label>
-            <input
-              id="website"
-              name="website"
-              type="url"
-              className="input-field"
-              placeholder="https://..."
+              placeholder="Your password"
             />
           </div>
           <div className="flex flex-wrap gap-4">
             <button type="submit" className="btn-primary">
-              Create account
+              Log in
             </button>
-            <Link href="/login" className="btn-secondary">
-              Already have an account? Log in
+            <Link href="/signup" className="btn-secondary">
+              Create an account
             </Link>
           </div>
         </form>

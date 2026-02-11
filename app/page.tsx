@@ -3,9 +3,11 @@ import Image from "next/image";
 import { getFeaturedProducts, getAllPotters } from "@/lib/data";
 import { ProductCard } from "@/components/ProductCard";
 
-export default function HomePage() {
-  const featured = getFeaturedProducts();
-  const potters = getAllPotters();
+export default async function HomePage() {
+  const [featured, potters] = await Promise.all([
+    getFeaturedProducts(),
+    getAllPotters(),
+  ]);
 
   return (
     <div>

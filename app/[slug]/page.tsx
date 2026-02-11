@@ -9,13 +9,15 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = getAllSlugs();
+  const slugs = await getAllSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const potter = getPotterBySlug(slug);
+  const potter = await getPotterBySlug(slug);
   if (!potter) return { title: "Potter not found" };
   return {
     title: `${potter.name} | Ceramics Gallery`,
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function PotterPage({ params }: PageProps) {
   const { slug } = await params;
-  const potter = getPotterBySlug(slug);
+  const potter = await getPotterBySlug(slug);
   if (!potter) notFound();
 
   return (

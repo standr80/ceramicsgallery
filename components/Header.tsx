@@ -1,42 +1,22 @@
 import Link from "next/link";
+import { getCurrentPotter } from "@/lib/get-potter";
+import { isAdmin } from "@/lib/is-admin";
+import { HeaderNav } from "@/components/HeaderNav";
 
-export function Header() {
+export async function Header() {
+  const [potter, admin] = await Promise.all([getCurrentPotter(), isAdmin()]);
+
   return (
     <header className="border-b border-clay-200/60 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="font-display text-2xl font-semibold text-clay-800 hover:text-clay-600 transition-colors"
+            className="font-display text-2xl font-semibold text-clay-800 hover:text-clay-600 transition-colors shrink-0"
           >
             Ceramics Gallery
           </Link>
-          <nav className="flex items-center gap-6" aria-label="Main navigation">
-            <Link
-              href="/"
-              className="text-stone-600 hover:text-clay-600 font-medium transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/#potters"
-              className="text-stone-600 hover:text-clay-600 font-medium transition-colors"
-            >
-              Potters
-            </Link>
-            <Link
-              href="/courses"
-              className="text-stone-600 hover:text-clay-600 font-medium transition-colors"
-            >
-              Courses
-            </Link>
-            <Link
-              href="/signup"
-              className="btn-primary text-sm"
-            >
-              Join as a Potter
-            </Link>
-          </nav>
+          <HeaderNav isAdmin={!!admin} isPotter={!!potter} />
         </div>
       </div>
     </header>

@@ -1,21 +1,23 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlugs, getAllProductPaths } from "@/lib/data";
 import { buildAddToCartUrl } from "@/lib/foxycart";
+import { ProductImageGallery } from "@/components/ProductImageGallery";
 
 interface PageProps {
   params: Promise<{ slug: string; productSlug: string }>;
 }
 
 export async function generateStaticParams() {
-  const paths = getAllProductPaths();
+  const paths = await getAllProductPaths();
   return paths.map(({ slug, productSlug }) => ({ slug, productSlug }));
 }
 
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }: PageProps) {
   const { slug, productSlug } = await params;
-  const result = getProductBySlugs(slug, productSlug);
+  const result = await getProductBySlugs(slug, productSlug);
   if (!result) return { title: "Product not found" };
   const { product, potter } = result;
   return {
@@ -38,11 +40,11 @@ function formatPrice(price: number, currency: string) {
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug, productSlug } = await params;
-  const result = getProductBySlugs(slug, productSlug);
+  const result = await getProductBySlugs(slug, productSlug);
   if (!result) notFound();
 
   const { product, potter } = result;
-  const additionalImages = product.images ?? [];
+  const allImages = product.images?.length ? product.images : [product.image];
 
   return (
     <div>
@@ -76,38 +78,7 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
             {/* Main image + gallery */}
-            <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-stone-100 border border-clay-200/60">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                  unoptimized
-                />
-              </div>
-              {additionalImages.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" aria-label="Additional product images">
-                  {additionalImages.map((src, i) => (
-                    <div
-                      key={`${src}-${i}`}
-                      className="relative aspect-square overflow-hidden rounded-lg bg-stone-100 border border-clay-200/60"
-                    >
-                      <Image
-                        src={src}
-                        alt={`${product.name} — view ${i + 2}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 50vw, 33vw"
-                        unoptimized
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ProductImageGallery images={allImages} productName={product.name} />
 
             {/* Info */}
             <div>
