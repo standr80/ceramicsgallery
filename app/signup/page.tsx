@@ -15,7 +15,7 @@ export default function SignupPage() {
 
     const result = await signUp(formData);
     if (result && "error" in result) {
-      setError(result.error);
+      setError(result.error ?? "An error occurred");
     }
   }
 

@@ -74,7 +74,7 @@ export function EditProfileForm({
     const result = await updateProfile(formData);
 
     if (result && "error" in result) {
-      setError(result.error);
+      setError(result.error ?? "An error occurred");
       return;
     }
 
