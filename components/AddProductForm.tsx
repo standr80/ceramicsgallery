@@ -63,7 +63,7 @@ export function AddProductForm() {
 
     const result = await addProduct(formData);
 
-    if (result?.error) {
+    if (result && "error" in result) {
       setError(result.error);
       return;
     }

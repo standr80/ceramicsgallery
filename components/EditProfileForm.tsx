@@ -73,7 +73,7 @@ export function EditProfileForm({
 
     const result = await updateProfile(formData);
 
-    if (result?.error) {
+    if (result && "error" in result) {
       setError(result.error);
       return;
     }

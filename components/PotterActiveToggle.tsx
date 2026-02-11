@@ -16,7 +16,7 @@ export function PotterActiveToggle({ potterId, active: initialActive }: PotterAc
     setLoading(true);
     const result = await setPotterActive(potterId, !active);
     setLoading(false);
-    if (result?.error) {
+    if (result && "error" in result) {
       alert(result.error);
       return;
     }

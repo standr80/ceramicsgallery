@@ -88,7 +88,7 @@ export function EditProductForm({
 
     const result = await updateProduct(productId, formData);
 
-    if (result?.error) {
+    if (result && "error" in result) {
       setError(result.error);
       return;
     }

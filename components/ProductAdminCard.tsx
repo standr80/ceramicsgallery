@@ -28,7 +28,7 @@ export function ProductAdminCard({
     setLoading("active");
     const result = await setProductActive(productId, !active);
     setLoading(null);
-    if (result?.error) {
+    if (result && "error" in result) {
       alert(result.error);
       return;
     }
@@ -39,7 +39,7 @@ export function ProductAdminCard({
     setLoading("featured");
     const result = await setProductFeatured(productId, !featured);
     setLoading(null);
-    if (result?.error) {
+    if (result && "error" in result) {
       alert(result.error);
       return;
     }
