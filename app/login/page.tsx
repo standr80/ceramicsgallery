@@ -17,7 +17,7 @@ export default function LoginPage() {
 
     const result = await signIn(formData);
     if (result && "error" in result) {
-      setError(result.error);
+      setError(result.error ?? "An error occurred");
       return;
     }
     if (result?.redirectTo) {
