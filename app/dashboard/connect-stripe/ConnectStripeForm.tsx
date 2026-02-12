@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { createConnectAccountLink } from "@/app/actions/stripe";
 
@@ -35,8 +36,14 @@ export function ConnectStripeForm({
 }: ConnectStripeFormProps) {
   const [state, formAction] = useFormState(
     async (_: unknown, __: FormData) => connectAction(),
-    null as { error?: string } | null
+    null as { url?: string; error?: string } | null
   );
+
+  useEffect(() => {
+    if (state?.url) {
+      window.location.href = state.url;
+    }
+  }, [state?.url]);
 
   return (
     <form action={formAction}>

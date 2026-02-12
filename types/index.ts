@@ -27,6 +27,8 @@ export interface Potter {
   products: Product[];
   /** Optional: email/contact for future use */
   email?: string;
+  /** Stripe Connect account ID for receiving payouts */
+  stripe_account_id?: string;
 }
 
 export interface Course {

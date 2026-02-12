@@ -45,6 +45,7 @@ function dbPotterToPotter(
     biography: string;
     image: string | null;
     website: string | null;
+    stripe_account_id?: string | null;
   },
   products: Product[]
 ): Potter {
@@ -55,6 +56,7 @@ function dbPotterToPotter(
     biography: row.biography,
     image: row.image ?? undefined,
     products,
+    stripe_account_id: row.stripe_account_id ?? undefined,
   };
 }
 
@@ -63,7 +65,7 @@ async function getDbPotters(includeInactive = false): Promise<Potter[]> {
     const supabase = await createClient();
     let query = supabase
       .from("potters")
-      .select("id, slug, name, biography, image, website");
+      .select("id, slug, name, biography, image, website, stripe_account_id");
     if (!includeInactive) {
       query = query.eq("active", true);
     }

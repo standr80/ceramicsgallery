@@ -1,14 +1,13 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentPotter } from "@/lib/get-potter";
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY is not set");
-  return new Stripe(key);
+  if (!key) return { error: "Stripe is not configured. Add STRIPE_SECRET_KEY to .env.local" };
+  return { stripe: new Stripe(key) };
 }
 
 function getBaseUrl() {
@@ -21,37 +20,46 @@ function getBaseUrl() {
   return "http://localhost:3000";
 }
 
-export async function createConnectAccountLink(): Promise<{ error?: string }> {
-  const potter = await getCurrentPotter();
-  if (!potter) {
-    return { error: "You must be logged in to connect Stripe." };
-  }
-
-  const supabase = await createClient();
-  const stripe = getStripe();
-  const baseUrl = getBaseUrl().replace(/\/$/, "");
-  const returnUrl = `${baseUrl}/dashboard/connect-stripe?success=1`;
-  const refreshUrl = `${baseUrl}/dashboard/connect-stripe`;
-
+export async function createConnectAccountLink(): Promise<
+  { url?: string; error?: string }
+> {
   try {
+    const potter = await getCurrentPotter();
+    if (!potter) {
+      return { error: "You must be logged in to connect Stripe." };
+    }
+
+    const stripeResult = getStripe();
+    if (stripeResult.error) return stripeResult;
+
+    const supabase = await createClient();
+    const stripe = stripeResult.stripe;
+    const baseUrl = getBaseUrl().replace(/\/$/, "");
+    const returnUrl = `${baseUrl}/dashboard/connect-stripe?success=1`;
+    const refreshUrl = `${baseUrl}/dashboard/connect-stripe`;
+
     let accountId = potter.stripe_account_id as string | null | undefined;
 
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: "express",
         country: "GB",
-        email: undefined,
       });
       accountId = account.id;
 
       const { error } = await supabase
         .from("potters")
-        .update({ stripe_account_id: accountId, updated_at: new Date().toISOString() })
+        .update({
+          stripe_account_id: accountId,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", potter.id);
 
       if (error) {
         console.error("Failed to save stripe_account_id:", error);
-        return { error: "Failed to save your account. Please try again." };
+        return {
+          error: `Failed to save your account: ${error.message}. Have you run the migration to add stripe_account_id to potters?`,
+        };
       }
     }
 
@@ -62,12 +70,12 @@ export async function createConnectAccountLink(): Promise<{ error?: string }> {
       type: "account_onboarding",
     });
 
-    redirect(accountLink.url);
+    return { url: accountLink.url };
   } catch (err) {
-    if (err instanceof Error && "digest" in err) {
-      throw err;
-    }
     console.error("Stripe Connect error:", err);
-    return { error: "Something went wrong. Please try again." };
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return {
+      error: `Something went wrong: ${message}. On Vercel, check that STRIPE_SECRET_KEY and other env vars are set in Project Settings → Environment Variables.`,
+    };
   }
 }

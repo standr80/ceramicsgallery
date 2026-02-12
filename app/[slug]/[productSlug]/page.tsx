@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getProductBySlugs, getAllProductPaths } from "@/lib/data";
 import { buildAddToCartUrl } from "@/lib/foxycart";
 import { ProductImageGallery } from "@/components/ProductImageGallery";
+import { BuyNowButton } from "@/components/BuyNowButton";
+import { createBuyNowCheckout } from "@/app/actions/checkout";
 
 interface PageProps {
   params: Promise<{ slug: string; productSlug: string }>;
@@ -108,13 +110,21 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
               )}
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
-                  href={buildAddToCartUrl(product, potter)}
-                  className="foxycart inline-flex items-center justify-center rounded-lg bg-clay-600 px-6 py-3 text-base font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2"
-                  rel="nofollow"
-                >
-                  Add to cart
-                </a>
+                {potter.stripe_account_id ? (
+                  <BuyNowButton
+                    productId={product.id}
+                    potterId={potter.id}
+                    createCheckoutAction={createBuyNowCheckout}
+                  />
+                ) : (
+                  <a
+                    href={buildAddToCartUrl(product, potter)}
+                    className="foxycart inline-flex items-center justify-center rounded-lg bg-clay-600 px-6 py-3 text-base font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2"
+                    rel="nofollow"
+                  >
+                    Add to cart
+                  </a>
+                )}
                 <Link
                   href={`/${potter.slug}`}
                   className="inline-flex items-center justify-center rounded-lg border border-clay-300 bg-white px-6 py-3 text-base font-medium text-clay-700 hover:bg-clay-50"
