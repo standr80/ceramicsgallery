@@ -31,9 +31,10 @@ export async function createConnectAccountLink(): Promise<
 
     const stripeResult = getStripe();
     if (stripeResult.error) return stripeResult;
+    const stripe = "stripe" in stripeResult ? stripeResult.stripe : undefined;
+    if (!stripe) return { error: "Stripe is not configured." };
 
     const supabase = await createClient();
-    const stripe = stripeResult.stripe;
     const baseUrl = getBaseUrl().replace(/\/$/, "");
     const returnUrl = `${baseUrl}/dashboard/connect-stripe?success=1`;
     const refreshUrl = `${baseUrl}/dashboard/connect-stripe`;

@@ -35,6 +35,8 @@ export async function createBuyNowCheckout(
   try {
     const stripeResult = getStripe();
     if (stripeResult.error) return stripeResult;
+    const stripe = "stripe" in stripeResult ? stripeResult.stripe : undefined;
+    if (!stripe) return { error: "Stripe is not configured." };
 
     const supabase = await createClient();
 
@@ -65,8 +67,6 @@ export async function createBuyNowCheckout(
         error: "This maker hasn't set up payments yet. Please try again later.",
       };
     }
-
-    const stripe = stripeResult.stripe;
     const baseUrl = getBaseUrl().replace(/\/$/, "");
     const pricePence = Math.round(Number(product.price) * 100);
 
