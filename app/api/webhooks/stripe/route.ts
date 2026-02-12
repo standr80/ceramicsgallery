@@ -61,42 +61,52 @@ export async function POST(req: Request) {
     );
   }
 
-  const admin = createAdminClient();
-
-  const { data: defaultRow } = await admin
-    .from("settings")
-    .select("value")
-    .eq("key", "default_commission_percent")
-    .single();
-
-  const { data: potter } = await admin
-    .from("potters")
-    .select("commission_override_percent")
-    .eq("id", potterId)
-    .single();
-
-  const defaultCommission = defaultRow
-    ? parseFloat(defaultRow.value)
-    : 10;
-  const commissionPercent =
-    potter?.commission_override_percent != null
-      ? Number(potter.commission_override_percent)
-      : defaultCommission;
-
-  const commissionAmount = Math.round(
-    (amountSubtotal * commissionPercent) / 100
-  );
-  const transferAmount = amountSubtotal - commissionAmount;
-
-  if (transferAmount < 1) {
-    console.error("Webhook: transfer amount too small");
-    return NextResponse.json(
-      { message: "Transfer amount too small" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const admin = createAdminClient();
+
+    const { data: defaultRow, error: settingsError } = await admin
+      .from("settings")
+      .select("value")
+      .eq("key", "default_commission_percent")
+      .single();
+
+    if (settingsError) {
+      console.error("Webhook: settings fetch failed:", settingsError);
+      throw new Error(`Settings: ${settingsError.message}`);
+    }
+
+    const { data: potter, error: potterError } = await admin
+      .from("potters")
+      .select("commission_override_percent")
+      .eq("id", potterId)
+      .single();
+
+    if (potterError) {
+      console.error("Webhook: potter fetch failed:", potterError);
+      throw new Error(`Potter: ${potterError.message}`);
+    }
+
+    const defaultCommission = defaultRow
+      ? parseFloat(defaultRow.value)
+      : 10;
+    const commissionPercent =
+      potter?.commission_override_percent != null
+        ? Number(potter.commission_override_percent)
+        : defaultCommission;
+
+    const commissionAmount = Math.round(
+      (amountSubtotal * commissionPercent) / 100
+    );
+    const transferAmount = amountSubtotal - commissionAmount;
+
+    if (transferAmount < 1) {
+      console.error("Webhook: transfer amount too small");
+      return NextResponse.json(
+        { message: "Transfer amount too small" },
+        { status: 400 }
+      );
+    }
+
     await stripe.transfers.create({
       amount: transferAmount,
       currency: (session.currency ?? "gbp").toLowerCase(),
@@ -109,9 +119,10 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    console.error("Stripe transfer failed:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Stripe webhook processing error:", err);
     return NextResponse.json(
-      { message: "Transfer failed" },
+      { message: msg },
       { status: 500 }
     );
   }

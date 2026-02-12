@@ -7,6 +7,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    /*
+     * Match all paths except:
+     * - _next/static, _next/image, favicon.ico, images
+     * - api/webhooks/stripe (Stripe needs raw request, no middleware)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|api/webhooks/stripe|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
