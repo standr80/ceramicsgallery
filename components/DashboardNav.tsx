@@ -35,6 +35,18 @@ export function DashboardNav() {
         </li>
         <li>
           <Link
+            href="/dashboard/connect-stripe"
+            className={`block border-b-2 pb-3 text-sm font-medium ${
+              pathname === "/dashboard/connect-stripe"
+                ? "border-clay-600 text-clay-700"
+                : "border-transparent text-stone-600 hover:text-clay-600"
+            }`}
+          >
+            Payments
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/dashboard/add-product"
             className={`block border-b-2 pb-3 text-sm font-medium ${
               pathname === "/dashboard/add-product"

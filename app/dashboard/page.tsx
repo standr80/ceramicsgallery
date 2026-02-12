@@ -15,6 +15,16 @@ export default async function DashboardPage() {
 
   return (
     <div>
+      {!potter.stripe_account_id && (
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+          <p className="text-amber-900 text-sm">
+            <Link href="/dashboard/connect-stripe" className="font-medium underline hover:no-underline">
+              Connect your Stripe account
+            </Link>
+            {" "}to receive payments when your pottery sells.
+          </p>
+        </div>
+      )}
       <h2 className="font-display text-xl font-semibold text-clay-900 mb-4">
         Your products
       </h2>
