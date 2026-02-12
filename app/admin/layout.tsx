@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { isAdmin } from "@/lib/is-admin";
 import { signOut } from "@/app/actions/auth";
+import { AdminNav } from "@/components/AdminNav";
 
 export default async function AdminLayout({
   children,
@@ -34,6 +35,7 @@ export default async function AdminLayout({
             </form>
           </div>
         </div>
+        <AdminNav />
         {children}
       </div>
     </div>

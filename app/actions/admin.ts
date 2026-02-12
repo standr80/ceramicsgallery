@@ -49,6 +49,45 @@ export async function setPotterActive(potterId: string, active: boolean) {
   return { success: true };
 }
 
+export async function setPotterCommissionOverride(
+  potterId: string,
+  commissionOverridePercent: number | null
+) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  if (commissionOverridePercent !== null) {
+    if (
+      isNaN(commissionOverridePercent) ||
+      commissionOverridePercent < 0 ||
+      commissionOverridePercent > 100
+    ) {
+      return { error: "Enter a valid percentage (0–100)." };
+    }
+  }
+
+  const admin = createAdminClient();
+  const { data: potter, error: fetchError } = await admin
+    .from("potters")
+    .select("slug")
+    .eq("id", potterId)
+    .single();
+
+  if (fetchError || !potter) {
+    return { error: "Potter not found" };
+  }
+
+  const { error } = await admin
+    .from("potters")
+    .update({ commission_override_percent: commissionOverridePercent })
+    .eq("id", potterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/potters/${potterId}`);
+  return { success: true };
+}
+
 export async function setProductActive(productId: string, active: boolean) {
   const authError = await ensureAdmin();
   if (authError) return authError;
