@@ -1,13 +1,13 @@
 # Ceramics Gallery — www.ceramicsgallery.co.uk
 
-A website that lists multiple ceramacists (potters), each with their own page, biography, and product catalog. Built for future integration with Foxycart or Ecwid.
+A website that lists multiple ceramacists (potters), each with their own page, biography, and product catalog. Ecommerce is powered by Stripe Connect.
 
 ## Features
 
 - **Home page** — Featured products from each potter, plus links to all potters
 - **Potter pages** — One page per potter at `/fredbloggs`, `/henrymay`, `/violetsmith`, etc., with biography and product catalog (price, description, image)
 - **Signup page** — Form for new potters to apply to join the gallery
-- **Ecommerce-ready** — Product data includes price, description, SKU; placeholders for Foxycart/Ecwid “Add to cart”
+- **Ecommerce** — Stripe Checkout for purchases; potters connect Stripe to receive payouts. “Add to cart”
 
 ## Tech stack
 
@@ -43,9 +43,9 @@ A website that lists multiple ceramacists (potters), each with their own page, b
 
   Then set the `image` field in `potters.json` to paths like `/images/potters/fred-bloggs.jpg` and `/images/products/fb-bowl.jpg`. Until you add real images, the site uses a placeholder from `public/images/placeholder.svg`.
 
-## Ecommerce (Foxycart / Ecwid)
+## Ecommerce (Stripe Connect)
 
-- Product entries already include `price`, `currency`, and optional `sku` for integration.
+- Potters connect their Stripe accounts via **Dashboard → Payments**.
 - “Add to cart” is not wired yet; you can add Foxycart or Ecwid scripts and buttons that use each product’s `id`, `name`, `price`, and `sku` when you’re ready.
 
 ## Signup form

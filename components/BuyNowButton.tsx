@@ -8,15 +8,21 @@ interface BuyNowButtonProps {
   productId: string;
   potterId: string;
   createCheckoutAction: typeof createBuyNowCheckout;
+  /** Smaller styling for product cards */
+  compact?: boolean;
 }
 
-function SubmitButton() {
+function SubmitButton({ compact }: { compact?: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center rounded-lg bg-clay-600 px-6 py-3 text-base font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
+      className={
+        compact
+          ? "inline-flex items-center justify-center rounded-lg bg-clay-600 px-4 py-2 text-sm font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          : "inline-flex items-center justify-center rounded-lg bg-clay-600 px-6 py-3 text-base font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
+      }
     >
       {pending ? "Redirecting..." : "Buy now"}
     </button>
@@ -27,6 +33,7 @@ export function BuyNowButton({
   productId,
   potterId,
   createCheckoutAction,
+  compact = false,
 }: BuyNowButtonProps) {
   const [state, formAction] = useFormState(
     async (_: unknown, __: FormData) => createCheckoutAction(productId, potterId),
@@ -44,7 +51,7 @@ export function BuyNowButton({
       {state?.error && (
         <p className="mb-3 text-red-600 text-sm">{state.error}</p>
       )}
-      <SubmitButton />
+      <SubmitButton compact={compact} />
     </form>
   );
 }

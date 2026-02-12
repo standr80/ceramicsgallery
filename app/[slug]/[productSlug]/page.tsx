@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlugs, getAllProductPaths } from "@/lib/data";
-import { buildAddToCartUrl } from "@/lib/foxycart";
 import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { BuyNowButton } from "@/components/BuyNowButton";
 import { createBuyNowCheckout } from "@/app/actions/checkout";
@@ -119,13 +118,9 @@ export default async function ProductPage({ params }: PageProps) {
                     createCheckoutAction={createBuyNowCheckout}
                   />
                 ) : (
-                  <a
-                    href={buildAddToCartUrl(product, potter)}
-                    className="foxycart inline-flex items-center justify-center rounded-lg bg-clay-600 px-6 py-3 text-base font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2"
-                    rel="nofollow"
-                  >
-                    Add to cart
-                  </a>
+                  <p className="text-stone-600 text-sm">
+                    This maker is setting up payments. Check back soon.
+                  </p>
                 )}
                 <Link
                   href={`/${potter.slug}`}

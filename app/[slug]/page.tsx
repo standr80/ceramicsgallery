@@ -83,7 +83,7 @@ export default async function PotterPage({ params }: PageProps) {
             ))}
           </div>
           <p className="mt-6 text-sm text-stone-500">
-            Purchases are handled via our secure Foxycart checkout.
+            Secure checkout is powered by Stripe.
           </p>
         </div>
       </section>

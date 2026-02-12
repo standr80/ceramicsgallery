@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Cormorant_Garamond, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -42,13 +41,6 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        {/* FOXYCART */}
-        <Script
-          src="https://cdn.foxycart.com/cen292lch17dcn5b/loader.js"
-          strategy="afterInteractive"
-          data-cfasync="false"
-        />
-        {/* /FOXYCART */}
       </body>
     </html>
   );
