@@ -16,6 +16,8 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
+/** Dynamic so Buy now vs Add to cart reflects current Stripe Connect status */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug, productSlug } = await params;
