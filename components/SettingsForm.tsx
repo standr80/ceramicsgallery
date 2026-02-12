@@ -20,12 +20,18 @@ function SubmitButton() {
   );
 }
 
+type FormState = { error: string } | { success: boolean } | null;
+
 export function SettingsForm({
   defaultCommissionPercent,
 }: SettingsFormProps) {
   const [state, formAction] = useFormState(
-    async (_: unknown, formData: FormData) => updateDefaultCommission(formData),
-    null as { success?: boolean; error?: string } | null
+    async (_prevState: FormState, formData: FormData) => {
+      const result = await updateDefaultCommission(formData);
+      if (result && "error" in result) return { error: result.error };
+      return { success: true };
+    },
+    null as FormState
   );
 
   return (
@@ -52,10 +58,10 @@ export function SettingsForm({
           className="w-full rounded-lg border border-clay-300 px-3 py-2 text-stone-900 focus:border-clay-500 focus:ring-1 focus:ring-clay-500"
         />
       </div>
-      {state?.error && (
+      {state && "error" in state && (
         <p className="text-red-600 text-sm">{state.error}</p>
       )}
-      {state?.success && (
+      {state && "success" in state && (
         <p className="text-green-600 text-sm">Settings saved.</p>
       )}
       <SubmitButton />

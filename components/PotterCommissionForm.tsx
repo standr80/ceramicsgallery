@@ -9,6 +9,8 @@ interface PotterCommissionFormProps {
   currentOverride: number | null;
 }
 
+type FormState = { error: string } | { success: boolean } | null;
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -28,18 +30,22 @@ export function PotterCommissionForm({
   currentOverride,
 }: PotterCommissionFormProps) {
   const [state, formAction] = useFormState(
-    async (_: unknown, formData: FormData) => {
+    async (_prevState: FormState, formData: FormData) => {
       const raw = formData.get("commission_override_percent");
       if (raw === "" || raw === null) {
-        return setPotterCommissionOverride(potterId, null);
+        const result = await setPotterCommissionOverride(potterId, null);
+        if (result && "error" in result) return { error: result.error };
+        return { success: true };
       }
       const val = parseFloat(String(raw));
-      return setPotterCommissionOverride(
+      const result = await setPotterCommissionOverride(
         potterId,
         isNaN(val) ? null : val
       );
+      if (result && "error" in result) return { error: result.error };
+      return { success: true };
     },
-    null as { success?: boolean; error?: string } | null
+    null as FormState
   );
 
   return (
@@ -67,8 +73,8 @@ export function PotterCommissionForm({
           className="w-full max-w-xs rounded-lg border border-clay-300 px-3 py-2 text-stone-900 focus:border-clay-500 focus:ring-1 focus:ring-clay-500"
         />
       </div>
-      {state?.error && <p className="text-red-600 text-sm">{state.error}</p>}
-      {state?.success && (
+      {state && "error" in state && <p className="text-red-600 text-sm">{state.error}</p>}
+      {state && "success" in state && (
         <p className="text-green-600 text-sm">Override saved.</p>
       )}
       <SubmitButton />
