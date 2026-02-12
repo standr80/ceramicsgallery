@@ -100,6 +100,9 @@ export async function createBuyNowCheckout(
         potter_id: potter.id,
         stripe_account_id: potter.stripe_account_id,
       },
+      shipping_address_collection: {
+        allowed_countries: ["GB", "IE", "US", "CA", "AU", "DE", "FR", "ES", "IT", "NL"],
+      },
       success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/${potter.slug}/${product.slug}`,
     });
