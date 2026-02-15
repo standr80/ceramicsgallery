@@ -24,7 +24,7 @@ interface HeaderNavProps {
 }
 
 const linkClass = "text-stone-600 hover:text-clay-600 font-medium transition-colors";
-const mobileLinkClass = "block py-3 text-lg text-stone-700 hover:text-clay-600 font-medium";
+const mobileLinkClass = "block py-3 text-lg text-stone-900 hover:text-clay-600 font-medium transition-colors";
 
 export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -75,7 +75,7 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="md:hidden p-2 -mr-2 text-stone-600 hover:text-clay-600"
+        className="md:hidden p-2 -mr-2 text-stone-900 hover:text-clay-600 transition-colors"
         aria-label="Open menu"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,21 +87,21 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/30 z-40 md:hidden"
+            className="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-40 md:hidden"
             aria-hidden="true"
             onClick={() => setMobileOpen(false)}
           />
           <div
-            className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl z-50 md:hidden flex flex-col"
+            className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-50 md:hidden flex flex-col"
             role="dialog"
             aria-label="Mobile menu"
           >
-            <div className="flex items-center justify-between p-4 border-b border-clay-200/60">
-              <span className="font-display text-lg font-semibold text-clay-800">Menu</span>
+            <div className="flex items-center justify-between p-4 border-b border-stone-200 bg-stone-50">
+              <span className="font-display text-lg font-semibold text-stone-900">Menu</span>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="p-2 -mr-2 text-stone-600 hover:text-clay-600"
+                className="p-2 -mr-2 text-stone-900 hover:text-clay-600 transition-colors"
                 aria-label="Close menu"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
                   </Link>
                   <Link
                     href="/signup"
-                    className="btn-primary mt-2"
+                    className="block py-3 mt-4 pt-4 text-lg font-semibold text-clay-700 hover:text-clay-600 border-t border-stone-200 transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     Join as a Potter
