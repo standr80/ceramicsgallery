@@ -14,17 +14,19 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const potter = await getPotterBySlug(slug);
   if (!potter) return { title: "Potter not found" };
+  const description = (potter.biography ?? "").slice(0, 160);
   return {
     title: `${potter.name} | Ceramics Gallery`,
-    description: potter.biography.slice(0, 160),
+    description: description || "Potter on Ceramics Gallery",
     openGraph: {
       title: `${potter.name} | Ceramics Gallery`,
-      description: potter.biography.slice(0, 160),
+      description: description || "Potter on Ceramics Gallery",
     },
   };
 }
@@ -78,7 +80,7 @@ export default async function PotterPage({ params }: PageProps) {
             Catalog
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {potter.products.map((product) => (
+            {(potter.products ?? []).map((product) => (
               <ProductCard key={product.id} product={product} potter={potter} />
             ))}
           </div>
