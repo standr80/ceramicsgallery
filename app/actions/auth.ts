@@ -83,11 +83,24 @@ export async function signIn(formData: FormData) {
   }
 
   const adminEmails = process.env.ADMIN_EMAILS ?? "";
-  const isAdmin = adminEmails
+  const isAdminUser = adminEmails
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .includes(data.user.email?.toLowerCase() ?? "");
-  return { redirectTo: isAdmin ? "/admin" : "/dashboard" };
+
+  if (isAdminUser) {
+    const admin = createAdminClient();
+    const { data: potter } = await admin
+      .from("potters")
+      .select("id")
+      .eq("auth_user_id", data.user.id)
+      .maybeSingle();
+    if (potter) {
+      return { redirectTo: "/choose" };
+    }
+  }
+
+  return { redirectTo: isAdminUser ? "/admin" : "/dashboard" };
 }
 
 export async function signOut() {

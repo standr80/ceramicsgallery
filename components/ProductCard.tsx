@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product, Potter } from "@/types";
-import { BuyNowButton } from "@/components/BuyNowButton";
-import { createBuyNowCheckout } from "@/app/actions/checkout";
 
 interface ProductCardProps {
   product: Product;
@@ -49,23 +47,12 @@ export function ProductCard({ product, potter, showPotter = false }: ProductCard
         </h3>
         <p className="text-stone-600 text-sm line-clamp-2 mt-1">{product.description}</p>
         <p className="mt-2 font-semibold text-clay-700">{formatPrice(product.price, product.currency)}</p>
-        {potter?.stripe_account_id ? (
-          <div className="mt-3">
-            <BuyNowButton
-              productId={product.id}
-              potterId={potter.id}
-              createCheckoutAction={createBuyNowCheckout}
-              compact
-            />
-          </div>
-        ) : (
-          <Link
-            href={productHref}
-            className="mt-3 inline-block rounded-lg bg-clay-600 px-4 py-2 text-sm font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2"
-          >
-            View product
-          </Link>
-        )}
+        <Link
+          href={productHref}
+          className="mt-3 inline-block rounded-lg bg-clay-600 px-4 py-2 text-sm font-medium text-white hover:bg-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-500 focus:ring-offset-2"
+        >
+          View product
+        </Link>
       </div>
     </article>
   );

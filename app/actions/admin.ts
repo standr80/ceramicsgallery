@@ -1,8 +1,16 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+
+function slugFromName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "")
+    .slice(0, 50) || "potter";
+}
 
 async function ensureAdmin() {
   const supabase = await createClient();
@@ -18,6 +26,32 @@ async function ensureAdmin() {
     return { error: "Access denied" };
   }
   return null;
+}
+
+export async function deletePotter(potterId: string) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  const admin = createAdminClient();
+  const { data: potter, error: fetchError } = await admin
+    .from("potters")
+    .select("slug")
+    .eq("id", potterId)
+    .single();
+
+  if (fetchError || !potter) {
+    return { error: "Potter not found" };
+  }
+
+  const { error } = await admin.from("potters").delete().eq("id", potterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  revalidatePath(`/${potter.slug}`);
+  revalidatePath("/admin");
+  revalidatePath(`/admin/potters/${potterId}`);
+  return { success: true };
 }
 
 export async function setPotterActive(potterId: string, active: boolean) {
@@ -145,4 +179,56 @@ export async function setProductFeatured(productId: string, featured: boolean) {
   revalidatePath("/admin");
   revalidatePath(`/admin/potters/${product.potter_id}`);
   return { success: true };
+}
+
+export async function createPotterProfileForAdmin(formData: FormData) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const admin = createAdminClient();
+  const { data: existing } = await admin
+    .from("potters")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+
+  if (existing) {
+    return { error: "You already have a potter profile." };
+  }
+
+  const name = (formData.get("name") as string)?.trim();
+  const biography = (formData.get("biography") as string)?.trim();
+  const website = (formData.get("website") as string)?.trim() || null;
+
+  if (!name || !biography) {
+    return { error: "Name and biography are required." };
+  }
+
+  let baseSlug = slugFromName(name);
+  let slug = baseSlug;
+  let attempt = 0;
+  for (;;) {
+    const { data: taken } = await admin.from("potters").select("id").eq("slug", slug).maybeSingle();
+    if (!taken) break;
+    attempt++;
+    slug = `${baseSlug}${attempt}`;
+  }
+
+  const { error } = await admin.from("potters").insert({
+    auth_user_id: user.id,
+    slug,
+    name,
+    biography,
+    website: website || null,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/create-potter-profile");
+  redirect("/choose");
 }

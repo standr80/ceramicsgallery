@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { isAdmin } from "@/lib/is-admin";
+import { getCurrentPotter } from "@/lib/get-potter";
 import { signOut } from "@/app/actions/auth";
 import { AdminNav } from "@/components/AdminNav";
 
@@ -14,6 +15,8 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
+  const potter = await getCurrentPotter();
+
   return (
     <div className="py-8 px-4">
       <div className="mx-auto max-w-4xl">
@@ -25,6 +28,11 @@ export default async function AdminLayout({
             <p className="text-sm text-stone-600">Manage potters</p>
           </div>
           <div className="flex items-center gap-4">
+            {potter && (
+              <Link href="/dashboard" className="btn-secondary text-sm">
+                My potter dashboard
+              </Link>
+            )}
             <Link href="/" className="btn-secondary text-sm">
               Back to site
             </Link>
@@ -35,7 +43,7 @@ export default async function AdminLayout({
             </form>
           </div>
         </div>
-        <AdminNav />
+        <AdminNav hasPotter={!!potter} />
         {children}
       </div>
     </div>

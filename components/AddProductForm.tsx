@@ -233,7 +233,7 @@ export function AddProductForm() {
       </div>
 
       <button type="submit" className="btn-primary">
-        Add product
+        Save product
       </button>
     </form>
   );

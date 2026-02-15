@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentPotter } from "@/lib/get-potter";
+import { isAdmin } from "@/lib/is-admin";
 import { signOut } from "@/app/actions/auth";
 import { DashboardNav } from "@/components/DashboardNav";
 
@@ -14,6 +15,8 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  const admin = await isAdmin();
+
   return (
     <div className="py-8 px-4">
       <div className="mx-auto max-w-4xl">
@@ -25,6 +28,11 @@ export default async function DashboardLayout({
             <p className="text-sm text-stone-600">Potter dashboard</p>
           </div>
           <div className="flex items-center gap-4">
+            {admin && (
+              <Link href="/admin" className="btn-secondary text-sm">
+                Admin
+              </Link>
+            )}
             <Link href={`/${potter.slug}`} className="btn-secondary text-sm">
               View your page
             </Link>

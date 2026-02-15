@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PotterActiveToggle } from "@/components/PotterActiveToggle";
+import { PotterDeleteButton } from "@/components/PotterDeleteButton";
 
 export default async function AdminPage() {
   const admin = createAdminClient();
@@ -32,7 +33,10 @@ export default async function AdminPage() {
               >
                 {p.name}
               </Link>
-              <PotterActiveToggle potterId={p.id} active={p.active} />
+              <div className="flex items-center gap-3">
+                <PotterActiveToggle potterId={p.id} active={p.active} />
+                <PotterDeleteButton potterId={p.id} potterName={p.name} />
+              </div>
             </li>
           ))}
         </ul>

@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function AdminNav() {
+interface AdminNavProps {
+  hasPotter?: boolean;
+}
+
+export function AdminNav({ hasPotter }: AdminNavProps) {
   const pathname = usePathname();
 
   return (
     <nav className="mb-8 border-b border-clay-200/60">
-      <ul className="flex gap-6">
+      <ul className="flex gap-6 flex-wrap">
         <li>
           <Link
             href="/admin"
@@ -21,6 +25,20 @@ export function AdminNav() {
             Potters
           </Link>
         </li>
+        {!hasPotter && (
+          <li>
+            <Link
+              href="/admin/create-potter-profile"
+              className={`block border-b-2 pb-3 text-sm font-medium ${
+                pathname === "/admin/create-potter-profile"
+                  ? "border-clay-600 text-clay-700"
+                  : "border-transparent text-stone-600 hover:text-clay-600"
+              }`}
+            >
+              Create potter profile
+            </Link>
+          </li>
+        )}
         <li>
           <Link
             href="/admin/settings"

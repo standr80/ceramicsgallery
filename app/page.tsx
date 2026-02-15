@@ -18,8 +18,7 @@ export default async function HomePage() {
             Ceramics Gallery
           </h1>
           <p className="mt-4 text-lg text-stone-600">
-            Handmade pottery from British ceramacists. Discover unique pieces from
-            our community of potters.
+            Where Potters and Pots Sell.
           </p>
         </div>
       </section>

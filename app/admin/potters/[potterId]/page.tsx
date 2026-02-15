@@ -4,6 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { ProductAdminCard } from "@/components/ProductAdminCard";
 import { PotterCommissionForm } from "@/components/PotterCommissionForm";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ potterId: string }>;
 }
@@ -34,7 +36,8 @@ export default async function AdminPotterPage({ params }: PageProps) {
     .from("products")
     .select("id, name, slug, price, image, active, featured")
     .eq("potter_id", potterId)
-    .order("name");
+    .order("name")
+    .limit(1000);
 
   return (
     <div>
