@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface AdminNavProps {
   hasPotter?: boolean;
@@ -9,6 +9,10 @@ interface AdminNavProps {
 
 export function AdminNav({ hasPotter }: AdminNavProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const potterMatch = pathname.match(/^\/admin\/potters\/([a-f0-9-]+)$/);
+  const potterId = potterMatch?.[1];
+  const isProfileTab = potterId && searchParams.get("tab") === "profile";
 
   return (
     <nav className="mb-8 border-b border-clay-200/60">
@@ -25,6 +29,20 @@ export function AdminNav({ hasPotter }: AdminNavProps) {
             Potters
           </Link>
         </li>
+        {potterId && (
+          <li>
+            <Link
+              href={`/admin/potters/${potterId}?tab=profile`}
+              className={`block border-b-2 pb-3 text-sm font-medium ${
+                isProfileTab
+                  ? "border-clay-600 text-clay-700"
+                  : "border-transparent text-stone-600 hover:text-clay-600"
+              }`}
+            >
+              Profile
+            </Link>
+          </li>
+        )}
         {!hasPotter && (
           <li>
             <Link

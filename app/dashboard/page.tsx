@@ -1,17 +1,52 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentPotter } from "@/lib/get-potter";
+import { SortSelect } from "@/components/SortSelect";
+import { PaginationNav } from "@/components/PaginationNav";
 
-export default async function DashboardPage() {
+const PER_PAGE = 10;
+const SORT_OPTIONS = [
+  { value: "name", label: "Alphabetical" },
+  { value: "date", label: "Date added" },
+  { value: "price", label: "Price" },
+  { value: "featured", label: "Featured" },
+];
+
+interface PageProps {
+  searchParams: Promise<{ sort?: string; page?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
   const potter = await getCurrentPotter();
   if (!potter) return null;
 
+  const { sort = "date", page: pageParam = "1" } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+
   const supabase = await createClient();
-  const { data: products } = await supabase
+  let query = supabase
     .from("products")
-    .select("id, name, slug, price, image, featured")
-    .eq("potter_id", potter.id)
-    .order("created_at", { ascending: false });
+    .select("id, name, slug, price, image, featured, created_at")
+    .eq("potter_id", potter.id);
+
+  if (sort === "name") {
+    query = query.order("name", { ascending: true });
+  } else if (sort === "price") {
+    query = query.order("price", { ascending: true });
+  } else if (sort === "featured") {
+    query = query.order("featured", { ascending: false });
+  } else {
+    query = query.order("created_at", { ascending: false });
+  }
+
+  const { data: allProducts } = await query;
+  const total = allProducts?.length ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const products = (allProducts ?? []).slice(
+    (currentPage - 1) * PER_PAGE,
+    currentPage * PER_PAGE
+  );
 
   return (
     <div>
@@ -25,16 +60,24 @@ export default async function DashboardPage() {
           </p>
         </div>
       )}
-      <h2 className="font-display text-xl font-semibold text-clay-900 mb-4">
-        Your products
-      </h2>
-      {!products?.length ? (
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <h2 className="font-display text-xl font-semibold text-clay-900">
+          Your products
+        </h2>
+        {total > 0 && (
+          <div className="flex items-center gap-3">
+            <SortSelect options={SORT_OPTIONS} defaultValue="date" />
+          </div>
+        )}
+      </div>
+      {total === 0 ? (
         <p className="text-stone-600 mb-6">
           You haven&apos;t added any products yet. Add your first piece to start selling.
         </p>
       ) : (
-        <ul className="space-y-3 mb-8">
-          {products.map((p) => (
+        <>
+          <ul className="space-y-3 mb-6">
+            {products.map((p) => (
             <li
               key={p.id}
               className="flex items-center justify-between rounded-lg border border-clay-200/60 bg-white p-4"
@@ -75,9 +118,16 @@ export default async function DashboardPage() {
               </div>
             </li>
           ))}
-        </ul>
+          </ul>
+          <PaginationNav
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={total}
+            perPage={PER_PAGE}
+          />
+        </>
       )}
-      <Link href="/dashboard/add-product" className="btn-primary">
+      <Link href="/dashboard/add-product" className="btn-primary mt-6 inline-block">
         Add product
       </Link>
     </div>

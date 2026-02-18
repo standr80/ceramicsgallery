@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { isAdmin } from "@/lib/is-admin";
@@ -43,7 +44,9 @@ export default async function AdminLayout({
             </form>
           </div>
         </div>
-        <AdminNav hasPotter={!!potter} />
+        <Suspense fallback={<div className="mb-8 h-10 border-b border-clay-200/60" />}>
+          <AdminNav hasPotter={!!potter} />
+        </Suspense>
         {children}
       </div>
     </div>

@@ -232,3 +232,60 @@ export async function createPotterProfileForAdmin(formData: FormData) {
   revalidatePath("/admin/create-potter-profile");
   redirect("/choose");
 }
+
+export async function updatePotterProfileAdmin(potterId: string, formData: FormData) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  const admin = createAdminClient();
+  const { data: potter, error: fetchError } = await admin
+    .from("potters")
+    .select("id, slug")
+    .eq("id", potterId)
+    .single();
+
+  if (fetchError || !potter) {
+    return { error: "Potter not found" };
+  }
+
+  const name = (formData.get("name") as string)?.trim();
+  const biography = (formData.get("biography") as string)?.trim();
+  const website = (formData.get("website") as string)?.trim() || null;
+  const image = (formData.get("image") as string)?.trim() || null;
+  const activeRaw = formData.get("active");
+  const active = activeRaw === "on" || activeRaw === "true";
+  const slug = (formData.get("slug") as string)?.trim();
+
+  if (!name || !biography) {
+    return { error: "Name and biography are required." };
+  }
+
+  const updates: Record<string, unknown> = {
+    name,
+    biography,
+    website: website || null,
+    image: image || null,
+    active,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (slug && slug !== potter.slug) {
+    const newSlug = slug.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 50) || "potter";
+    const { data: taken } = await admin.from("potters").select("id").eq("slug", newSlug).neq("id", potterId).maybeSingle();
+    if (taken) {
+      return { error: "That slug is already in use." };
+    }
+    updates.slug = newSlug;
+  }
+
+  const { error } = await admin.from("potters").update(updates).eq("id", potterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  revalidatePath(`/${potter.slug}`);
+  if (updates.slug) revalidatePath(`/${updates.slug}`);
+  revalidatePath("/admin");
+  revalidatePath(`/admin/potters/${potterId}`);
+  return { success: true };
+}
