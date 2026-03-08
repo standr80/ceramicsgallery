@@ -3,7 +3,7 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { changePasswordAndClearForceReset } from "@/app/actions/auth";
 
-type FormState = { error: string } | null;
+type FormState = { error?: string } | null;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -25,7 +25,7 @@ export function ChangePasswordForm() {
       if (result && "error" in result) return { error: result.error };
       return null;
     },
-    null
+    null as FormState
   );
 
   return (
