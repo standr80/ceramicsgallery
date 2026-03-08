@@ -174,3 +174,42 @@ export async function updateProduct(productId: string, formData: FormData) {
   revalidatePath(`/dashboard/products/${productId}`);
   return { success: true };
 }
+
+export async function deleteProduct(productId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be logged in to delete a product." };
+
+  const { data: potter } = await supabase
+    .from("potters")
+    .select("id, slug")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (!potter) return { error: "Potter profile not found." };
+
+  const { data: product, error: fetchError } = await supabase
+    .from("products")
+    .select("id, slug")
+    .eq("id", productId)
+    .eq("potter_id", potter.id)
+    .single();
+
+  if (fetchError || !product) {
+    return { error: "Product not found or you don't have permission to delete it." };
+  }
+
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId)
+    .eq("potter_id", potter.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  revalidatePath(`/${potter.slug}`);
+  revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/products/${productId}`);
+  return { success: true };
+}

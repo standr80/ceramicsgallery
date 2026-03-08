@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentPotter } from "@/lib/get-potter";
 import { SortSelect } from "@/components/SortSelect";
 import { PaginationNav } from "@/components/PaginationNav";
+import { ProductDeleteButton } from "@/components/ProductDeleteButton";
 
 const PER_PAGE = 10;
 const SORT_OPTIONS = [
@@ -115,6 +116,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
                 >
                   View →
                 </Link>
+                <ProductDeleteButton productId={p.id} productName={p.name} />
               </div>
             </li>
           ))}
