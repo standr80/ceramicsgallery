@@ -59,6 +59,18 @@ export function AdminNav({ hasPotter }: AdminNavProps) {
         )}
         <li>
           <Link
+            href="/admin/potter-logins"
+            className={`block border-b-2 pb-3 text-sm font-medium ${
+              pathname === "/admin/potter-logins"
+                ? "border-clay-600 text-clay-700"
+                : "border-transparent text-stone-600 hover:text-clay-600"
+            }`}
+          >
+            Potter logins
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/settings"
             className={`block border-b-2 pb-3 text-sm font-medium ${
               pathname === "/admin/settings"

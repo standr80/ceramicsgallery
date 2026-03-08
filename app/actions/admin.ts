@@ -289,3 +289,66 @@ export async function updatePotterProfileAdmin(potterId: string, formData: FormD
   revalidatePath(`/admin/potters/${potterId}`);
   return { success: true };
 }
+
+export async function resetPotterPassword(potterId: string, newPassword: string) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  if (!newPassword || newPassword.length < 6) {
+    return { error: "Password must be at least 6 characters." };
+  }
+
+  const admin = createAdminClient();
+  const { data: potter, error: fetchError } = await admin
+    .from("potters")
+    .select("auth_user_id")
+    .eq("id", potterId)
+    .single();
+
+  if (fetchError || !potter) {
+    return { error: "Potter not found" };
+  }
+
+  const { error } = await admin.auth.admin.updateUserById(potter.auth_user_id, {
+    password: newPassword,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/potter-logins");
+  return { success: true };
+}
+
+export async function setForcePasswordReset(potterId: string, force: boolean) {
+  const authError = await ensureAdmin();
+  if (authError) return authError;
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("potters")
+    .update({ force_password_reset: force })
+    .eq("id", potterId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/potter-logins");
+  return { success: true };
+}
+
+export async function clearForcePasswordResetForCurrentUser() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("potters")
+    .update({ force_password_reset: false })
+    .eq("auth_user_id", user.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard");
+  revalidatePath("/change-password");
+  return { success: true };
+}

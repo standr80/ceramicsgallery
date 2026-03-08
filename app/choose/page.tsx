@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export default async function ChoosePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  const admin = createAdminClient();
+  const { data: potter } = await admin
+    .from("potters")
+    .select("force_password_reset")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+  if (potter?.force_password_reset) redirect("/change-password");
 
   const adminEmails = process.env.ADMIN_EMAILS ?? "";
   const isAdmin = adminEmails

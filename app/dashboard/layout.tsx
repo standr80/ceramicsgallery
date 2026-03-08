@@ -14,6 +14,9 @@ export default async function DashboardLayout({
   if (!potter) {
     redirect("/login");
   }
+  if (potter.force_password_reset) {
+    redirect("/change-password");
+  }
 
   const admin = await isAdmin();
 

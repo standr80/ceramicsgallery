@@ -88,23 +88,56 @@ export async function signIn(formData: FormData) {
     .map((e) => e.trim().toLowerCase())
     .includes(data.user.email?.toLowerCase() ?? "");
 
+  const admin = createAdminClient();
+  const { data: potter } = await admin
+    .from("potters")
+    .select("id, force_password_reset")
+    .eq("auth_user_id", data.user.id)
+    .maybeSingle();
+
+  if (potter?.force_password_reset) {
+    return { redirectTo: "/change-password" };
+  }
+
   if (isAdminUser) {
-    const admin = createAdminClient();
-    const { data: potter } = await admin
-      .from("potters")
-      .select("id")
-      .eq("auth_user_id", data.user.id)
-      .maybeSingle();
     if (potter) {
       return { redirectTo: "/choose" };
     }
+    return { redirectTo: "/admin" };
   }
 
-  return { redirectTo: isAdminUser ? "/admin" : "/dashboard" };
+  return { redirectTo: "/dashboard" };
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+export async function changePassword(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be logged in." };
+
+  const password = formData.get("password") as string;
+  if (!password || password.length < 6) {
+    return { error: "Password must be at least 6 characters." };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) return { error: error.message };
+
+  return { success: true };
+}
+
+export async function changePasswordAndClearForceReset(formData: FormData) {
+  const result = await changePassword(formData);
+  if (result && "error" in result) return result;
+
+  const { clearForcePasswordResetForCurrentUser } = await import("@/app/actions/admin");
+  await clearForcePasswordResetForCurrentUser();
+
+  redirect("/dashboard");
 }
