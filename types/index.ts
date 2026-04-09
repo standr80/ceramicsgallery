@@ -16,6 +16,8 @@ export interface Product {
   sku?: string;
   /** Display category (e.g. Functional, Tableware) */
   category?: string;
+  /** Origin of the product: 'manual' (potter-uploaded) or 'onboarding-scout' (agent draft) */
+  source?: string;
 }
 
 export interface Potter {

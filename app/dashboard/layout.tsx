@@ -4,6 +4,7 @@ import { getCurrentPotter } from "@/lib/get-potter";
 import { isAdmin } from "@/lib/is-admin";
 import { signOut } from "@/app/actions/auth";
 import { DashboardNav } from "@/components/DashboardNav";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
   children,
@@ -19,6 +20,15 @@ export default async function DashboardLayout({
   }
 
   const admin = await isAdmin();
+
+  // Fetch draft count for the Drafts nav badge
+  const supabase = await createClient();
+  const { count: draftCount } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true })
+    .eq("potter_id", potter.id)
+    .eq("active", false)
+    .eq("source", "onboarding-scout");
 
   return (
     <div className="py-8 px-4">
@@ -46,7 +56,7 @@ export default async function DashboardLayout({
             </form>
           </div>
         </div>
-        <DashboardNav />
+        <DashboardNav draftCount={draftCount ?? 0} />
         {children}
       </div>
     </div>
