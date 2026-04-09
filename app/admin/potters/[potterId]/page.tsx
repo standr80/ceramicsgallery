@@ -6,6 +6,7 @@ import { PotterCommissionForm } from "@/components/PotterCommissionForm";
 import { AdminPotterProfileForm } from "@/components/AdminPotterProfileForm";
 import { SortSelect } from "@/components/SortSelect";
 import { PaginationNav } from "@/components/PaginationNav";
+import { TriggerScoutButton } from "@/components/TriggerScoutButton";
 
 export const dynamic = "force-dynamic";
 
@@ -133,9 +134,12 @@ export default async function AdminPotterPage({ params, searchParams }: PageProp
         </div>
       ) : (
         <>
-          <p className="text-stone-600 text-sm mb-4">
-            Inactive products are hidden from the catalog. Featured products appear on the home page.
-          </p>
+          <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <p className="text-stone-600 text-sm">
+              Inactive products are hidden from the catalog. Featured products appear on the home page.
+            </p>
+            <TriggerScoutButton potterId={potterId} hasWebsite={!!potter.website} />
+          </div>
           {total > 0 && (
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <SortSelect options={SORT_OPTIONS} defaultValue="name" />
