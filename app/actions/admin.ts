@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
-import { runOnboardingScout } from "@/lib/agents/onboarding-scout";
 
 function slugFromName(name: string): string {
   return name
@@ -354,21 +353,3 @@ export async function clearForcePasswordResetForCurrentUser() {
   return { success: true };
 }
 
-export async function triggerScout(potterId: string) {
-  const admin = createAdminClient();
-
-  const { data: potter } = await admin
-    .from("potters")
-    .select("id, website")
-    .eq("id", potterId)
-    .single();
-
-  if (!potter) return { error: "Potter not found." };
-  if (!potter.website) return { error: "This potter has no website URL set. Add one in the Profile tab first." };
-
-  const result = await runOnboardingScout(potterId, potter.website);
-  if (result.error) return { error: result.error };
-
-  revalidatePath(`/admin/potters/${potterId}`);
-  return { success: true, inserted: result.inserted };
-}

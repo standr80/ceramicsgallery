@@ -12,6 +12,6 @@ export const config = {
      * - _next/static, _next/image, favicon.ico, images
      * - api/webhooks/stripe (Stripe needs raw request, no middleware)
      */
-    "/((?!_next/static|_next/image|favicon.ico|api/webhooks/stripe|api/agents/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/webhooks/|api/agents/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
