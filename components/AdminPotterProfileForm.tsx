@@ -10,6 +10,9 @@ interface AdminPotterProfileFormProps {
   initialSlug: string;
   initialBiography: string;
   initialWebsite: string | null;
+  initialWebsiteAbout: string | null;
+  initialWebsiteShop: string | null;
+  initialWebsiteCourses: string | null;
   initialImage: string | null;
   initialActive: boolean;
 }
@@ -20,6 +23,9 @@ export function AdminPotterProfileForm({
   initialSlug,
   initialBiography,
   initialWebsite,
+  initialWebsiteAbout,
+  initialWebsiteShop,
+  initialWebsiteCourses,
   initialImage,
   initialActive,
 }: AdminPotterProfileFormProps) {
@@ -175,17 +181,24 @@ export function AdminPotterProfileForm({
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
-          Website (optional)
-        </label>
-        <input
-          name="website"
-          type="url"
-          defaultValue={initialWebsite || ""}
-          className="input-field"
-          placeholder="https://..."
-        />
+      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 space-y-4">
+        <p className="text-sm font-medium text-stone-700">Website URLs (for AI scout)</p>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Main website</label>
+          <input name="website" type="url" defaultValue={initialWebsite || ""} className="input-field" placeholder="https://..." />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">About / bio page</label>
+          <input name="website_about" type="url" defaultValue={initialWebsiteAbout || ""} className="input-field" placeholder="https://.../about" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Shop / products page</label>
+          <input name="website_shop" type="url" defaultValue={initialWebsiteShop || ""} className="input-field" placeholder="https://.../shop" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Courses page</label>
+          <input name="website_courses" type="url" defaultValue={initialWebsiteCourses || ""} className="input-field" placeholder="https://.../courses" />
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

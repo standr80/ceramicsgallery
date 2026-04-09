@@ -13,8 +13,11 @@ export default async function ProfilePage() {
       <EditProfileForm
         initialName={potter.name}
         initialBiography={potter.biography}
-        initialWebsite={potter.website}
-        initialImage={potter.image}
+        initialWebsite={potter.website ?? null}
+        initialWebsiteAbout={potter.website_about ?? null}
+        initialWebsiteShop={potter.website_shop ?? null}
+        initialWebsiteCourses={potter.website_courses ?? null}
+        initialImage={potter.image ?? null}
         potterId={potter.id}
       />
     </div>

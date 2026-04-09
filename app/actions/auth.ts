@@ -19,6 +19,9 @@ export async function signUp(formData: FormData) {
   const password = formData.get("password") as string;
   const biography = formData.get("biography") as string;
   const website = (formData.get("website") as string) || null;
+  const websiteAbout = (formData.get("website_about") as string) || null;
+  const websiteShop = (formData.get("website_shop") as string) || null;
+  const websiteCourses = (formData.get("website_courses") as string) || null;
 
   if (!name?.trim() || !email?.trim() || !password?.trim() || !biography?.trim()) {
     return { error: "Name, email, password and biography are required." };
@@ -55,6 +58,9 @@ export async function signUp(formData: FormData) {
     name: name.trim(),
     biography: biography.trim(),
     website: website?.trim() || null,
+    website_about: websiteAbout?.trim() || null,
+    website_shop: websiteShop?.trim() || null,
+    website_courses: websiteCourses?.trim() || null,
   });
 
   if (potterError) {

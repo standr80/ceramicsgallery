@@ -62,3 +62,31 @@ export async function discardDraft(productId: string) {
   revalidatePath("/dashboard/drafts");
   return { success: true };
 }
+
+export async function discardCourseDraft(courseId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be logged in." };
+
+  const { data: potter } = await supabase
+    .from("potters")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (!potter) return { error: "Potter profile not found." };
+
+  const { error } = await supabase
+    .from("courses")
+    .delete()
+    .eq("id", courseId)
+    .eq("potter_id", potter.id)
+    .eq("source", "onboarding-scout");
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/drafts");
+  return { success: true };
+}

@@ -8,6 +8,9 @@ interface EditProfileFormProps {
   initialName: string;
   initialBiography: string;
   initialWebsite: string | null;
+  initialWebsiteAbout: string | null;
+  initialWebsiteShop: string | null;
+  initialWebsiteCourses: string | null;
   initialImage: string | null;
   potterId: string;
 }
@@ -16,6 +19,9 @@ export function EditProfileForm({
   initialName,
   initialBiography,
   initialWebsite,
+  initialWebsiteAbout,
+  initialWebsiteShop,
+  initialWebsiteCourses,
   initialImage,
   potterId,
 }: EditProfileFormProps) {
@@ -157,17 +163,61 @@ export function EditProfileForm({
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
-          Website (optional)
-        </label>
-        <input
-          name="website"
-          type="url"
-          defaultValue={initialWebsite || ""}
-          className="input-field"
-          placeholder="https://..."
-        />
+      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 space-y-4">
+        <div>
+          <p className="text-sm font-medium text-stone-700 mb-0.5">Website URLs</p>
+          <p className="text-xs text-stone-500">
+            Used by the AI scout to import products, courses, and biography. All optional.
+          </p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">
+            Main website
+          </label>
+          <input
+            name="website"
+            type="url"
+            defaultValue={initialWebsite || ""}
+            className="input-field"
+            placeholder="https://yourwebsite.com"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">
+            About / bio page
+          </label>
+          <input
+            name="website_about"
+            type="url"
+            defaultValue={initialWebsiteAbout || ""}
+            className="input-field"
+            placeholder="https://yourwebsite.com/about"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">
+            Shop / products page
+          </label>
+          <input
+            name="website_shop"
+            type="url"
+            defaultValue={initialWebsiteShop || ""}
+            className="input-field"
+            placeholder="https://yourwebsite.com/shop"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">
+            Courses / workshops page
+          </label>
+          <input
+            name="website_courses"
+            type="url"
+            defaultValue={initialWebsiteCourses || ""}
+            className="input-field"
+            placeholder="https://yourwebsite.com/courses"
+          />
+        </div>
       </div>
 
       <button type="submit" className="btn-primary">

@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 
-export function TriggerScoutButton({ potterId, hasWebsite }: { potterId: string; hasWebsite: boolean }) {
+type ScoutType = "profile" | "shop" | "courses";
+
+interface TriggerScoutButtonProps {
+  potterId: string;
+  scoutType: ScoutType;
+  label: string;
+  hasUrl: boolean;
+  missingUrlMessage: string;
+}
+
+export function TriggerScoutButton({
+  potterId,
+  scoutType,
+  label,
+  hasUrl,
+  missingUrlMessage,
+}: TriggerScoutButtonProps) {
   const [status, setStatus] = useState<"idle" | "starting" | "running" | "error">("idle");
   const [message, setMessage] = useState("");
 
   async function handleClick() {
-    if (!hasWebsite) {
-      setMessage("No website URL set. Add one in the Profile tab first.");
+    if (!hasUrl) {
+      setMessage(missingUrlMessage);
       setStatus("error");
       return;
     }
@@ -19,7 +35,7 @@ export function TriggerScoutButton({ potterId, hasWebsite }: { potterId: string;
       const res = await fetch("/api/agents/trigger-scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ potterId }),
+        body: JSON.stringify({ potterId, scoutType }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -27,7 +43,13 @@ export function TriggerScoutButton({ potterId, hasWebsite }: { potterId: string;
         setStatus("error");
       } else {
         setStatus("running");
-        setMessage("Scout is running in the background. Check the potter's Drafts page in 2–3 minutes.");
+        setMessage(
+          scoutType === "profile"
+            ? "Profile scout running. Biography will update in ~30 seconds."
+            : scoutType === "shop"
+            ? "Shop scout running. Check Drafts in ~30 seconds."
+            : "Courses scout running. Check Drafts in ~30 seconds."
+        );
       }
     } catch {
       setMessage("Network error — please try again.");
@@ -36,22 +58,19 @@ export function TriggerScoutButton({ potterId, hasWebsite }: { potterId: string;
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       <button
         onClick={handleClick}
         disabled={status === "starting" || status === "running"}
-        className="inline-flex items-center gap-2 rounded border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 disabled:opacity-50 transition-colors"
+        className="inline-flex items-center gap-2 rounded border border-stone-300 bg-white px-3 py-1.5 text-sm text-stone-700 hover:bg-stone-50 disabled:opacity-50 transition-colors"
       >
         {status === "starting" ? (
           <>
-            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-stone-400 border-t-transparent" />
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-stone-400 border-t-transparent" />
             Starting…
           </>
         ) : (
-          <>
-            <span>🔍</span>
-            Run Onboarding Scout
-          </>
+          label
         )}
       </button>
       {message && (

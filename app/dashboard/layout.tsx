@@ -21,14 +21,23 @@ export default async function DashboardLayout({
 
   const admin = await isAdmin();
 
-  // Fetch draft count for the Drafts nav badge
+  // Fetch draft count (products + courses) for the Drafts nav badge
   const supabase = await createClient();
-  const { count: draftCount } = await supabase
-    .from("products")
-    .select("id", { count: "exact", head: true })
-    .eq("potter_id", potter.id)
-    .eq("active", false)
-    .eq("source", "onboarding-scout");
+  const [{ count: productDraftCount }, { count: courseDraftCount }] = await Promise.all([
+    supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("potter_id", potter.id)
+      .eq("active", false)
+      .eq("source", "onboarding-scout"),
+    supabase
+      .from("courses")
+      .select("id", { count: "exact", head: true })
+      .eq("potter_id", potter.id)
+      .eq("active", false)
+      .eq("source", "onboarding-scout"),
+  ]);
+  const draftCount = (productDraftCount ?? 0) + (courseDraftCount ?? 0);
 
   return (
     <div className="py-8 px-4">
@@ -56,7 +65,7 @@ export default async function DashboardLayout({
             </form>
           </div>
         </div>
-        <DashboardNav draftCount={draftCount ?? 0} />
+        <DashboardNav draftCount={draftCount} />
         {children}
       </div>
     </div>

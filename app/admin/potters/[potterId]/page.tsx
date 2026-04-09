@@ -33,7 +33,7 @@ export default async function AdminPotterPage({ params, searchParams }: PageProp
 
   const { data: potter } = await admin
     .from("potters")
-    .select("id, slug, name, biography, image, website, active, commission_override_percent")
+    .select("id, slug, name, biography, image, website, website_about, website_shop, website_courses, active, commission_override_percent")
     .eq("id", potterId)
     .single();
 
@@ -127,8 +127,11 @@ export default async function AdminPotterPage({ params, searchParams }: PageProp
             initialName={potter.name}
             initialSlug={potter.slug}
             initialBiography={potter.biography ?? ""}
-            initialWebsite={potter.website}
-            initialImage={potter.image}
+            initialWebsite={potter.website ?? null}
+            initialWebsiteAbout={potter.website_about ?? null}
+            initialWebsiteShop={potter.website_shop ?? null}
+            initialWebsiteCourses={potter.website_courses ?? null}
+            initialImage={potter.image ?? null}
             initialActive={potter.active ?? true}
           />
         </div>
@@ -138,7 +141,30 @@ export default async function AdminPotterPage({ params, searchParams }: PageProp
             <p className="text-stone-600 text-sm">
               Inactive products are hidden from the catalog. Featured products appear on the home page.
             </p>
-            <TriggerScoutButton potterId={potterId} hasWebsite={!!potter.website} />
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">AI Scout</p>
+              <TriggerScoutButton
+                potterId={potterId}
+                scoutType="profile"
+                label="Scout Profile"
+                hasUrl={!!(potter.website || potter.website_about)}
+                missingUrlMessage="Add a main website or about URL in the Profile tab first."
+              />
+              <TriggerScoutButton
+                potterId={potterId}
+                scoutType="shop"
+                label="Scout Shop"
+                hasUrl={!!potter.website_shop}
+                missingUrlMessage="Add a shop URL in the Profile tab first."
+              />
+              <TriggerScoutButton
+                potterId={potterId}
+                scoutType="courses"
+                label="Scout Courses"
+                hasUrl={!!potter.website_courses}
+                missingUrlMessage="Add a courses URL in the Profile tab first."
+              />
+            </div>
           </div>
           {total > 0 && (
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

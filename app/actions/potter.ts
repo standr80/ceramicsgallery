@@ -19,6 +19,9 @@ export async function updateProfile(formData: FormData) {
   const name = formData.get("name") as string;
   const biography = formData.get("biography") as string;
   const website = (formData.get("website") as string)?.trim() || null;
+  const websiteAbout = (formData.get("website_about") as string)?.trim() || null;
+  const websiteShop = (formData.get("website_shop") as string)?.trim() || null;
+  const websiteCourses = (formData.get("website_courses") as string)?.trim() || null;
   const image = (formData.get("image") as string)?.trim() || null;
 
   if (!name?.trim() || !biography?.trim()) {
@@ -31,6 +34,9 @@ export async function updateProfile(formData: FormData) {
       name: name.trim(),
       biography: biography.trim(),
       website: website || null,
+      website_about: websiteAbout || null,
+      website_shop: websiteShop || null,
+      website_courses: websiteCourses || null,
       image: image || null,
       updated_at: new Date().toISOString(),
     })

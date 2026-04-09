@@ -251,6 +251,9 @@ export async function updatePotterProfileAdmin(potterId: string, formData: FormD
   const name = (formData.get("name") as string)?.trim();
   const biography = (formData.get("biography") as string)?.trim();
   const website = (formData.get("website") as string)?.trim() || null;
+  const websiteAbout = (formData.get("website_about") as string)?.trim() || null;
+  const websiteShop = (formData.get("website_shop") as string)?.trim() || null;
+  const websiteCourses = (formData.get("website_courses") as string)?.trim() || null;
   const image = (formData.get("image") as string)?.trim() || null;
   const activeRaw = formData.get("active");
   const active = activeRaw === "on" || activeRaw === "true";
@@ -264,6 +267,9 @@ export async function updatePotterProfileAdmin(potterId: string, formData: FormD
     name,
     biography,
     website: website || null,
+    website_about: websiteAbout || null,
+    website_shop: websiteShop || null,
+    website_courses: websiteCourses || null,
     image: image || null,
     active,
     updated_at: new Date().toISOString(),

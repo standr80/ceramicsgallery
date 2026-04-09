@@ -88,18 +88,65 @@ export default function SignupPage() {
               placeholder="Tell us about your practice, influences, and the type of work you make..."
             />
           </div>
-          <div>
-            <label htmlFor="website" className="block text-sm font-medium text-stone-700 mb-1">
-              Website or social link (optional)
-            </label>
-            <input
-              id="website"
-              name="website"
-              type="url"
-              className="input-field"
-              placeholder="https://..."
-            />
+
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 space-y-4">
+            <div>
+              <p className="text-sm font-medium text-stone-700 mb-0.5">Your website URLs</p>
+              <p className="text-xs text-stone-500">
+                Providing these lets our AI scout automatically import your products, courses, and biography.
+                All fields are optional.
+              </p>
+            </div>
+            <div>
+              <label htmlFor="website" className="block text-sm font-medium text-stone-700 mb-1">
+                Main website
+              </label>
+              <input
+                id="website"
+                name="website"
+                type="url"
+                className="input-field"
+                placeholder="https://yourwebsite.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="website_about" className="block text-sm font-medium text-stone-700 mb-1">
+                About / bio page
+              </label>
+              <input
+                id="website_about"
+                name="website_about"
+                type="url"
+                className="input-field"
+                placeholder="https://yourwebsite.com/about"
+              />
+            </div>
+            <div>
+              <label htmlFor="website_shop" className="block text-sm font-medium text-stone-700 mb-1">
+                Shop / products page
+              </label>
+              <input
+                id="website_shop"
+                name="website_shop"
+                type="url"
+                className="input-field"
+                placeholder="https://yourwebsite.com/shop"
+              />
+            </div>
+            <div>
+              <label htmlFor="website_courses" className="block text-sm font-medium text-stone-700 mb-1">
+                Courses / workshops page
+              </label>
+              <input
+                id="website_courses"
+                name="website_courses"
+                type="url"
+                className="input-field"
+                placeholder="https://yourwebsite.com/courses"
+              />
+            </div>
           </div>
+
           <div className="flex flex-wrap gap-4">
             <button type="submit" className="btn-primary">
               Create account
