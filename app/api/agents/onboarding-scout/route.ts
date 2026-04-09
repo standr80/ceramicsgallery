@@ -37,7 +37,9 @@ async function runScout(potterId: string, websiteUrl: string) {
 
   try {
     const result = await firecrawl.crawl(websiteUrl, {
-      limit: 15,
+      limit: 10,
+      maxConcurrency: 1,
+      delay: 2000,
       scrapeOptions: { formats: ["markdown"] },
     });
 
