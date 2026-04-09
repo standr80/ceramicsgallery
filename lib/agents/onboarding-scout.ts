@@ -1,4 +1,4 @@
-import Firecrawl, { type Document } from "@mendable/firecrawl-js";
+import Firecrawl from "@mendable/firecrawl-js";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -27,26 +27,21 @@ export async function runOnboardingScout(potterId: string, websiteUrl: string) {
 
   console.log(`[onboarding-scout] Starting crawl for potter ${potterId}: ${websiteUrl}`);
 
-  // Crawl the potter's website
+  // Scrape the potter's homepage (fast, works within any Vercel function timeout)
   const firecrawl = new Firecrawl({ apiKey: firecrawlKey });
   let crawlContent = "";
 
   try {
-    const result = await firecrawl.crawl(websiteUrl, {
-      limit: 10,
-      maxConcurrency: 1,
-      delay: 2000,
-      scrapeOptions: { formats: ["markdown"] },
+    const result = await firecrawl.scrape(websiteUrl, {
+      formats: ["markdown"],
     });
 
-    if (result.status !== "completed" || !result.data || result.data.length === 0) {
-      console.error("[onboarding-scout] Firecrawl returned no data, status:", result.status);
-      return { error: `Firecrawl status: ${result.status}` };
+    if (!result.markdown) {
+      console.error("[onboarding-scout] Firecrawl scrape returned no content");
+      return { error: "No content returned from website" };
     }
 
-    crawlContent = result.data
-      .map((page: Document) => `## ${page.metadata?.title ?? ""}\n\n${page.markdown ?? ""}`)
-      .join("\n\n---\n\n");
+    crawlContent = `## ${result.metadata?.title ?? websiteUrl}\n\n${result.markdown}`;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[onboarding-scout] Firecrawl error:", err);
