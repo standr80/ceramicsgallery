@@ -167,7 +167,7 @@ export async function getCourses(): Promise<Course[]> {
 
     return data.map((row) => ({
       id: row.id,
-      potterSlug: (row.potters as { slug: string } | null)?.slug ?? "",
+      potterSlug: (row.potters as unknown as { slug: string } | null)?.slug ?? "",
       title: row.title,
       description: row.description ?? "",
       type: row.type ?? "",
