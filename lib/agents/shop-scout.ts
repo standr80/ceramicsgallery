@@ -78,12 +78,11 @@ export async function runShopScout(potterId: string, shopUrl: string) {
   if (productPageUrls.length > 0) {
     try {
       const batchResult = await firecrawl.batchScrape(productPageUrls, {
-        formats: ["markdown"],
+        options: { formats: ["markdown"] },
       });
-      const pages = (batchResult as { data?: Array<{ metadata?: { title?: string }; url?: string; markdown?: string }> }).data ?? [];
-      for (const page of pages) {
+      for (const page of batchResult.data ?? []) {
         if (page.markdown) {
-          productPagesContent += `\n\n# PRODUCT PAGE: ${page.metadata?.title ?? page.url ?? ""}\n\n${page.markdown}`;
+          productPagesContent += `\n\n# PRODUCT PAGE: ${page.metadata?.title ?? ""}\n\n${page.markdown}`;
         }
       }
       console.log(`[shop-scout] Batch-scraped ${pages.length} product pages`);
