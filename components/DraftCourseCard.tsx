@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { discardCourseDraft } from "@/app/actions/agents";
+import Link from "next/link";
+import { publishCourseDraft, discardCourseDraft } from "@/app/actions/agents";
 
 interface DraftCourse {
   id: string;
@@ -17,8 +18,19 @@ interface DraftCourse {
 }
 
 export function DraftCourseCard({ course }: { course: DraftCourse }) {
-  const [status, setStatus] = useState<"idle" | "discarding" | "done" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "publishing" | "discarding" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  async function handlePublish() {
+    setStatus("publishing");
+    const result = await publishCourseDraft(course.id);
+    if (result.error) {
+      setErrorMsg(result.error);
+      setStatus("error");
+    } else {
+      setStatus("done");
+    }
+  }
 
   async function handleDiscard() {
     if (!confirm(`Discard "${course.title}"? This cannot be undone.`)) return;
@@ -68,14 +80,29 @@ export function DraftCourseCard({ course }: { course: DraftCourse }) {
         <p className="text-red-600 text-xs">{errorMsg}</p>
       )}
 
+      {status === "error" && (
+        <p className="text-red-600 text-xs">{errorMsg}</p>
+      )}
+
       <div className="flex gap-2 pt-1 border-t border-stone-100">
-        <p className="flex-1 text-xs text-stone-400 self-center">
-          Review coming soon — discard if not relevant.
-        </p>
+        <button
+          onClick={handlePublish}
+          disabled={status !== "idle"}
+          className="flex-1 bg-stone-900 text-white text-sm px-3 py-2 rounded hover:bg-stone-700 disabled:opacity-50 transition-colors"
+        >
+          {status === "publishing" ? "Publishing…" : "Publish"}
+        </button>
+        <Link
+          href={`/dashboard/courses/${course.id}`}
+          className="flex-1 text-center border border-stone-300 text-stone-700 text-sm px-3 py-2 rounded hover:bg-stone-50 transition-colors"
+        >
+          Edit
+        </Link>
         <button
           onClick={handleDiscard}
-          disabled={status === "discarding"}
-          className="px-3 py-1.5 text-red-600 text-sm rounded border border-red-200 hover:bg-red-50 disabled:opacity-50 transition-colors"
+          disabled={status !== "idle"}
+          className="px-3 py-2 text-red-600 text-sm rounded border border-red-200 hover:bg-red-50 disabled:opacity-50 transition-colors"
+          title="Discard draft"
         >
           {status === "discarding" ? "…" : "Discard"}
         </button>
