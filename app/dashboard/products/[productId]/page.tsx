@@ -27,7 +27,7 @@ export default async function EditProductPage({ params }: PageProps) {
 
   return (
     <div>
-      <Link href="/dashboard" className="text-sm text-clay-600 hover:text-clay-700 mb-4 inline-block">
+      <Link href="/dashboard/products" className="text-sm text-clay-600 hover:text-clay-700 mb-4 inline-block">
         ← Back to dashboard
       </Link>
       <h2 className="font-display text-xl font-semibold text-clay-900 mb-6">

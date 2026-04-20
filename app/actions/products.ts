@@ -91,7 +91,7 @@ export async function addProduct(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath(`/${potter.slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/products");
   return { success: true };
 }
 
@@ -170,7 +170,7 @@ export async function updateProduct(productId: string, formData: FormData) {
   revalidatePath("/");
   revalidatePath(`/${potter.slug}`);
   revalidatePath(`/${potter.slug}/${product.slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/products");
   revalidatePath(`/dashboard/products/${productId}`);
   return { success: true };
 }
@@ -209,7 +209,7 @@ export async function deleteProduct(productId: string) {
 
   revalidatePath("/");
   revalidatePath(`/${potter.slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/products");
   revalidatePath(`/dashboard/products/${productId}`);
   return { success: true };
 }

@@ -29,7 +29,7 @@ export async function publishDraft(productId: string) {
 
   revalidatePath("/");
   revalidatePath(`/${potter.slug}`);
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/products");
   revalidatePath("/dashboard/drafts");
   return { success: true };
 }
@@ -58,7 +58,7 @@ export async function discardDraft(productId: string) {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/products");
   revalidatePath("/dashboard/drafts");
   return { success: true };
 }

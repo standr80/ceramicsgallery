@@ -100,8 +100,8 @@ export function EditProductForm({
     return (
       <div className="rounded-lg bg-green-50 px-4 py-6 text-green-800">
         <p className="font-medium">Product updated successfully.</p>
-        <Link href="/dashboard" className="mt-4 inline-block text-sm font-medium text-green-700 hover:text-green-800">
-          ← Back to dashboard
+        <Link href="/dashboard/products" className="mt-4 inline-block text-sm font-medium text-green-700 hover:text-green-800">
+          ← Back to products
         </Link>
       </div>
     );
@@ -254,7 +254,7 @@ export function EditProductForm({
         <button type="submit" className="btn-primary">
           Save changes
         </button>
-        <Link href="/dashboard" className="btn-secondary">
+        <Link href="/dashboard/products" className="btn-secondary">
           Cancel
         </Link>
       </div>

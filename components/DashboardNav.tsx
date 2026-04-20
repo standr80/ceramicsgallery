@@ -10,12 +10,17 @@ interface DashboardNavProps {
 export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
   const pathname = usePathname();
 
-  const linkClass = (href: string) =>
-    `block border-b-2 pb-3 text-sm font-medium ${
-      pathname === href
+  const linkClass = (href: string) => {
+    const active =
+      pathname === href ||
+      // Treat /dashboard/products/[id] as still on the Products tab
+      (href === "/dashboard/products" && pathname.startsWith("/dashboard/products"));
+    return `block border-b-2 pb-3 text-sm font-medium ${
+      active
         ? "border-clay-600 text-clay-700"
         : "border-transparent text-stone-600 hover:text-clay-600"
     }`;
+  };
 
   return (
     <nav className="mb-8 border-b border-clay-200/60">
@@ -26,7 +31,7 @@ export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
           </Link>
         </li>
         <li>
-          <Link href="/dashboard" className={linkClass("/dashboard")}>
+          <Link href="/dashboard/products" className={linkClass("/dashboard/products")}>
             Products
           </Link>
         </li>
