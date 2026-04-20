@@ -36,6 +36,7 @@ export async function updateCourse(courseId: string, formData: FormData) {
       location: (formData.get("location") as string)?.trim() || null,
       start_date: (formData.get("start_date") as string) || null,
       max_participants: maxParticipantsRaw ? parseInt(maxParticipantsRaw, 10) : null,
+      url: (formData.get("url") as string)?.trim() || null,
     })
     .eq("id", courseId)
     .eq("potter_id", potter.id);

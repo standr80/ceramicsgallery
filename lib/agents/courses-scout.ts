@@ -42,6 +42,7 @@ export async function runCoursesScout(potterId: string, coursesUrl: string) {
     skill_level?: string;
     location?: string;
     max_participants?: number;
+    url?: string;
   }> = [];
 
   try {
@@ -62,6 +63,7 @@ Each course must have these fields:
 - skill_level (string, optional): one of "beginner", "intermediate", "advanced", "all"
 - location (string, optional): where the course takes place
 - max_participants (number, optional): maximum class size if mentioned
+- url (string, optional): the full URL (https://...) of the specific course or booking page if one is linked
 
 Return ONLY a valid JSON array, no markdown fences, no explanation.
 If no clear courses or workshops are found, return an empty array [].`,
@@ -108,6 +110,7 @@ If no clear courses or workshops are found, return an empty array [].`,
       max_participants: c.max_participants ?? null,
       active: false,
       source: "onboarding-scout",
+      url: c.url ?? null,
     });
 
     if (error) {

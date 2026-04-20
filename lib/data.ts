@@ -158,7 +158,7 @@ export async function getCourses(): Promise<Course[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("courses")
-      .select("id, title, description, type, start_date, end_date, price, currency, duration, skill_level, location, max_participants, potter_id, potters(slug)")
+      .select("id, title, description, type, start_date, end_date, price, currency, duration, skill_level, location, max_participants, url, potter_id, potters(slug)")
       .eq("active", true)
       .order("start_date", { ascending: true, nullsFirst: false });
 
@@ -178,6 +178,7 @@ export async function getCourses(): Promise<Course[]> {
       skillLevel: (row.skill_level as Course["skillLevel"]) ?? undefined,
       location: row.location ?? undefined,
       maxParticipants: row.max_participants ?? undefined,
+      url: row.url ?? undefined,
     }));
   } catch {
     return [];

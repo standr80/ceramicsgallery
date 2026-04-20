@@ -50,4 +50,6 @@ export interface Course {
   skillLevel?: "beginner" | "intermediate" | "advanced" | "all";
   location?: string;
   maxParticipants?: number;
+  /** Link to the course page on the potter's own website */
+  url?: string;
 }

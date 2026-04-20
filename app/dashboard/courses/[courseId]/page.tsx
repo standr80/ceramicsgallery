@@ -46,6 +46,7 @@ export default async function EditCoursePage({ params }: PageProps) {
         initialLocation={course.location ?? ""}
         initialStartDate={course.start_date ?? ""}
         initialMaxParticipants={course.max_participants ?? null}
+        initialUrl={course.url ?? ""}
       />
     </div>
   );

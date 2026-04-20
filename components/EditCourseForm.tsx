@@ -15,6 +15,7 @@ interface EditCourseFormProps {
   initialLocation: string;
   initialStartDate: string;
   initialMaxParticipants: number | null;
+  initialUrl: string;
 }
 
 const SKILL_LEVELS = ["", "beginner", "intermediate", "advanced", "all"];
@@ -31,6 +32,7 @@ export function EditCourseForm({
   initialLocation,
   initialStartDate,
   initialMaxParticipants,
+  initialUrl,
 }: EditCourseFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -174,6 +176,18 @@ export function EditCourseForm({
             className="input-field"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-stone-700 mb-1">Course page URL</label>
+        <input
+          name="url"
+          type="url"
+          defaultValue={initialUrl}
+          className="input-field"
+          placeholder="https://yourwebsite.com/courses/wheel-throwing"
+        />
+        <p className="mt-1 text-xs text-stone-400">Link to this course on your own website. Shown to visitors on Ceramics Gallery.</p>
       </div>
 
       <button type="submit" className="btn-primary">
