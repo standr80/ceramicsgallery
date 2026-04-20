@@ -13,8 +13,8 @@ export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
   const linkClass = (href: string) => {
     const active =
       pathname === href ||
-      // Treat /dashboard/products/[id] as still on the Products tab
-      (href === "/dashboard/products" && pathname.startsWith("/dashboard/products"));
+      (href === "/dashboard/products" && pathname.startsWith("/dashboard/products") && !pathname.startsWith("/dashboard/courses")) ||
+      (href === "/dashboard/courses" && pathname.startsWith("/dashboard/courses"));
     return `block border-b-2 pb-3 text-sm font-medium ${
       active
         ? "border-clay-600 text-clay-700"
@@ -38,6 +38,11 @@ export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
         <li>
           <Link href="/dashboard/add-product" className={linkClass("/dashboard/add-product")}>
             Add product
+          </Link>
+        </li>
+        <li>
+          <Link href="/dashboard/courses" className={linkClass("/dashboard/courses")}>
+            Courses
           </Link>
         </li>
         <li>

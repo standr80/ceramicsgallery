@@ -53,18 +53,23 @@ export function PotterCourseCard({ course }: { course: Course }) {
         ) : (
           <span className="italic">Date TBC</span>
         )}
-        {course.url && (
-          <>
-            <span>·</span>
-            <a
-              href={course.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-clay-600 hover:text-clay-700 hover:underline"
-            >
-              Book / more info →
-            </a>
-          </>
+        <span>·</span>
+        {course.url ? (
+          <a
+            href={course.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-clay-600 hover:text-clay-700 hover:underline"
+          >
+            Book / more info →
+          </a>
+        ) : (
+          <a
+            href={`/contact/${course.potterSlug}?courseId=${course.id}&course=${encodeURIComponent(course.title)}`}
+            className="text-clay-600 hover:text-clay-700 hover:underline"
+          >
+            Enquire →
+          </a>
         )}
       </div>
     </div>
