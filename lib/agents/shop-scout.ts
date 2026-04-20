@@ -2,6 +2,12 @@ import Firecrawl from "@mendable/firecrawl-js";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+const MAX_PRODUCT_PAGES = 15;
+
+// Paths that are clearly not individual product detail pages
+const NON_PRODUCT_PATH_RE =
+  /\/(cart|checkout|account|login|register|signup|blog|news|about|contact|search|tag|category|categories|collections$|pages\/|faq|terms|privacy|shipping|returns|press|events|gallery$|home$|\?)/i;
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -10,6 +16,20 @@ function slugify(text: string): string {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .slice(0, 80);
+}
+
+function isLikelyProductPage(url: string, shopUrl: string): boolean {
+  try {
+    const shopOrigin = new URL(shopUrl).origin;
+    const parsed = new URL(url);
+    // Must be same origin and not a fragment-only or root URL
+    if (parsed.origin !== shopOrigin) return false;
+    if (parsed.pathname === "/" || parsed.pathname === "") return false;
+    if (NON_PRODUCT_PATH_RE.test(parsed.pathname + parsed.search)) return false;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function runShopScout(potterId: string, shopUrl: string) {
@@ -24,19 +44,55 @@ export async function runShopScout(potterId: string, shopUrl: string) {
   console.log(`[shop-scout] Starting for potter ${potterId}: ${shopUrl}`);
 
   const firecrawl = new Firecrawl({ apiKey: firecrawlKey });
-  let content = "";
 
+  // ── Step 1: Scrape the listing page ───────────────────────────────────────
+  let listingMarkdown = "";
   try {
     const result = await firecrawl.scrape(shopUrl, { formats: ["markdown"] });
     if (!result.markdown) {
       return { error: "No content returned from shop page" };
     }
-    content = `## ${result.metadata?.title ?? shopUrl}\n\n${result.markdown}`;
+    listingMarkdown = `# SHOP LISTING: ${result.metadata?.title ?? shopUrl}\n\n${result.markdown}`;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[shop-scout] Firecrawl error:", err);
+    console.error("[shop-scout] Firecrawl scrape error:", err);
     return { error: msg };
   }
+
+  // ── Step 2: Discover product page URLs via map ─────────────────────────────
+  let productPageUrls: string[] = [];
+  try {
+    const mapResult = await firecrawl.map(shopUrl, { limit: 60 });
+    const links: string[] = (mapResult as { links?: string[] }).links ?? [];
+    productPageUrls = links
+      .filter((u) => isLikelyProductPage(u, shopUrl))
+      .slice(0, MAX_PRODUCT_PAGES);
+    console.log(`[shop-scout] Found ${productPageUrls.length} potential product pages`);
+  } catch (err) {
+    // Non-fatal — proceed with listing page content only
+    console.warn("[shop-scout] Map step failed, using listing page only:", err);
+  }
+
+  // ── Step 3: Batch-scrape individual product pages ─────────────────────────
+  let productPagesContent = "";
+  if (productPageUrls.length > 0) {
+    try {
+      const batchResult = await firecrawl.batchScrape(productPageUrls, {
+        formats: ["markdown"],
+      });
+      const pages = (batchResult as { data?: Array<{ metadata?: { title?: string }; url?: string; markdown?: string }> }).data ?? [];
+      for (const page of pages) {
+        if (page.markdown) {
+          productPagesContent += `\n\n# PRODUCT PAGE: ${page.metadata?.title ?? page.url ?? ""}\n\n${page.markdown}`;
+        }
+      }
+      console.log(`[shop-scout] Batch-scraped ${pages.length} product pages`);
+    } catch (err) {
+      console.warn("[shop-scout] Batch scrape failed, using listing page only:", err);
+    }
+  }
+
+  const content = (listingMarkdown + productPagesContent).slice(0, 100000);
 
   const anthropic = new Anthropic({ apiKey: anthropicKey });
 
@@ -55,26 +111,30 @@ export async function runShopScout(potterId: string, shopUrl: string) {
   try {
     const message = await anthropic.messages.create({
       model: "claude-opus-4-5",
-      max_tokens: 4096,
+      max_tokens: 8192,
       system: `You are a product data extraction assistant for a ceramics marketplace.
-Extract individual pottery products from website content and return them as a JSON array.
-Each product must have these fields:
+The content below comes from a potter's shop page plus individual product detail pages scraped separately.
+Extract every distinct pottery product and return them as a JSON array.
+
+Each product object must have:
 - name (string, required): the product name
-- description (string, required): a concise 1-2 sentence product description
-- descriptionExtended (string, optional): longer description or care instructions if available
-- price (number, required): numeric price in the site's currency; use 0 if unclear or unavailable
-- currency (string, default "GBP"): 3-letter currency code
-- category (string, optional): e.g. "Functional", "Tableware", "Sculptural", "Decorative"
-- image (string, optional): the full URL of the primary product image if found
+- description (string, required): a concise 1–2 sentence summary suitable for a product listing card
+- descriptionExtended (string, required if available): the FULL product description from the product detail page — include materials, dimensions, firing technique, glaze, care instructions, and any other details the potter provided. This is the most important field; do not leave it empty if detail-page content is present.
+- price (number, required): numeric price; use 0 if not shown
+- currency (string, default "GBP"): ISO 4217 code
+- category (string, optional): one of "Functional", "Tableware", "Sculptural", "Decorative", "Vases & Vessels", "Jewellery", "Tiles", "Other"
+- image (string, optional): absolute URL of the primary product image
 - images (array of strings, optional): any additional image URLs
-- sku (string, optional): product code or SKU if shown
+- sku (string, optional): product code or SKU
+
+Deduplication: if the same product appears in both the listing section and a detail section, merge the data — use the detail page's richer description.
 
 Return ONLY a valid JSON array, no markdown fences, no explanation.
-If no clear individual products are found, return an empty array [].`,
+If no clear products are found, return [].`,
       messages: [
         {
           role: "user",
-          content: `Extract all distinct pottery products from this shop page:\n\n${content.slice(0, 80000)}`,
+          content: `Extract all pottery products from the content below.\n\n${content}`,
         },
       ],
     });
