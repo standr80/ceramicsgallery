@@ -35,7 +35,7 @@ export async function deletePotter(potterId: string) {
   const admin = createAdminClient();
   const { data: potter, error: fetchError } = await admin
     .from("potters")
-    .select("slug")
+    .select("slug, auth_user_id")
     .eq("id", potterId)
     .single();
 
@@ -44,8 +44,12 @@ export async function deletePotter(potterId: string) {
   }
 
   const { error } = await admin.from("potters").delete().eq("id", potterId);
-
   if (error) return { error: error.message };
+
+  // Also remove the Supabase Auth user so the email address is freed up
+  if (potter.auth_user_id) {
+    await admin.auth.admin.deleteUser(potter.auth_user_id);
+  }
 
   revalidatePath("/");
   revalidatePath(`/${potter.slug}`);
