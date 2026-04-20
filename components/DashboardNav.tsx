@@ -21,18 +21,13 @@ export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
     <nav className="mb-8 border-b border-clay-200/60">
       <ul className="flex gap-6 flex-wrap">
         <li>
-          <Link href="/dashboard" className={linkClass("/dashboard")}>
-            Overview
-          </Link>
-        </li>
-        <li>
           <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>
             Profile
           </Link>
         </li>
         <li>
-          <Link href="/dashboard/connect-stripe" className={linkClass("/dashboard/connect-stripe")}>
-            Payments
+          <Link href="/dashboard" className={linkClass("/dashboard")}>
+            Products
           </Link>
         </li>
         <li>
@@ -41,9 +36,14 @@ export function DashboardNav({ draftCount = 0 }: DashboardNavProps) {
           </Link>
         </li>
         <li>
+          <Link href="/dashboard/connect-stripe" className={linkClass("/dashboard/connect-stripe")}>
+            Payments
+          </Link>
+        </li>
+        <li>
           <Link href="/dashboard/drafts" className={linkClass("/dashboard/drafts")}>
             <span className="flex items-center gap-1.5">
-              Drafts
+              Agents
               {draftCount > 0 && (
                 <span className="inline-flex items-center justify-center rounded-full bg-amber-500 text-white text-xs font-semibold w-5 h-5 leading-none">
                   {draftCount}
