@@ -79,7 +79,9 @@ If no clear individual products are found, return an empty array [].`,
       ],
     });
 
-    const text = message.content[0].type === "text" ? message.content[0].text : "";
+    const raw = message.content[0].type === "text" ? message.content[0].text : "";
+    // Strip markdown code fences Claude sometimes adds despite instructions
+    const text = raw.replace(/^```[a-z]*\s*/i, "").replace(/\s*```\s*$/i, "").trim();
     const parsed = JSON.parse(text);
     if (Array.isArray(parsed)) products = parsed;
   } catch (err) {
