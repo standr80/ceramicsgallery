@@ -80,7 +80,8 @@ export async function runShopScout(potterId: string, shopUrl: string) {
       const batchResult = await firecrawl.batchScrape(productPageUrls, {
         options: { formats: ["markdown"] },
       });
-      for (const page of batchResult.data ?? []) {
+      const pages = batchResult.data ?? [];
+      for (const page of pages) {
         if (page.markdown) {
           productPagesContent += `\n\n# PRODUCT PAGE: ${page.metadata?.title ?? ""}\n\n${page.markdown}`;
         }
