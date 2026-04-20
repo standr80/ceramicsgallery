@@ -40,6 +40,9 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
         <Link href="/#potters" className={linkClass}>
           Potters
         </Link>
+        <Link href="/shop" className={linkClass}>
+          Shop
+        </Link>
         <Link href="/courses" className={linkClass}>
           Courses
         </Link>
@@ -115,6 +118,9 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
               </Link>
               <Link href="/#potters" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
                 Potters
+              </Link>
+              <Link href="/shop" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
+                Shop
               </Link>
               <Link href="/courses" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
                 Courses

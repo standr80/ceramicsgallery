@@ -153,6 +153,69 @@ export async function getAllProductPaths(): Promise<{ slug: string; productSlug:
   return paths;
 }
 
+export interface ShopProduct {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  image: string;
+  category?: string;
+  featured?: boolean;
+  potterSlug: string;
+  potterName: string;
+}
+
+export async function getAllProducts(): Promise<ShopProduct[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, slug, name, description, price, currency, image, category, featured, potter_id, potters!inner(slug, name, active)")
+      .eq("active", true)
+      .eq("potters.active", true)
+      .order("created_at", { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => {
+      const potter = row.potters as unknown as { slug: string; name: string };
+      return {
+        id: row.id,
+        slug: row.slug,
+        name: row.name,
+        description: row.description ?? "",
+        price: Number(row.price) || 0,
+        currency: row.currency ?? "GBP",
+        image: row.image || "/images/placeholder.svg",
+        category: row.category ?? undefined,
+        featured: Boolean(row.featured),
+        potterSlug: potter?.slug ?? "",
+        potterName: potter?.name ?? "",
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function getShopFilterOptions(products: ShopProduct[]) {
+  const categories = Array.from(
+    new Set(products.map((p) => p.category).filter(Boolean))
+  ).sort() as string[];
+
+  const pottersMap = new Map<string, string>();
+  for (const p of products) {
+    if (p.potterSlug) pottersMap.set(p.potterSlug, p.potterName);
+  }
+  const potters = Array.from(pottersMap.entries())
+    .map(([slug, name]) => ({ slug, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return { categories, potters };
+}
+
 export async function getCoursesByPotterId(potterId: string): Promise<Course[]> {
   try {
     const supabase = await createClient();
