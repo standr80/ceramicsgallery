@@ -63,7 +63,7 @@ export async function runShopScout(potterId: string, shopUrl: string) {
   let productPageUrls: string[] = [];
   try {
     const mapResult = await firecrawl.map(shopUrl, { limit: 60 });
-    const links: string[] = (mapResult as { links?: string[] }).links ?? [];
+    const links: string[] = (mapResult as unknown as { links?: string[] }).links ?? [];
     productPageUrls = links
       .filter((u) => isLikelyProductPage(u, shopUrl))
       .slice(0, MAX_PRODUCT_PAGES);
