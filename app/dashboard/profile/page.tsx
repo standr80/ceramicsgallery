@@ -1,9 +1,14 @@
+import { createClient } from "@/lib/supabase/server";
 import { getCurrentPotter } from "@/lib/get-potter";
 import { EditProfileForm } from "@/components/EditProfileForm";
 
 export default async function ProfilePage() {
   const potter = await getCurrentPotter();
   if (!potter) return null;
+
+  // Fetch the auth email separately — not stored in the potters table
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <div>
@@ -14,6 +19,8 @@ export default async function ProfilePage() {
         initialName={potter.name}
         initialBiography={potter.biography}
         initialImage={potter.image ?? null}
+        initialSlug={potter.slug}
+        initialEmail={user?.email ?? ""}
         potterId={potter.id}
       />
     </div>
