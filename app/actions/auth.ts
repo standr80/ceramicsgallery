@@ -4,32 +4,43 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 
-function slugFromName(name: string): string {
-  return name
+function sanitiseSlug(value: string): string {
+  return value
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "")
-    .slice(0, 50) || "potter";
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "potter";
 }
 
 export async function signUp(formData: FormData) {
   const supabase = await createClient();
 
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const biography = formData.get("biography") as string;
-  const website = (formData.get("website") as string) || null;
-  const websiteAbout = (formData.get("website_about") as string) || null;
-  const websiteShop = (formData.get("website_shop") as string) || null;
-  const websiteCourses = (formData.get("website_courses") as string) || null;
+  const firstName = (formData.get("first_name") as string)?.trim();
+  const lastName = (formData.get("last_name") as string)?.trim();
+  const studioName = (formData.get("studio_name") as string)?.trim() || null;
+  const email = (formData.get("email") as string)?.trim();
+  const password = (formData.get("password") as string)?.trim();
+  const biography = (formData.get("biography") as string)?.trim();
+  const rawSlug = (formData.get("slug") as string)?.trim();
 
-  if (!name?.trim() || !email?.trim() || !password?.trim() || !biography?.trim()) {
-    return { error: "Name, email, password and biography are required." };
+  if (!firstName || !lastName || !email || !password || !biography) {
+    return { error: "All required fields must be filled in." };
+  }
+
+  const displayName = studioName || `${firstName} ${lastName}`;
+  const slug = sanitiseSlug(rawSlug || displayName);
+
+  // Guard against a race-condition where the client-side check passed but the
+  // slug was taken before the insert.
+  const admin = createAdminClient();
+  const { data: existing } = await admin.from("potters").select("id").eq("slug", slug).maybeSingle();
+  if (existing) {
+    return { error: "That URL is already taken — please choose a different one." };
   }
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: email.trim(),
-    password: password.trim(),
+    email,
+    password,
     options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/dashboard` },
   });
 
@@ -41,26 +52,11 @@ export async function signUp(formData: FormData) {
     return { error: "Sign up failed. Please try again." };
   }
 
-  const admin = createAdminClient();
-  let baseSlug = slugFromName(name);
-  let slug = baseSlug;
-  let attempt = 0;
-  for (;;) {
-    const { data: existing } = await admin.from("potters").select("id").eq("slug", slug).maybeSingle();
-    if (!existing) break;
-    attempt++;
-    slug = `${baseSlug}${attempt}`;
-  }
-
   const { error: potterError } = await admin.from("potters").insert({
     auth_user_id: authData.user.id,
     slug,
-    name: name.trim(),
-    biography: biography.trim(),
-    website: website?.trim() || null,
-    website_about: websiteAbout?.trim() || null,
-    website_shop: websiteShop?.trim() || null,
-    website_courses: websiteCourses?.trim() || null,
+    name: displayName,
+    biography,
   });
 
   if (potterError) {
