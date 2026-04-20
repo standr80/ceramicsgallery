@@ -7,9 +7,10 @@ export const metadata = {
     "Face-to-face pottery courses with UK ceramacists. Filter by month, price, type, potter, duration, skill level and location.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CoursesPage() {
-  const courses = getCourses();
-  const filterOptions = await getCourseFilterOptions();
+  const [courses, filterOptions] = await Promise.all([getCourses(), getCourseFilterOptions()]);
 
   return (
     <div>

@@ -87,6 +87,7 @@ export async function publishCourseDraft(courseId: string) {
 
   if (error) return { error: error.message };
 
+  revalidatePath("/courses");
   revalidatePath("/dashboard/drafts");
   return { success: true };
 }

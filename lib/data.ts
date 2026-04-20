@@ -1,10 +1,8 @@
 import type { Course, Potter, Product } from "@/types";
 import pottersData from "@/data/potters.json";
-import coursesData from "@/data/courses.json";
 import { createClient } from "@/lib/supabase/server";
 
 const staticPotters: Potter[] = pottersData as Potter[];
-const courses: Course[] = coursesData as Course[];
 
 function dbProductToProduct(row: {
   id: string;
@@ -155,8 +153,36 @@ export async function getAllProductPaths(): Promise<{ slug: string; productSlug:
   return paths;
 }
 
-export function getCourses(): Course[] {
-  return courses;
+export async function getCourses(): Promise<Course[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("courses")
+      .select("id, title, description, type, start_date, end_date, price, currency, duration, skill_level, location, max_participants, potter_id, potters(slug)")
+      .eq("active", true)
+      .not("start_date", "is", null)
+      .order("start_date", { ascending: true });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      id: row.id,
+      potterSlug: (row.potters as { slug: string } | null)?.slug ?? "",
+      title: row.title,
+      description: row.description ?? "",
+      type: row.type ?? "",
+      startDate: row.start_date,
+      endDate: row.end_date ?? undefined,
+      price: Number(row.price) || 0,
+      currency: row.currency ?? "GBP",
+      duration: row.duration ?? "",
+      skillLevel: (row.skill_level as Course["skillLevel"]) ?? undefined,
+      location: row.location ?? undefined,
+      maxParticipants: row.max_participants ?? undefined,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function getCourseFilterOptions(): Promise<{
@@ -166,15 +192,18 @@ export async function getCourseFilterOptions(): Promise<{
   skillLevels: string[];
   locations: string[];
 }> {
+  const courses = await getCourses();
   const allPotters = await getAllPotters();
-  const types = Array.from(new Set(courses.map((c) => c.type))).sort();
+
+  const types = Array.from(new Set(courses.map((c) => c.type).filter(Boolean))).sort();
   const pottersMap = new Map<string, string>();
   for (const c of courses) {
+    if (!c.potterSlug) continue;
     const potter = allPotters.find((p) => p.slug === c.potterSlug);
     if (potter) pottersMap.set(c.potterSlug, potter.name);
   }
   const potters = Array.from(pottersMap.entries()).map(([slug, name]) => ({ slug, name }));
-  const durations = Array.from(new Set(courses.map((c) => c.duration))).sort(
+  const durations = Array.from(new Set(courses.map((c) => c.duration).filter(Boolean))).sort(
     (a, b) => durationSortOrder(a) - durationSortOrder(b)
   );
   const skillLevels = Array.from(
@@ -183,6 +212,7 @@ export async function getCourseFilterOptions(): Promise<{
   const locations = Array.from(
     new Set(courses.map((c) => c.location).filter(Boolean))
   ).sort() as string[];
+
   return { types, potters, durations, skillLevels, locations };
 }
 
