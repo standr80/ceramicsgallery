@@ -446,16 +446,6 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
                 <p className="mt-2 text-stone-600 text-sm leading-relaxed line-clamp-2">
                   {course.description}
                 </p>
-                {course.url && (
-                  <a
-                    href={course.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block text-sm font-medium text-clay-600 hover:text-clay-700 hover:underline"
-                  >
-                    View on potter's website →
-                  </a>
-                )}
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-stone-500">
                   <span>{course.type}</span>
                   <span>·</span>
@@ -483,6 +473,19 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
                     </time>
                   ) : (
                     <span className="italic">Date TBC</span>
+                  )}
+                  {course.url && (
+                    <>
+                      <span>·</span>
+                      <a
+                        href={course.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-clay-600 hover:text-clay-700 hover:underline"
+                      >
+                        Book / more info →
+                      </a>
+                    </>
                   )}
                 </div>
               </li>
