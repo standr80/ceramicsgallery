@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPotterBySlug, getAllSlugs } from "@/lib/data";
+import { getPotterBySlug, getAllSlugs, getCoursesByPotterId } from "@/lib/data";
 import { ProductCard } from "@/components/ProductCard";
+import { PotterCourseCard } from "@/components/PotterCourseCard";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,6 +36,8 @@ export default async function PotterPage({ params }: PageProps) {
   const { slug } = await params;
   const potter = await getPotterBySlug(slug);
   if (!potter) notFound();
+
+  const courses = await getCoursesByPotterId(potter.id);
 
   return (
     <div>
@@ -74,21 +77,42 @@ export default async function PotterPage({ params }: PageProps) {
       </section>
 
       {/* Product catalog */}
-      <section className="py-14 px-4" aria-labelledby="catalog-heading">
-        <div className="mx-auto max-w-6xl">
-          <h2 id="catalog-heading" className="font-display text-2xl font-semibold text-clay-900 mb-8">
-            Catalog
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(potter.products ?? []).map((product) => (
-              <ProductCard key={product.id} product={product} potter={potter} />
-            ))}
+      {(potter.products ?? []).length > 0 && (
+        <section className="py-14 px-4" aria-labelledby="catalog-heading">
+          <div className="mx-auto max-w-6xl">
+            <h2 id="catalog-heading" className="font-display text-2xl font-semibold text-clay-900 mb-8">
+              Catalog
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {(potter.products ?? []).map((product) => (
+                <ProductCard key={product.id} product={product} potter={potter} />
+              ))}
+            </div>
+            <p className="mt-6 text-sm text-stone-500">
+              Secure checkout is powered by Stripe.
+            </p>
           </div>
-          <p className="mt-6 text-sm text-stone-500">
-            Secure checkout is powered by Stripe.
-          </p>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* Courses */}
+      {courses.length > 0 && (
+        <section className="py-14 px-4 bg-stone-50/60" aria-labelledby="courses-heading">
+          <div className="mx-auto max-w-6xl">
+            <h2 id="courses-heading" className="font-display text-2xl font-semibold text-clay-900 mb-2">
+              Courses &amp; workshops
+            </h2>
+            <p className="text-stone-500 text-sm mb-8">
+              Taught by {potter.name}. Contact the potter directly to book.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {courses.map((course) => (
+                <PotterCourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

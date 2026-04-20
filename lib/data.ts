@@ -153,6 +153,39 @@ export async function getAllProductPaths(): Promise<{ slug: string; productSlug:
   return paths;
 }
 
+export async function getCoursesByPotterId(potterId: string): Promise<Course[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("courses")
+      .select("id, title, description, type, start_date, end_date, price, currency, duration, skill_level, location, max_participants, url, potter_id, potters(slug)")
+      .eq("active", true)
+      .eq("potter_id", potterId)
+      .order("start_date", { ascending: true, nullsFirst: false });
+
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      id: row.id,
+      potterSlug: (row.potters as unknown as { slug: string } | null)?.slug ?? "",
+      title: row.title,
+      description: row.description ?? "",
+      type: row.type ?? "",
+      startDate: row.start_date ?? undefined,
+      endDate: row.end_date ?? undefined,
+      price: Number(row.price) || 0,
+      currency: row.currency ?? "GBP",
+      duration: row.duration ?? "",
+      skillLevel: (row.skill_level as Course["skillLevel"]) ?? undefined,
+      location: row.location ?? undefined,
+      maxParticipants: row.max_participants ?? undefined,
+      url: row.url ?? undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getCourses(): Promise<Course[]> {
   try {
     const supabase = await createClient();
