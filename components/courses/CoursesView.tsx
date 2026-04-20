@@ -26,13 +26,14 @@ function formatPrice(price: number, currency: string) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency }).format(price);
 }
 
-function getMonthKey(dateStr: string): string {
-  return dateStr.slice(0, 7); // YYYY-MM
+function getMonthKey(dateStr: string | undefined): string {
+  return dateStr ? dateStr.slice(0, 7) : "";
 }
 
 function getCoursesByMonth(courses: Course[]): Map<string, Course[]> {
   const map = new Map<string, Course[]>();
   for (const c of courses) {
+    if (!c.startDate) continue; // undated courses don't appear on the calendar
     const key = getMonthKey(c.startDate);
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(c);
@@ -84,7 +85,7 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
       result = result.filter((c) => c.startDate === selectedDate);
     }
     if (monthFilter) {
-      result = result.filter((c) => getMonthKey(c.startDate) === monthFilter);
+      result = result.filter((c) => c.startDate && getMonthKey(c.startDate) === monthFilter);
     }
     if (typeFilter) {
       result = result.filter((c) => c.type === typeFilter);
@@ -109,7 +110,12 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
 
     if (priceSort === "asc") result.sort((a, b) => a.price - b.price);
     else if (priceSort === "desc") result.sort((a, b) => b.price - a.price);
-    else result.sort((a, b) => a.startDate.localeCompare(b.startDate));
+    else result.sort((a, b) => {
+      if (!a.startDate && !b.startDate) return 0;
+      if (!a.startDate) return 1;  // undated courses go to the end
+      if (!b.startDate) return -1;
+      return a.startDate.localeCompare(b.startDate);
+    });
 
     return result;
   }, [
@@ -126,7 +132,7 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
   ]);
 
   const monthsWithCourses = useMemo(() => {
-    const keys = Array.from(new Set(courses.map((c) => getMonthKey(c.startDate)))).sort();
+    const keys = Array.from(new Set(courses.filter((c) => c.startDate).map((c) => getMonthKey(c.startDate)))).sort();
     return keys.map((key) => {
       const [y, m] = key.split("-").map(Number);
       return { key, label: `${MONTH_LABELS[m - 1]} ${y}` };
@@ -142,6 +148,7 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
     const [y, m] = calendarMonth.split("-").map(Number);
     const map = new Map<number, Course[]>();
     for (const c of courses) {
+      if (!c.startDate) continue;
       const [cy, cm, cd] = c.startDate.split("-").map(Number);
       if (cy === y && cm === m) {
         if (!map.has(cd)) map.set(cd, []);
@@ -456,13 +463,17 @@ export function CoursesView({ courses, filterOptions }: CoursesViewProps) {
                     </>
                   )}
                   <span>·</span>
-                  <time dateTime={course.startDate}>
-                    {new Date(course.startDate).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </time>
+                  {course.startDate ? (
+                    <time dateTime={course.startDate}>
+                      {new Date(course.startDate).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </time>
+                  ) : (
+                    <span className="italic">Date TBC</span>
+                  )}
                 </div>
               </li>
             ))}

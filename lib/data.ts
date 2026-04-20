@@ -160,8 +160,7 @@ export async function getCourses(): Promise<Course[]> {
       .from("courses")
       .select("id, title, description, type, start_date, end_date, price, currency, duration, skill_level, location, max_participants, potter_id, potters(slug)")
       .eq("active", true)
-      .not("start_date", "is", null)
-      .order("start_date", { ascending: true });
+      .order("start_date", { ascending: true, nullsFirst: false });
 
     if (error || !data) return [];
 
@@ -171,7 +170,7 @@ export async function getCourses(): Promise<Course[]> {
       title: row.title,
       description: row.description ?? "",
       type: row.type ?? "",
-      startDate: row.start_date,
+      startDate: row.start_date ?? undefined,
       endDate: row.end_date ?? undefined,
       price: Number(row.price) || 0,
       currency: row.currency ?? "GBP",

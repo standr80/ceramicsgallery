@@ -40,7 +40,7 @@ export interface Course {
   description: string;
   /** e.g. "Wheel throwing", "Hand building", "One-day workshop" */
   type: string;
-  startDate: string; // ISO date YYYY-MM-DD
+  startDate?: string; // ISO date YYYY-MM-DD — optional (some courses have no fixed date)
   endDate?: string; // optional for multi-day
   price: number;
   currency: string;
