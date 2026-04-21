@@ -81,13 +81,8 @@ export async function runShopScout(potterId: string, shopUrl: string) {
       const batchResult = await firecrawl.batchScrape(productPageUrls, {
         options: {
           formats: ["markdown"],
-          // Give JS time to render and expand any lazy-loaded content
+          // Give JS time to render lazy-loaded and dynamically revealed content
           waitFor: 1500,
-          // Try to click common "read more" / accordion patterns before scraping
-          actions: [
-            { type: "click", selector: "[data-read-more], .read-more, .show-more, [aria-expanded='false'], details summary, .accordion__button, .product-description__toggle" },
-            { type: "wait", milliseconds: 800 },
-          ],
         },
       });
       const pages = batchResult.data ?? [];
