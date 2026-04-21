@@ -79,7 +79,16 @@ export async function runShopScout(potterId: string, shopUrl: string) {
   if (productPageUrls.length > 0) {
     try {
       const batchResult = await firecrawl.batchScrape(productPageUrls, {
-        options: { formats: ["markdown"] },
+        options: {
+          formats: ["markdown"],
+          // Give JS time to render and expand any lazy-loaded content
+          waitFor: 1500,
+          // Try to click common "read more" / accordion patterns before scraping
+          actions: [
+            { type: "click", selector: "[data-read-more], .read-more, .show-more, [aria-expanded='false'], details summary, .accordion__button, .product-description__toggle" },
+            { type: "wait", milliseconds: 800 },
+          ],
+        },
       });
       const pages = batchResult.data ?? [];
       for (const page of pages) {
@@ -120,7 +129,7 @@ Extract every distinct pottery product and return them as a JSON array.
 Each product object must have:
 - name (string, required): the product name
 - description (string, required): a concise 1–2 sentence summary suitable for a product listing card
-- descriptionExtended (string, required if available): the FULL product description from the product detail page — include materials, dimensions, firing technique, glaze, care instructions, and any other details the potter provided. This is the most important field; do not leave it empty if detail-page content is present.
+- descriptionExtended (string, optional): ONLY populate with genuinely additional detail that goes beyond the short description above — e.g. clay body and materials, dimensions and weight, firing technique and temperature, glaze details, surface texture, edition size, care instructions, or other specifics the potter provided on their product detail page. Do NOT copy, rephrase, or repeat the short description. If the product page contains no substantially richer information than what is already in description, omit this field entirely (do not set it to an empty string or duplicate text).
 - price (number, required): numeric price; use 0 if not shown
 - currency (string, default "GBP"): ISO 4217 code
 - category (string, optional): one of "Functional", "Tableware", "Sculptural", "Decorative", "Vases & Vessels", "Jewellery", "Tiles", "Other"
@@ -128,7 +137,7 @@ Each product object must have:
 - images (array of strings, optional): any additional image URLs
 - sku (string, optional): product code or SKU
 
-Deduplication: if the same product appears in both the listing section and a detail section, merge the data — use the detail page's richer description.
+Deduplication: if the same product appears in both the listing section and a detail section, merge the data and prefer the richer detail-page content.
 
 Return ONLY a valid JSON array, no markdown fences, no explanation.
 If no clear products are found, return [].`,
