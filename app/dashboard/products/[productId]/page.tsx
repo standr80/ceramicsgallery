@@ -40,7 +40,6 @@ export default async function EditProductPage({ params }: PageProps) {
         initialDescriptionExtended={product.description_extended}
         initialPrice={Number(product.price)}
         initialCategory={product.category}
-        initialFeatured={product.featured}
         initialSku={product.sku}
         initialImages={images}
       />

@@ -13,7 +13,6 @@ interface EditProductFormProps {
   initialDescriptionExtended: string | null;
   initialPrice: number;
   initialCategory: string | null;
-  initialFeatured: boolean;
   initialSku: string | null;
   initialImages: string[];
 }
@@ -25,7 +24,6 @@ export function EditProductForm({
   initialDescriptionExtended,
   initialPrice,
   initialCategory,
-  initialFeatured,
   initialSku,
   initialImages,
 }: EditProductFormProps) {
@@ -225,16 +223,6 @@ export function EditProductForm({
             ))}
           </div>
         )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
-          Featured on home page
-        </label>
-        <select name="featured" className="input-field w-32" defaultValue={initialFeatured ? "true" : "false"}>
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
       </div>
 
       <div>

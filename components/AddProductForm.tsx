@@ -212,16 +212,6 @@ export function AddProductForm() {
 
       <div>
         <label className="block text-sm font-medium text-stone-700 mb-1">
-          Featured on home page
-        </label>
-        <select name="featured" className="input-field w-32">
-          <option value="false">No</option>
-          <option value="true">Yes</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
           SKU (optional)
         </label>
         <input

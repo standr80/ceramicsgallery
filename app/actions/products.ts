@@ -29,7 +29,6 @@ export async function addProduct(formData: FormData) {
   const descriptionExtended = (formData.get("descriptionExtended") as string) || null;
   const priceStr = formData.get("price") as string;
   const category = (formData.get("category") as string) || null;
-  const featured = formData.get("featured") === "true";
   const sku = (formData.get("sku") as string)?.trim() || null;
   const imagesJson = formData.get("images") as string;
 
@@ -80,7 +79,7 @@ export async function addProduct(formData: FormData) {
     currency: "GBP",
     image,
     images,
-    featured,
+    featured: false,
     category: category || null,
     sku,
   });
@@ -122,7 +121,6 @@ export async function updateProduct(productId: string, formData: FormData) {
   const descriptionExtended = (formData.get("descriptionExtended") as string) || null;
   const priceStr = formData.get("price") as string;
   const category = (formData.get("category") as string) || null;
-  const featured = formData.get("featured") === "true";
   const sku = (formData.get("sku") as string)?.trim() || null;
   const imagesJson = formData.get("images") as string;
 
@@ -158,7 +156,6 @@ export async function updateProduct(productId: string, formData: FormData) {
       category: category || null,
       image,
       images,
-      featured,
       sku: sku || null,
       updated_at: new Date().toISOString(),
     })
