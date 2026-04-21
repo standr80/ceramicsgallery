@@ -20,7 +20,7 @@ export async function publishDraft(productId: string) {
 
   const { error } = await supabase
     .from("products")
-    .update({ active: true, source: "manual" })
+    .update({ active: true })
     .eq("id", productId)
     .eq("potter_id", potter.id)
     .eq("source", "onboarding-scout");
@@ -80,7 +80,7 @@ export async function publishCourseDraft(courseId: string) {
 
   const { error } = await supabase
     .from("courses")
-    .update({ active: true, source: "manual" })
+    .update({ active: true })
     .eq("id", courseId)
     .eq("potter_id", potter.id)
     .eq("source", "onboarding-scout");

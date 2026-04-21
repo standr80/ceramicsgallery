@@ -92,6 +92,21 @@ If no clear courses or workshops are found, return an empty array [].`,
   }
 
   const admin = createAdminClient();
+
+  // Remove all previously scout-created courses for this potter (draft and published)
+  // so that re-running the scout never duplicates content. Manually created courses
+  // (source = 'manual') are never touched.
+  const { error: deleteError } = await admin
+    .from("courses")
+    .delete()
+    .eq("potter_id", potterId)
+    .eq("source", "onboarding-scout");
+
+  if (deleteError) {
+    console.error("[courses-scout] Failed to clear previous scout courses:", deleteError);
+    return { error: `Cleanup failed: ${deleteError.message}` };
+  }
+
   let inserted = 0;
 
   for (const c of courses) {

@@ -156,6 +156,21 @@ If no clear products are found, return [].`,
   }
 
   const admin = createAdminClient();
+
+  // Remove all previously scout-created products for this potter (draft and published)
+  // so that re-running the scout never duplicates content. Manually created products
+  // (source = 'manual') are never touched.
+  const { error: deleteError } = await admin
+    .from("products")
+    .delete()
+    .eq("potter_id", potterId)
+    .eq("source", "onboarding-scout");
+
+  if (deleteError) {
+    console.error("[shop-scout] Failed to clear previous scout products:", deleteError);
+    return { error: `Cleanup failed: ${deleteError.message}` };
+  }
+
   const usedSlugs = new Set<string>();
   let inserted = 0;
 
