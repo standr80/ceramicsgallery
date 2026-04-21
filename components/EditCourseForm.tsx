@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { updateCourse } from "@/app/actions/courses";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { updateCourse, publishAndSaveCourse } from "@/app/actions/courses";
 
 interface EditCourseFormProps {
   courseId: string;
+  isDraft?: boolean;
   initialTitle: string;
   initialDescription: string;
   initialType: string;
@@ -22,6 +25,7 @@ const SKILL_LEVELS = ["", "beginner", "intermediate", "advanced", "all"];
 
 export function EditCourseForm({
   courseId,
+  isDraft = false,
   initialTitle,
   initialDescription,
   initialType,
@@ -34,15 +38,23 @@ export function EditCourseForm({
   initialMaxParticipants,
   initialUrl,
 }: EditCourseFormProps) {
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const busy = saving || publishing;
+
+  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setSuccess(false);
+    setSaving(true);
     const formData = new FormData(e.currentTarget);
     const result = await updateCourse(courseId, formData);
+    setSaving(false);
     if (result && "error" in result) {
       setError(result.error ?? "An error occurred");
     } else {
@@ -50,14 +62,31 @@ export function EditCourseForm({
     }
   }
 
+  async function handlePublish() {
+    if (!formRef.current) return;
+    setError(null);
+    setSuccess(false);
+    setPublishing(true);
+    const formData = new FormData(formRef.current);
+    const result = await publishAndSaveCourse(courseId, formData);
+    if (result && "error" in result) {
+      setError(result.error ?? "An error occurred");
+      setPublishing(false);
+    } else {
+      router.push("/dashboard/drafts");
+    }
+  }
+
+  const cancelHref = isDraft ? "/dashboard/drafts" : "/dashboard/courses";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+    <form ref={formRef} onSubmit={handleSave} className="space-y-6 max-w-2xl">
       {error && (
         <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
       )}
       {success && (
         <p className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-          Course updated.
+          Draft saved.
         </p>
       )}
 
@@ -187,12 +216,44 @@ export function EditCourseForm({
           className="input-field"
           placeholder="https://yourwebsite.com/courses/wheel-throwing"
         />
-        <p className="mt-1 text-xs text-stone-400">Link to this course on your own website. Shown to visitors on Ceramics Gallery.</p>
+        <p className="mt-1 text-xs text-stone-400">
+          Link to this course on your own website. Shown to visitors on Ceramics Gallery.
+        </p>
       </div>
 
-      <button type="submit" className="btn-primary">
-        Save course
-      </button>
+      <div className="flex flex-wrap gap-3 pt-2">
+        {isDraft ? (
+          <>
+            <button
+              type="submit"
+              disabled={busy}
+              className="btn-secondary disabled:opacity-50"
+            >
+              {saving ? "Saving…" : "Save draft"}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={handlePublish}
+              className="btn-primary disabled:opacity-50"
+            >
+              {publishing ? "Publishing…" : "Publish"}
+            </button>
+          </>
+        ) : (
+          <button type="submit" disabled={busy} className="btn-primary disabled:opacity-50">
+            {saving ? "Saving…" : "Save course"}
+          </button>
+        )}
+        <Link
+          href={cancelHref}
+          className="inline-flex items-center justify-center rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-600 hover:bg-stone-50"
+          aria-disabled={busy}
+          tabIndex={busy ? -1 : undefined}
+        >
+          Cancel
+        </Link>
+      </div>
     </form>
   );
 }

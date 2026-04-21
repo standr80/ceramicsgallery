@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { publishCourseDraft, discardCourseDraft } from "@/app/actions/agents";
+import { discardCourseDraft } from "@/app/actions/agents";
 
 interface DraftCourse {
   id: string;
@@ -18,19 +18,8 @@ interface DraftCourse {
 }
 
 export function DraftCourseCard({ course }: { course: DraftCourse }) {
-  const [status, setStatus] = useState<"idle" | "publishing" | "discarding" | "done" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "discarding" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-
-  async function handlePublish() {
-    setStatus("publishing");
-    const result = await publishCourseDraft(course.id);
-    if (result.error) {
-      setErrorMsg(result.error);
-      setStatus("error");
-    } else {
-      setStatus("done");
-    }
-  }
 
   async function handleDiscard() {
     if (!confirm(`Discard "${course.title}"? This cannot be undone.`)) return;
@@ -80,23 +69,12 @@ export function DraftCourseCard({ course }: { course: DraftCourse }) {
         <p className="text-red-600 text-xs">{errorMsg}</p>
       )}
 
-      {status === "error" && (
-        <p className="text-red-600 text-xs">{errorMsg}</p>
-      )}
-
       <div className="flex gap-2 pt-1 border-t border-stone-100">
-        <button
-          onClick={handlePublish}
-          disabled={status !== "idle"}
-          className="flex-1 bg-stone-900 text-white text-sm px-3 py-2 rounded hover:bg-stone-700 disabled:opacity-50 transition-colors"
-        >
-          {status === "publishing" ? "Publishing…" : "Publish"}
-        </button>
         <Link
           href={`/dashboard/courses/${course.id}`}
-          className="flex-1 text-center border border-stone-300 text-stone-700 text-sm px-3 py-2 rounded hover:bg-stone-50 transition-colors"
+          className="flex-1 text-center bg-stone-900 text-white text-sm px-3 py-2 rounded hover:bg-stone-700 transition-colors"
         >
-          Edit
+          Review
         </Link>
         <button
           onClick={handleDiscard}
