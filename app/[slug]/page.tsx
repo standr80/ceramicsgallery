@@ -76,12 +76,12 @@ export default async function PotterPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Product catalog */}
+      {/* Product catalogue */}
       {(potter.products ?? []).length > 0 && (
-        <section className="py-14 px-4" aria-labelledby="catalog-heading">
+        <section className="py-14 px-4" aria-labelledby="catalogue-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 id="catalog-heading" className="font-display text-2xl font-semibold text-clay-900 mb-8">
-              Catalog
+            <h2 id="catalogue-heading" className="font-display text-2xl font-semibold text-clay-900 mb-8">
+              Catalogue
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {(potter.products ?? []).map((product) => (

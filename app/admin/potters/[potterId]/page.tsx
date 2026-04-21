@@ -139,7 +139,7 @@ export default async function AdminPotterPage({ params, searchParams }: PageProp
         <>
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
             <p className="text-stone-600 text-sm">
-              Inactive products are hidden from the catalog. Featured products appear on the home page.
+              Inactive products are hidden from the catalogue. Featured products appear on the home page.
             </p>
             <div className="flex flex-col gap-2">
               <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">AI Scout</p>

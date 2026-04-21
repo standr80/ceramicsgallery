@@ -47,7 +47,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
         Potters
       </h2>
       <p className="text-stone-600 mb-4">
-        Inactive potters are hidden from the catalog. Click a name to manage their products.
+        Inactive potters are hidden from the catalogue. Click a name to manage their products.
       </p>
       {total > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

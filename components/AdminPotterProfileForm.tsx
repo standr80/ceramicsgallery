@@ -210,7 +210,7 @@ export function AdminPotterProfileForm({
           className="h-4 w-4 rounded border-stone-300 text-clay-600 focus:ring-clay-500"
         />
         <label htmlFor="active" className="text-sm font-medium text-stone-700">
-          Active (visible in catalog)
+          Active (visible in catalogue)
         </label>
       </div>
 
