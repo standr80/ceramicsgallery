@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { updateProduct } from "@/app/actions/products";
+import { useRouter } from "next/navigation";
+import { updateProduct, publishAndSaveProduct } from "@/app/actions/products";
 import { PRODUCT_CATEGORIES } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 
 interface EditProductFormProps {
   productId: string;
+  isDraft?: boolean;
   initialName: string;
   initialDescription: string;
   initialDescriptionExtended: string | null;
@@ -19,6 +21,7 @@ interface EditProductFormProps {
 
 export function EditProductForm({
   productId,
+  isDraft = false,
   initialName,
   initialDescription,
   initialDescriptionExtended,
@@ -27,12 +30,18 @@ export function EditProductForm({
   initialSku,
   initialImages,
 }: EditProductFormProps) {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [imageUrls, setImageUrls] = useState<string[]>(
     initialImages.length > 0 ? initialImages : ["/images/placeholder.svg"]
   );
+
+  const busy = saving || publishing || uploading;
+  const cancelHref = isDraft ? "/dashboard/drafts" : "/dashboard/products";
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -75,42 +84,50 @@ export function EditProductForm({
     setImageUrls((prev) => prev.filter((_, i) => i !== idx));
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
-
-    const form = e.currentTarget;
+  function buildFormData(form: HTMLFormElement): FormData {
     const formData = new FormData(form);
     formData.set("images", JSON.stringify(imageUrls));
+    return formData;
+  }
 
-    const result = await updateProduct(productId, formData);
-
+  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setSaveSuccess(false);
+    setSaving(true);
+    const result = await updateProduct(productId, buildFormData(e.currentTarget));
+    setSaving(false);
     if (result && "error" in result) {
       setError(result.error ?? "An error occurred");
       return;
     }
-
-    setSuccess(true);
+    if (isDraft) {
+      setSaveSuccess(true);
+    } else {
+      router.push("/dashboard/products");
+    }
   }
 
-  if (success) {
-    return (
-      <div className="rounded-lg bg-green-50 px-4 py-6 text-green-800">
-        <p className="font-medium">Product updated successfully.</p>
-        <Link href="/dashboard/products" className="mt-4 inline-block text-sm font-medium text-green-700 hover:text-green-800">
-          ← Back to products
-        </Link>
-      </div>
-    );
+  async function handlePublish(form: HTMLFormElement) {
+    setError(null);
+    setSaveSuccess(false);
+    setPublishing(true);
+    const result = await publishAndSaveProduct(productId, buildFormData(form));
+    if (result && "error" in result) {
+      setError(result.error ?? "An error occurred");
+      setPublishing(false);
+      return;
+    }
+    router.push("/dashboard/drafts");
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSave} className="space-y-6">
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      )}
+      {saveSuccess && (
+        <p className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">Draft saved.</p>
       )}
 
       <div>
@@ -196,7 +213,7 @@ export function EditProductForm({
           accept="image/*"
           multiple
           onChange={handleFileChange}
-          disabled={uploading}
+          disabled={busy}
           className="block w-full text-sm text-stone-600 file:mr-4 file:rounded file:border-0 file:bg-clay-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-clay-700 hover:file:bg-clay-200"
         />
         {uploading && <p className="mt-2 text-sm text-stone-500">Uploading…</p>}
@@ -238,11 +255,33 @@ export function EditProductForm({
         />
       </div>
 
-      <div className="flex gap-4">
-        <button type="submit" className="btn-primary">
-          Save changes
-        </button>
-        <Link href="/dashboard/products" className="btn-secondary">
+      <div className="flex flex-wrap gap-3 pt-2">
+        {isDraft ? (
+          <>
+            <button type="submit" disabled={busy} className="btn-secondary disabled:opacity-50">
+              {saving ? "Saving…" : "Save draft"}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={(e) => {
+                const form = (e.currentTarget as HTMLButtonElement).closest("form") as HTMLFormElement;
+                handlePublish(form);
+              }}
+              className="btn-primary disabled:opacity-50"
+            >
+              {publishing ? "Publishing…" : "Publish"}
+            </button>
+          </>
+        ) : (
+          <button type="submit" disabled={busy} className="btn-primary disabled:opacity-50">
+            {saving ? "Saving…" : "Save changes"}
+          </button>
+        )}
+        <Link
+          href={cancelHref}
+          className="inline-flex items-center justify-center rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-600 hover:bg-stone-50"
+        >
           Cancel
         </Link>
       </div>

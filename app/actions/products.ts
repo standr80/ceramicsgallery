@@ -172,6 +172,86 @@ export async function updateProduct(productId: string, formData: FormData) {
   return { success: true };
 }
 
+export async function publishAndSaveProduct(productId: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "You must be logged in to publish a product." };
+
+  const { data: potter } = await supabase
+    .from("potters")
+    .select("id, slug")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (!potter) return { error: "Potter profile not found." };
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("id, slug")
+    .eq("id", productId)
+    .eq("potter_id", potter.id)
+    .single();
+
+  if (!product) return { error: "Product not found or you don't have permission to edit it." };
+
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  const descriptionExtended = (formData.get("descriptionExtended") as string) || null;
+  const priceStr = formData.get("price") as string;
+  const category = (formData.get("category") as string) || null;
+  const sku = (formData.get("sku") as string)?.trim() || null;
+  const imagesJson = formData.get("images") as string;
+
+  if (!name?.trim() || !description?.trim() || !priceStr) {
+    return { error: "Name, description and price are required." };
+  }
+
+  const price = parseFloat(priceStr);
+  if (isNaN(price) || price < 0) {
+    return { error: "Please enter a valid price." };
+  }
+
+  let images: string[] = [];
+  if (imagesJson) {
+    try {
+      images = JSON.parse(imagesJson) as string[];
+    } catch {
+      images = [];
+    }
+  }
+  const image = images[0] || "/images/placeholder.svg";
+  if (images.length === 0) {
+    images = [image];
+  }
+
+  const { error } = await supabase
+    .from("products")
+    .update({
+      name: name.trim(),
+      description: description.trim(),
+      description_extended: descriptionExtended?.trim() || null,
+      price,
+      category: category || null,
+      image,
+      images,
+      sku: sku || null,
+      active: true,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", productId)
+    .eq("potter_id", potter.id)
+    .eq("source", "onboarding-scout");
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  revalidatePath(`/${potter.slug}`);
+  revalidatePath(`/${potter.slug}/${product.slug}`);
+  revalidatePath("/dashboard/drafts");
+  revalidatePath("/dashboard/products");
+  return { success: true };
+}
+
 export async function deleteProduct(productId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

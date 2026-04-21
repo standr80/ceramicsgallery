@@ -23,18 +23,28 @@ export default async function EditProductPage({ params }: PageProps) {
 
   if (!product) notFound();
 
+  const isDraft = !product.active && product.source === "onboarding-scout";
+  const backHref = isDraft ? "/dashboard/drafts" : "/dashboard/products";
+  const backLabel = isDraft ? "← Back to Drafts" : "← Back to products";
+
   const images = product.images?.length ? product.images : [product.image];
 
   return (
     <div>
-      <Link href="/dashboard/products" className="text-sm text-clay-600 hover:text-clay-700 mb-4 inline-block">
-        ← Back to dashboard
+      <Link href={backHref} className="text-sm text-clay-600 hover:text-clay-700 mb-4 inline-block">
+        {backLabel}
       </Link>
-      <h2 className="font-display text-xl font-semibold text-clay-900 mb-6">
-        Edit product
+      <h2 className="font-display text-xl font-semibold text-clay-900 mb-2">
+        {isDraft ? "Review product" : "Edit product"}
       </h2>
+      {isDraft && (
+        <p className="text-sm text-stone-500 mb-6">
+          This product was imported by the Scout. Review and correct the details below, then publish when ready.
+        </p>
+      )}
       <EditProductForm
         productId={product.id}
+        isDraft={isDraft}
         initialName={product.name}
         initialDescription={product.description}
         initialDescriptionExtended={product.description_extended}
