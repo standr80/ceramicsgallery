@@ -18,7 +18,7 @@ export default async function HomePage() {
             ShantyWare
           </h1>
           <p className="mt-4 text-lg text-stone-600">
-            Where Potters and Pots Sell.
+            Traditional British Ceramics Inspired by Songs of the Sea.
           </p>
         </div>
       </section>
