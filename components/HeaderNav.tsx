@@ -46,7 +46,7 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
         <Link href="/courses" className={linkClass}>
           Courses
         </Link>
-        <Link href="https://blog.ceramicsgallery.co.uk" className={linkClass}>
+        <Link href="https://blog.shantyware.co.uk" className={linkClass}>
           Blog
         </Link>
         {isAdmin && (
@@ -128,7 +128,7 @@ export function HeaderNav({ isAdmin, isPotter }: HeaderNavProps) {
               <Link href="/courses" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
                 Courses
               </Link>
-              <Link href="https://blog.ceramicsgallery.co.uk" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
+              <Link href="https://blog.shantyware.co.uk" className={mobileLinkClass} onClick={() => setMobileOpen(false)}>
                 Blog
               </Link>
               {isAdmin && (

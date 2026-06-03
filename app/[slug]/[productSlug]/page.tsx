@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps) {
   if (!result) return { title: "Product not found" };
   const { product, potter } = result;
   return {
-    title: `${product.name} | ${potter.name} | Ceramics Gallery`,
+    title: `${product.name} | ${potter.name} | ShantyWare`,
     description: product.description.slice(0, 160),
     openGraph: {
       title: `${product.name} | ${potter.name}`,

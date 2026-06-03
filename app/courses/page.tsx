@@ -2,7 +2,7 @@ import { getCourses, getCourseFilterOptions } from "@/lib/data";
 import { CoursesView } from "@/components/courses/CoursesView";
 
 export const metadata = {
-  title: "Pottery Courses | Ceramics Gallery",
+  title: "Pottery Courses | ShantyWare",
   description:
     "Face-to-face pottery courses with UK ceramacists. Filter by month, price, type, potter, duration, skill level and location.",
 };

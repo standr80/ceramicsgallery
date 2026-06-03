@@ -15,7 +15,7 @@ export default async function HomePage() {
       <section className="relative bg-gradient-to-b from-clay-100 to-clay-50 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-display text-4xl sm:text-5xl font-semibold text-clay-900">
-            Ceramics Gallery
+            ShantyWare
           </h1>
           <p className="mt-4 text-lg text-stone-600">
             Where Potters and Pots Sell.
@@ -89,7 +89,7 @@ export default async function HomePage() {
             Are you a potter?
           </h2>
           <p className="mt-2 text-stone-600">
-            Join Ceramics Gallery and showcase your work to buyers across the UK.
+            Join ShantyWare and showcase your work to buyers across the UK.
           </p>
           <Link href="/signup" className="btn-primary mt-6 inline-block">
             Sign up as a potter

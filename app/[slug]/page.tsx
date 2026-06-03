@@ -23,11 +23,11 @@ export async function generateMetadata({ params }: PageProps) {
   if (!potter) return { title: "Potter not found" };
   const description = (potter.biography ?? "").slice(0, 160);
   return {
-    title: `${potter.name} | Ceramics Gallery`,
-    description: description || "Potter on Ceramics Gallery",
+    title: `${potter.name} | ShantyWare`,
+    description: description || "Potter on ShantyWare",
     openGraph: {
-      title: `${potter.name} | Ceramics Gallery`,
-      description: description || "Potter on Ceramics Gallery",
+      title: `${potter.name} | ShantyWare`,
+      description: description || "Potter on ShantyWare",
     },
   };
 }

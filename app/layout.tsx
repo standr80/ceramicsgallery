@@ -18,15 +18,15 @@ const body = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "Ceramics Gallery | Handmade Pottery by UK Potters",
+  title: "ShantyWare | Handmade Pottery by UK Potters",
   description:
     "Discover unique ceramics from British potters. Browse and buy handmade pottery, stoneware, and earthenware.",
-  metadataBase: new URL("https://www.ceramicsgallery.co.uk"),
+  metadataBase: new URL("https://www.shantyware.co.uk"),
   openGraph: {
-    title: "Ceramics Gallery | Handmade Pottery by UK Potters",
+    title: "ShantyWare | Handmade Pottery by UK Potters",
     description:
       "Discover unique ceramics from British potters. Browse and buy handmade pottery.",
-    url: "https://www.ceramicsgallery.co.uk",
+    url: "https://www.shantyware.co.uk",
   },
 };
 

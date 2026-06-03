@@ -159,11 +159,11 @@ export function EditProfileForm({
           <p className="mt-1 text-xs text-stone-400">Your studio name, or first and last name.</p>
         </div>
 
-        {/* Ceramics Gallery URL */}
+        {/* ShantyWare URL */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1">Your Ceramics Gallery URL</label>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Your ShantyWare URL</label>
           <div className="flex items-center rounded-lg border border-stone-300 bg-white focus-within:border-clay-500 focus-within:ring-1 focus-within:ring-clay-500 overflow-hidden">
-            <span className="pl-3 pr-1 text-sm text-stone-400 whitespace-nowrap select-none">ceramicsgallery.co.uk/</span>
+            <span className="pl-3 pr-1 text-sm text-stone-400 whitespace-nowrap select-none">shantyware.co.uk/</span>
             <input
               type="text"
               required

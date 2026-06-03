@@ -14,7 +14,7 @@ export async function Header() {
             href="/"
             className="font-display text-2xl font-semibold text-clay-800 hover:text-clay-600 transition-colors shrink-0"
           >
-            Ceramics Gallery
+            ShantyWare
           </Link>
           <HeaderNav isAdmin={!!admin} isPotter={!!potter} />
         </div>

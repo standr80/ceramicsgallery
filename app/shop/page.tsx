@@ -4,7 +4,7 @@ import { ShopView } from "@/components/shop/ShopView";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Shop | Ceramics Gallery",
+  title: "Shop | ShantyWare",
   description:
     "Browse handmade pottery from UK ceramicists. Filter by category, potter, and price.",
 };

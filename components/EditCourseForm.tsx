@@ -217,7 +217,7 @@ export function EditCourseForm({
           placeholder="https://yourwebsite.com/courses/wheel-throwing"
         />
         <p className="mt-1 text-xs text-stone-400">
-          Link to this course on your own website. Shown to visitors on Ceramics Gallery.
+          Link to this course on your own website. Shown to visitors on ShantyWare.
         </p>
       </div>
 

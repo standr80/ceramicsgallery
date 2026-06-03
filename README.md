@@ -1,4 +1,4 @@
-# Ceramics Gallery — www.ceramicsgallery.co.uk
+# ShantyWare — www.shantyware.co.uk
 
 A website that lists multiple ceramacists (potters), each with their own page, biography, and product catalog. Ecommerce is powered by Stripe Connect.
 
@@ -62,4 +62,4 @@ npm start
 
 ## Deploying
 
-You can deploy to Vercel, Netlify, or any host that supports Next.js. Point the domain www.ceramicsgallery.co.uk to your deployment when ready.
+You can deploy to Vercel, Netlify, or any host that supports Next.js. Point the domain www.shantyware.co.uk to your deployment when ready.

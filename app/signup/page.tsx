@@ -81,7 +81,7 @@ export default function SignupPage() {
     }
   }
 
-  const siteBase = "ceramicsgallery.co.uk/";
+  const siteBase = "shantyware.co.uk/";
 
   const slugHint = () => {
     if (!slug) return null;
@@ -95,7 +95,7 @@ export default function SignupPage() {
     <div className="py-14 px-4">
       <div className="mx-auto max-w-xl">
         <h1 className="font-display text-3xl font-semibold text-clay-900">
-          Join Ceramics Gallery
+          Join ShantyWare
         </h1>
         <p className="mt-2 text-stone-600">
           Create your potter account in seconds.
@@ -158,7 +158,7 @@ export default function SignupPage() {
 
           <div>
             <label htmlFor="slug" className="block text-sm font-medium text-stone-700 mb-1">
-              Your Ceramics Gallery URL
+              Your ShantyWare URL
             </label>
             <div className="flex items-center rounded-lg border border-stone-300 bg-white focus-within:border-clay-500 focus-within:ring-1 focus-within:ring-clay-500 overflow-hidden">
               <span className="pl-3 pr-1 text-sm text-stone-400 whitespace-nowrap select-none">

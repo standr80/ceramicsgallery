@@ -51,10 +51,10 @@ export async function POST(req: Request) {
     .filter(Boolean);
 
   const subject = courseTitle
-    ? `Ceramics Gallery: Enquiry about "${courseTitle}"`
-    : `Ceramics Gallery: New message from ${senderName}`;
+    ? `ShantyWare: Enquiry about "${courseTitle}"`
+    : `ShantyWare: New message from ${senderName}`;
 
-  const siteBase = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ceramicsgallery.co.uk";
+  const siteBase = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shantyware.co.uk";
 
   const html = `
     <p><strong>From:</strong> ${senderName} &lt;${senderEmail}&gt;</p>
@@ -63,12 +63,12 @@ export async function POST(req: Request) {
     <blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555">${message.trim().replace(/\n/g, "<br>")}</blockquote>
     <hr>
     <p style="color:#888;font-size:12px">
-      Sent via Ceramics Gallery contact form.<br>
+      Sent via ShantyWare contact form.<br>
       Reply directly to this email to respond to ${senderName}.
     </p>
   `;
 
-  const fromAddress = "Ceramics Gallery <noreply@ceramicsgallery.co.uk>";
+  const fromAddress = "ShantyWare <noreply@shantyware.co.uk>";
 
   await resend.emails.send({
     from: fromAddress,
