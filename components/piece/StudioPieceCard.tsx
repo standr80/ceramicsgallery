@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { Piece } from "@/types/database";
+import type { PieceWithCover } from "@/lib/data/pieces";
+import { getPublicImageUrl } from "@/lib/data/pieces";
 import { penceToDisplay } from "@/lib/stripe";
 
 interface Props {
-  piece: Piece;
+  piece: PieceWithCover;
 }
 
 const statusLabel: Record<string, string> = {
@@ -25,10 +26,19 @@ const statusStyle: Record<string, string> = {
 export function StudioPieceCard({ piece }: Props) {
   return (
     <Link href={`/dashboard/studio/${piece.id}`} className="group block card overflow-hidden hover:shadow-md transition-shadow">
-      <div className="aspect-square bg-clay-100 flex items-center justify-center text-clay-300">
-        <svg width="48" height="60" viewBox="0 0 64 80" aria-hidden="true">
-          <path d="M24 6h16v6c0 4 12 10 12 30 0 18-9 32-20 32S12 60 12 42c0-20 12-26 12-30z" fill="currentColor" />
-        </svg>
+      <div className="aspect-square bg-clay-100 flex items-center justify-center text-clay-300 overflow-hidden">
+        {piece.cover_path ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={getPublicImageUrl(piece.cover_path)}
+            alt={piece.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <svg width="48" height="60" viewBox="0 0 64 80" aria-hidden="true">
+            <path d="M24 6h16v6c0 4 12 10 12 30 0 18-9 32-20 32S12 60 12 42c0-20 12-26 12-30z" fill="currentColor" />
+          </svg>
+        )}
       </div>
       <div className="p-4 flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">

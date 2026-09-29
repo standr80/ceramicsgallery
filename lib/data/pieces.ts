@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Piece, PieceImage } from "@/types/database";
 
-export async function getMyPieces(): Promise<Piece[]> {
+export type PieceWithCover = Piece & { cover_path: string | null };
+
+export async function getMyPieces(): Promise<PieceWithCover[]> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
@@ -13,19 +15,28 @@ export async function getMyPieces(): Promise<Piece[]> {
   if (!potter) return [];
   const { data } = await supabase
     .from("pieces")
-    .select("*")
+    .select("*, piece_images(original_path, processed_path, position)")
     .eq("potter_id", potter.id)
     .order("created_at", { ascending: false });
-  return data ?? [];
+  return (data ?? []).map((p) => {
+    const imgs = (p.piece_images ?? []) as { original_path: string; processed_path: string | null; position: number }[];
+    imgs.sort((a, b) => a.position - b.position);
+    const cover = imgs[0];
+    return {
+      ...p,
+      piece_images: undefined,
+      cover_path: cover ? (cover.processed_path ?? cover.original_path) : null,
+    } as PieceWithCover;
+  });
 }
 
 export async function getPieceWithImages(
   pieceId: string
-): Promise<{ piece: Piece; images: PieceImage[] } | null> {
+): Promise<{ piece: Piece & { category_slug: string | null }; images: PieceImage[] } | null> {
   const supabase = await createClient();
   const { data: piece } = await supabase
     .from("pieces")
-    .select("*")
+    .select("*, categories(slug)")
     .eq("id", pieceId)
     .single();
   if (!piece) return null;
@@ -34,7 +45,11 @@ export async function getPieceWithImages(
     .select("*")
     .eq("piece_id", pieceId)
     .order("position");
-  return { piece, images: images ?? [] };
+  const categoriesData = piece.categories as { slug: string } | null;
+  return {
+    piece: { ...piece, category_slug: categoriesData?.slug ?? null },
+    images: images ?? [],
+  };
 }
 
 export function getPublicImageUrl(path: string): string {

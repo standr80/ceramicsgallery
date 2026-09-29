@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { createPiece, publishPiece } from "@/app/actions/pieces";
+import { createPiece, publishPiece, attachImages } from "@/app/actions/pieces";
 
 type Screen = "photos" | "drafting" | "review" | "live";
 
@@ -50,6 +50,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
 export function AddPieceFlow({ onDone }: { onDone: () => void }) {
   const [screen, setScreen] = useState<Screen>("photos");
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadedPaths, setUploadedPaths] = useState<string[]>([]);
   const [draft, setDraft] = useState<Draft>(emptyDraft());
   const [error, setError] = useState<string | null>(null);
   const [draftFailed, setDraftFailed] = useState(false);
@@ -67,6 +68,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
     try {
       const supabase = createClient();
       const uploadedUrls: string[] = [];
+      const tempPaths: string[] = [];
 
       for (const file of files) {
         const ext = file.name.split(".").pop();
@@ -79,7 +81,10 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
           .from("piece-images")
           .getPublicUrl(path);
         uploadedUrls.push(publicUrl);
+        tempPaths.push(path);
       }
+
+      setUploadedPaths(tempPaths);
 
       const res = await fetch("/api/pieces/draft", {
         method: "POST",
@@ -121,6 +126,11 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
 
       const result = await createPiece(fd);
       if ("error" in result) throw new Error(result.error);
+
+      if (uploadedPaths.length > 0) {
+        await attachImages(result.id, uploadedPaths);
+      }
+
       const pub = await publishPiece(result.id);
       if (pub && "error" in pub) throw new Error(pub.error);
 
