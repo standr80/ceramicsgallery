@@ -2,16 +2,10 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-      <h1 className="font-display text-3xl font-semibold text-clay-900">
-        Page not found
-      </h1>
-      <p className="mt-2 text-stone-600">
-        The page you&apos;re looking for doesn&apos;t exist.
-      </p>
-      <Link href="/" className="btn-primary mt-6">
-        Back to home
-      </Link>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+      <h1 className="font-display text-5xl font-semibold text-clay-900 mb-4">404</h1>
+      <p className="text-stone-600 mb-8">That page doesn't exist.</p>
+      <Link href="/" className="btn-primary">Back to gallery</Link>
     </div>
   );
 }

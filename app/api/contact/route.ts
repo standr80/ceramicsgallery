@@ -1,79 +1,72 @@
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !email.includes("\r") && !email.includes("\n");
+}
+
 export async function POST(req: Request) {
-  const { potterId, potterSlug, courseId, courseTitle, senderName, senderEmail, message } =
+  const { potterId, courseId, courseTitle, senderName, senderEmail, message } =
     await req.json();
 
   if (!potterId || !senderName?.trim() || !senderEmail?.trim() || !message?.trim()) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
   }
-
-  const admin = createAdminClient();
-
-  // Look up potter's auth email (not stored in potters table)
-  const { data: potter } = await admin
-    .from("potters")
-    .select("name, auth_user_id")
-    .eq("id", potterId)
-    .single();
-
-  if (!potter) return Response.json({ error: "Potter not found." }, { status: 404 });
-
-  const { data: authUser } = await admin.auth.admin.getUserById(potter.auth_user_id);
-  const potterEmail = authUser?.user?.email;
-
-  if (!potterEmail) {
-    return Response.json({ error: "Could not find potter's email." }, { status: 500 });
+  if (!isValidEmail(senderEmail)) {
+    return Response.json({ error: "Invalid email address." }, { status: 400 });
   }
 
-  // Save enquiry to DB
+  const admin = createAdminClient();
+  const { data: potter } = await admin
+    .from("potters")
+    .select("display_name, user_id")
+    .eq("id", potterId)
+    .single();
+  if (!potter) return Response.json({ error: "Potter not found." }, { status: 404 });
+
+  const { data: authUser } = await admin.auth.admin.getUserById(potter.user_id);
+  const potterEmail = authUser?.user?.email;
+  if (!potterEmail) return Response.json({ error: "Could not find potter email." }, { status: 500 });
+
   await admin.from("contact_enquiries").insert({
     potter_id: potterId,
-    course_id: courseId || null,
+    course_id: courseId ?? null,
     sender_name: senderName.trim(),
     sender_email: senderEmail.trim(),
     message: message.trim(),
   });
 
-  // Send email via Resend
   const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-    console.error("[contact] RESEND_API_KEY not configured");
-    // Still return success — message is saved to DB even if email fails
-    return Response.json({ success: true, emailSent: false });
-  }
+  if (!resendKey) return Response.json({ success: true, emailSent: false });
 
   const resend = new Resend(resendKey);
-  const adminEmails = (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean);
-
   const subject = courseTitle
-    ? `ShantyWare: Enquiry about "${courseTitle}"`
-    : `ShantyWare: New message from ${senderName}`;
-
-  const siteBase = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shantyware.co.uk";
+    ? `Ceramics Gallery: Enquiry about "${escapeHtml(courseTitle)}"`
+    : `Ceramics Gallery: Message from ${escapeHtml(senderName)}`;
 
   const html = `
-    <p><strong>From:</strong> ${senderName} &lt;${senderEmail}&gt;</p>
-    ${courseTitle ? `<p><strong>Course enquiry:</strong> ${courseTitle}</p>` : ""}
+    <p><strong>From:</strong> ${escapeHtml(senderName)} &lt;${escapeHtml(senderEmail)}&gt;</p>
+    ${courseTitle ? `<p><strong>Course:</strong> ${escapeHtml(courseTitle)}</p>` : ""}
     <p><strong>Message:</strong></p>
-    <blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555">${message.trim().replace(/\n/g, "<br>")}</blockquote>
+    <blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555">
+      ${escapeHtml(message.trim()).replace(/\n/g, "<br>")}
+    </blockquote>
     <hr>
-    <p style="color:#888;font-size:12px">
-      Sent via ShantyWare contact form.<br>
-      Reply directly to this email to respond to ${senderName}.
-    </p>
+    <p style="color:#888;font-size:12px">Sent via Ceramics Gallery contact form. Reply to respond to ${escapeHtml(senderName)}.</p>
   `;
 
-  const fromAddress = "ShantyWare <noreply@shantyware.co.uk>";
-
   await resend.emails.send({
-    from: fromAddress,
+    from: "Ceramics Gallery <noreply@ceramicsgallery.co.uk>",
     to: potterEmail,
-    ...(adminEmails.length > 0 ? { bcc: adminEmails } : {}),
     replyTo: senderEmail,
     subject,
     html,

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Source_Sans_3 } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
@@ -11,37 +9,28 @@ const display = Cormorant_Garamond({
   display: "swap",
 });
 
-const body = Source_Sans_3({
+const body = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "ShantyWare | Handmade Pottery by UK Potters",
+  title: "Ceramics Gallery | Handmade Pottery by UK Potters",
   description:
-    "Discover unique ceramics from British potters. Browse and buy handmade pottery, stoneware, and earthenware.",
-  metadataBase: new URL("https://www.shantyware.co.uk"),
+    "Discover and buy unique handmade ceramics directly from British potters.",
+  metadataBase: new URL("https://www.ceramicsgallery.co.uk"),
   openGraph: {
-    title: "ShantyWare | Handmade Pottery by UK Potters",
-    description:
-      "Discover unique ceramics from British potters. Browse and buy handmade pottery.",
-    url: "https://www.shantyware.co.uk",
+    title: "Ceramics Gallery | Handmade Pottery by UK Potters",
+    description: "Discover and buy unique handmade ceramics directly from British potters.",
+    url: "https://www.ceramicsgallery.co.uk",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-GB" className={`${display.variable} ${body.variable}`}>
-      <body className="font-body min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body className="font-body min-h-screen">{children}</body>
     </html>
   );
 }
