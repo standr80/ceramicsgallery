@@ -32,11 +32,27 @@ const emptyDraft = (): Draft => ({
   priceLow: null, priceHigh: null,
 });
 
+function CloseButton({ onClose }: { onClose: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClose}
+      aria-label="Close"
+      className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </svg>
+    </button>
+  );
+}
+
 export function AddPieceFlow({ onDone }: { onDone: () => void }) {
   const [screen, setScreen] = useState<Screen>("photos");
   const [files, setFiles] = useState<File[]>([]);
   const [draft, setDraft] = useState<Draft>(emptyDraft());
   const [error, setError] = useState<string | null>(null);
+  const [draftFailed, setDraftFailed] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -46,6 +62,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
     if (files.length === 0) return;
     setScreen("drafting");
     setError(null);
+    setDraftFailed(false);
 
     try {
       const supabase = createClient();
@@ -84,6 +101,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
       setScreen("review");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
+      setDraftFailed(true);
       setScreen("photos");
     }
   }
@@ -125,17 +143,43 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
     setDraft((d) => ({ ...d, [key]: e.target.value }));
 
   if (screen === "photos") return (
-    <div className="flex flex-col gap-6">
+    <div className="relative flex flex-col gap-6">
+      <CloseButton onClose={onDone} />
+
       <div>
-        <h2 className="font-display text-2xl font-semibold">Snap your pot</h2>
+        <h2 className="font-display text-2xl font-semibold pr-8">Snap your pot</h2>
         <p className="text-stone-500 mt-1">Up to three photos. Any background — we tidy it up for you.</p>
       </div>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+      {draftFailed && error ? (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex flex-col gap-3">
+          <p className="text-sm text-amber-900 font-medium">{error}</p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => { setError(null); setDraftFailed(false); handleContinue(); }}
+              className="btn-primary text-sm py-2 px-4"
+            >
+              Try again
+            </button>
+            <button
+              type="button"
+              onClick={() => { setError(null); setDraftFailed(false); setDraft(emptyDraft()); setScreen("review"); }}
+              className="btn-ghost text-sm py-2 px-4"
+            >
+              Enter details myself
+            </button>
+          </div>
+        </div>
+      ) : error ? (
+        <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>
+      ) : null}
 
       <button
         type="button"
         onClick={() => fileRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files); }}
         className="w-full h-64 border-2 border-dashed border-clay-200 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-clay-400 transition-colors cursor-pointer bg-white"
       >
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -183,7 +227,8 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
   );
 
   if (screen === "drafting") return (
-    <div className="flex flex-col items-center justify-center gap-6 py-20 text-center">
+    <div className="relative flex flex-col items-center justify-center gap-6 py-20 text-center">
+      <CloseButton onClose={onDone} />
       <div className="w-24 h-24 rounded-full bg-clay-100 flex items-center justify-center animate-pulse">
         <svg width="48" height="60" viewBox="0 0 64 80" aria-hidden="true">
           <path d="M24 6h16v6c0 4 12 10 12 30 0 18-9 32-20 32S12 60 12 42c0-20 12-26 12-30z" fill={accent} />
@@ -199,10 +244,12 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
   );
 
   if (screen === "review") return (
-    <div className="flex flex-col gap-6">
+    <div className="relative flex flex-col gap-6">
+      <CloseButton onClose={onDone} />
+
       <div>
-        <h2 className="font-display text-2xl font-semibold">Check and publish</h2>
-        <p className="text-stone-500 mt-1">We drafted this from your photos. Change anything that isn't right.</p>
+        <h2 className="font-display text-2xl font-semibold pr-8">Check and publish</h2>
+        <p className="text-stone-500 mt-1">Fill in your details. Change anything that isn't right.</p>
       </div>
 
       {error === "stripe_not_connected" ? (
