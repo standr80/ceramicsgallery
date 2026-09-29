@@ -1,15 +1,10 @@
 import { notFound } from "next/navigation";
-import { getPotterBySlug, getAllPotterSlugs, getPiecesForPotter } from "@/lib/data/potters";
+import { getPotterBySlug, getPiecesForPotter } from "@/lib/data/potters";
 import { PieceCard } from "@/components/piece/PieceCard";
 
 export const dynamic = "force-dynamic";
 
 interface Props { params: Promise<{ potterSlug: string }> }
-
-export async function generateStaticParams() {
-  const slugs = await getAllPotterSlugs();
-  return slugs.map((potterSlug) => ({ potterSlug }));
-}
 
 export async function generateMetadata({ params }: Props) {
   const { potterSlug } = await params;
