@@ -15,13 +15,6 @@ export default async function StudioPage() {
         <StudioAddButton />
       </div>
 
-      {!potter?.stripe_charges_ok && (
-        <div className="card p-4 mb-6 flex items-center justify-between gap-4 bg-amber-50 border-amber-200">
-          <p className="text-sm text-amber-800">Connect Stripe to take payments for your pieces.</p>
-          <a href="/dashboard/connect-stripe" className="btn-primary text-sm shrink-0">Connect now</a>
-        </div>
-      )}
-
       {pieces.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-stone-500 mb-4">You haven't added any pots yet.</p>

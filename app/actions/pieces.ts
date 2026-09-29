@@ -5,16 +5,20 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PieceStatus } from "@/types/database";
 
-async function getMyPotterId(): Promise<string | null> {
+async function getMyPotter() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   const { data } = await supabase
     .from("potters")
-    .select("id")
+    .select("id, stripe_charges_ok")
     .eq("user_id", user.id)
     .single();
-  return data?.id ?? null;
+  return data ?? null;
+}
+
+async function getMyPotterId(): Promise<string | null> {
+  return (await getMyPotter())?.id ?? null;
 }
 
 export async function createPiece(formData: FormData) {
@@ -68,8 +72,10 @@ export async function updatePiece(pieceId: string, formData: FormData) {
 }
 
 export async function publishPiece(pieceId: string) {
-  const potterId = await getMyPotterId();
-  if (!potterId) return { error: "Not authenticated." };
+  const potter = await getMyPotter();
+  if (!potter) return { error: "Not authenticated." };
+  if (!potter.stripe_charges_ok) return { error: "stripe_not_connected" };
+  const potterId = potter.id;
 
   const supabase = await createClient();
   const { error } = await supabase

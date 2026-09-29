@@ -103,7 +103,8 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
 
       const result = await createPiece(fd);
       if ("error" in result) throw new Error(result.error);
-      await publishPiece(result.id);
+      const pub = await publishPiece(result.id);
+      if (pub && "error" in pub) throw new Error(pub.error);
 
       setDraft((d) => ({ ...d, pieceId: result.id }));
       setScreen("live");
@@ -204,7 +205,15 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
         <p className="text-stone-500 mt-1">We drafted this from your photos. Change anything that isn't right.</p>
       </div>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+      {error === "stripe_not_connected" ? (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <p className="text-sm font-medium text-amber-900">Connect Stripe before publishing</p>
+          <p className="text-sm text-amber-800 mt-0.5">Your pot has been saved as a draft. Once your Stripe account is connected you can publish it.</p>
+          <a href="/dashboard/connect-stripe" className="inline-block mt-2 text-sm font-medium text-clay-700 underline">Set up payments →</a>
+        </div>
+      ) : error ? (
+        <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>
+      ) : null}
 
       <div className="flex flex-col gap-4">
         <div>
