@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProfilePage() {
-  const potter = await getCurrentPotter();
+interface Props { searchParams: Promise<{ saved?: string }> }
+
+export default async function ProfilePage({ searchParams }: Props) {
+  const [potter, { saved }] = await Promise.all([getCurrentPotter(), searchParams]);
   if (!potter) redirect("/login");
 
   async function handleUpdate(formData: FormData) {
@@ -31,6 +33,13 @@ export default async function ProfilePage() {
           <span className="text-sm font-medium text-green-700 bg-green-100 px-3 py-1 rounded-full">Published</span>
         )}
       </div>
+
+      {saved && (
+        <div className="mb-6 flex items-center gap-2 text-sm text-green-800 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Profile saved.
+        </div>
+      )}
 
       <form action={handleUpdate} className="flex flex-col gap-5">
         <div>
