@@ -7,7 +7,6 @@ export async function getPotterBySlug(slug: string): Promise<Potter | null> {
     .from("potters")
     .select("*")
     .eq("slug", slug)
-    .eq("is_published", true)
     .single();
   return data ?? null;
 }

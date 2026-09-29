@@ -24,6 +24,25 @@ export default async function PotterPage({ params }: Props) {
   ]);
   if (!potter) notFound();
 
+  if (!potter.is_published) {
+    return (
+      <div className="py-24 px-4 flex flex-col items-center text-center gap-4">
+        <div className="w-16 h-16 rounded-full bg-clay-100 flex items-center justify-center mb-2">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9A4527" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" /><path d="M12 8v4m0 4h.01" />
+          </svg>
+        </div>
+        <h1 className="font-display text-3xl font-semibold text-clay-900">Coming soon</h1>
+        <p className="text-stone-500 max-w-sm">
+          {potter.studio_name ?? potter.display_name} is still setting up their page. Check back soon.
+        </p>
+        <a href="/" className="mt-4 text-sm font-medium text-clay-700 underline underline-offset-2">
+          Browse the gallery →
+        </a>
+      </div>
+    );
+  }
+
   return (
     <div className="py-12 px-4">
       <div className="mx-auto max-w-6xl">
