@@ -19,6 +19,11 @@ export async function POST(req: Request) {
     }
   }
 
-  const draft = await draftListingFromImages(imageUrls);
-  return Response.json(draft);
+  try {
+    const draft = await draftListingFromImages(imageUrls);
+    return Response.json(draft);
+  } catch (e) {
+    console.error("AI draft failed:", e);
+    return Response.json({ error: "Could not analyse the photo — please try again or add a clearer image." }, { status: 500 });
+  }
 }
