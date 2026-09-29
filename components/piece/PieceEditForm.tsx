@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { attachImages, deletePieceImage } from "@/app/actions/pieces";
-import { getPublicImageUrl } from "@/lib/data/pieces";
+import { getPublicImageUrl } from "@/lib/utils/images";
 import type { Piece, PieceImage } from "@/types/database";
 
 const CATEGORIES = ["vase", "bowl", "mug", "plate", "jar", "teapot", "sculpture", "other"];

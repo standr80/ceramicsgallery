@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { PieceWithCover } from "@/lib/data/pieces";
-import { getPublicImageUrl } from "@/lib/data/pieces";
+import { getPublicImageUrl } from "@/lib/utils/images";
 import { penceToDisplay } from "@/lib/stripe";
 
 interface Props {
