@@ -18,6 +18,9 @@ export interface Potter {
   location_label: string | null;
   instagram: string | null;
   website_url: string | null;
+  contact_email: string | null;
+  studio_address: string | null;
+  opening_hours: string | null;
   stripe_account_id: string | null;
   stripe_charges_ok: boolean;
   stripe_payouts_ok: boolean;
@@ -202,7 +205,7 @@ export interface GalleryPiece {
   potter_slug: string;
   potter_name: string;
   location_label: string | null;
-  cover_image: string | null;
+  cover_path: string | null;
 }
 
 export interface CourseDirectory {

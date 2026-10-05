@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { GalleryPiece } from "@/types/database";
 import { penceToDisplay } from "@/lib/stripe";
+import { getPublicImageUrl } from "@/lib/utils/images";
 
 interface Props {
   piece: GalleryPiece;
@@ -10,7 +11,7 @@ interface Props {
 
 export function PieceCard({ piece, showPotter }: Props) {
   const href = `/${piece.potter_slug}/${piece.id}`;
-  const imgSrc = piece.cover_image ?? "/images/placeholder.svg";
+  const imgSrc = piece.cover_path ? getPublicImageUrl(piece.cover_path) : "/images/placeholder.svg";
 
   return (
     <Link href={href} className="group block card overflow-hidden hover:shadow-md transition-shadow">

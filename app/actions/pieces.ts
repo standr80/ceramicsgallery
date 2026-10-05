@@ -132,7 +132,6 @@ export async function updatePiece(pieceId: string, formData: FormData) {
 export async function publishPiece(pieceId: string) {
   const potter = await getMyPotter();
   if (!potter) return { error: "Not authenticated." };
-  if (!potter.stripe_charges_ok) return { error: "stripe_not_connected" };
   const potterId = potter.id;
 
   const supabase = await createClient();

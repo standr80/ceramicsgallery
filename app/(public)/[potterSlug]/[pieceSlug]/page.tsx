@@ -14,7 +14,7 @@ export default async function PiecePage({ params }: Props) {
   const supabase = await createClient();
   const { data: piece } = await supabase
     .from("pieces")
-    .select("*, potters!inner(slug, display_name, studio_name)")
+    .select("*, potters!inner(slug, display_name, studio_name, contact_email, stripe_charges_ok)")
     .eq("id", pieceId)
     .eq("potters.slug", potterSlug)
     .in("status", ["live", "sold"])
@@ -28,7 +28,16 @@ export default async function PiecePage({ params }: Props) {
     .eq("piece_id", pieceId)
     .order("position");
 
-  const potter = piece.potters as { slug: string; display_name: string; studio_name: string | null };
+  const potter = piece.potters as {
+    slug: string;
+    display_name: string;
+    studio_name: string | null;
+    contact_email: string | null;
+    stripe_charges_ok: boolean;
+  };
+  const enquiryHref = potter.contact_email
+    ? `mailto:${potter.contact_email}?subject=${encodeURIComponent(`Enquiry about "${piece.title}"`)}`
+    : null;
   const coverPath = images?.[0]?.processed_path ?? images?.[0]?.original_path;
   const coverUrl = coverPath ? getPublicImageUrl(coverPath) : null;
 
@@ -89,8 +98,36 @@ export default async function PiecePage({ params }: Props) {
             {piece.status === "sold" ? (
               <div className="card p-4 text-center text-stone-500">This piece has been sold.</div>
             ) : (
-              <div className="card p-4 text-sm text-stone-500">
-                To purchase, contact the potter directly via their profile.
+              <div className="flex items-center gap-3">
+                {enquiryHref ? (
+                  <a href={enquiryHref} className="btn-primary inline-flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" />
+                    </svg>
+                    Email enquiry
+                  </a>
+                ) : (
+                  <Link href={`/${potterSlug}`} className="btn-primary">Contact the potter</Link>
+                )}
+                {!potter.stripe_charges_ok && (
+                  <span className="relative group">
+                    <button
+                      type="button"
+                      aria-describedby="payment-tip"
+                      className="w-6 h-6 rounded-full border border-stone-300 text-stone-500 text-xs font-semibold flex items-center justify-center hover:border-clay-400 hover:text-clay-700 focus:outline-none focus:ring-2 focus:ring-clay-300"
+                    >
+                      i
+                      <span className="sr-only">Payment information</span>
+                    </button>
+                    <span
+                      id="payment-tip"
+                      role="tooltip"
+                      className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 rounded-lg bg-stone-800 text-white text-xs px-3 py-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+                    >
+                      This potter doesn&apos;t currently accept online payment. Email them to arrange buying this piece.
+                    </span>
+                  </span>
+                )}
               </div>
             )}
           </div>

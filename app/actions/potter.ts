@@ -21,6 +21,16 @@ export async function updateProfile(formData: FormData) {
     }
   }
 
+  const contactEmail = ((formData.get("contact_email") as string) || "").trim();
+  if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+    return { error: "Invalid contact email." };
+  }
+
+  const avatarPath = ((formData.get("avatar_path") as string) || "").trim();
+  if (avatarPath && !/^avatars\/[\w-]+\.\w+$/.test(avatarPath)) {
+    return { error: "Invalid photo." };
+  }
+
   const { error } = await supabase
     .from("potters")
     .update({
@@ -31,6 +41,10 @@ export async function updateProfile(formData: FormData) {
       location_label: (formData.get("location_label") as string) || null,
       instagram: (formData.get("instagram") as string) || null,
       website_url: websiteUrl || null,
+      contact_email: contactEmail || null,
+      avatar_path: avatarPath || null,
+      studio_address: ((formData.get("studio_address") as string) || "").trim() || null,
+      opening_hours: ((formData.get("opening_hours") as string) || "").trim() || null,
     })
     .eq("user_id", user.id);
 

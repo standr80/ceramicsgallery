@@ -223,23 +223,21 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
       {/* Publish / unpublish */}
       <div className="mt-8 pt-8 border-t border-stone-100 flex flex-col gap-3">
         {!isLive && (
-          stripeConnected ? (
-            <form action={onPublish}>
-              <button
-                type="submit"
-                className="btn-primary w-full"
-                onClick={() => setActionPending(true)}
-              >
-                {actionPending ? "Publishing…" : "Publish this pot"}
-              </button>
-            </form>
-          ) : (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-              <p className="text-sm font-medium text-amber-900">Connect Stripe to publish</p>
-              <p className="text-sm text-amber-800 mt-0.5">Your pot is saved as a draft. Connect your payment account first.</p>
-              <a href="/dashboard/connect-stripe" className="inline-block mt-2 text-sm font-medium text-clay-700 underline">Set up payments →</a>
-            </div>
-          )
+          <form action={onPublish}>
+            <button
+              type="submit"
+              className="btn-primary w-full"
+              onClick={() => setActionPending(true)}
+            >
+              {actionPending ? "Publishing…" : "Publish this pot"}
+            </button>
+          </form>
+        )}
+        {!stripeConnected && (
+          <p className="text-sm text-stone-500">
+            You haven&apos;t connected Stripe, so buyers will see an <strong>Email enquiry</strong> button instead of paying online.{" "}
+            <a href="/dashboard/connect-stripe" className="text-clay-700 underline">Set up payments →</a>
+          </p>
         )}
         {isLive && (
           <form action={onUnpublish}>

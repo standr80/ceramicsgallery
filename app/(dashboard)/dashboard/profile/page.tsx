@@ -1,6 +1,8 @@
 import { getCurrentPotter } from "@/lib/get-potter";
 import { updateProfile, publishProfile } from "@/app/actions/potter";
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { AvatarUpload } from "@/components/potter/AvatarUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +11,8 @@ interface Props { searchParams: Promise<{ saved?: string }> }
 export default async function ProfilePage({ searchParams }: Props) {
   const [potter, { saved }] = await Promise.all([getCurrentPotter(), searchParams]);
   if (!potter) redirect("/login");
+  const { data: { user } } = await (await createClient()).auth.getUser();
+  const accountEmail = user?.email;
 
   async function handleUpdate(formData: FormData) {
     "use server";
@@ -43,6 +47,10 @@ export default async function ProfilePage({ searchParams }: Props) {
 
       <form action={handleUpdate} className="flex flex-col gap-5">
         <div>
+          <p className="block text-sm font-medium mb-2">Photo</p>
+          <AvatarUpload initialPath={potter.avatar_path} />
+        </div>
+        <div>
           <label htmlFor="display_name" className="block text-sm font-medium mb-1.5">Your name</label>
           <input id="display_name" name="display_name" type="text" required defaultValue={potter.display_name} className="input-field" />
         </div>
@@ -61,6 +69,18 @@ export default async function ProfilePage({ searchParams }: Props) {
         <div>
           <label htmlFor="location_label" className="block text-sm font-medium mb-1.5">Location</label>
           <input id="location_label" name="location_label" type="text" defaultValue={potter.location_label ?? ""} className="input-field" placeholder="e.g. Bury St Edmunds, Suffolk" />
+        </div>
+        <div>
+          <label htmlFor="studio_address" className="block text-sm font-medium mb-1.5">Studio address <span className="text-stone-400 font-normal">(optional, shown on your page)</span></label>
+          <textarea id="studio_address" name="studio_address" rows={3} defaultValue={potter.studio_address ?? ""} className="input-field resize-y" placeholder={"The Old Barn\nMill Lane\nBury St Edmunds IP28 6AB"} />
+        </div>
+        <div>
+          <label htmlFor="opening_hours" className="block text-sm font-medium mb-1.5">Opening hours <span className="text-stone-400 font-normal">(optional)</span></label>
+          <textarea id="opening_hours" name="opening_hours" rows={3} defaultValue={potter.opening_hours ?? ""} className="input-field resize-y" placeholder={"Sat–Sun 10am–4pm\nWeekdays by appointment"} />
+        </div>
+        <div>
+          <label htmlFor="contact_email" className="block text-sm font-medium mb-1.5">Contact email <span className="text-stone-400 font-normal">(shown to buyers for enquiries)</span></label>
+          <input id="contact_email" name="contact_email" type="email" defaultValue={potter.contact_email ?? accountEmail ?? ""} className="input-field" placeholder="hello@yourstudio.co.uk" />
         </div>
         <div>
           <label htmlFor="instagram" className="block text-sm font-medium mb-1.5">Instagram handle <span className="text-stone-400 font-normal">(optional)</span></label>

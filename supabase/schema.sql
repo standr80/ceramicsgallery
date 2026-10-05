@@ -31,6 +31,9 @@ create table potters (
   location             geography(point, 4326),
   instagram            text,
   website_url          text,
+  contact_email        text,
+  studio_address       text,
+  opening_hours        text,
   stripe_account_id    text unique,
   stripe_charges_ok    boolean not null default false,
   stripe_payouts_ok    boolean not null default false,
@@ -333,7 +336,8 @@ select
   (select pi.original_path
    from piece_images pi
    where pi.piece_id = p.id
-   order by pi.position limit 1) as cover_path
+   order by pi.position limit 1) as cover_path,
+  p.published_at
 from pieces p
 join potters po on po.id = p.potter_id
 left join categories c on c.id = p.category_id
