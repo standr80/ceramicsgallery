@@ -1,21 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Potter, GalleryPiece } from "@/types/database";
 
-export async function getPotterBySlug(slug: string): Promise<Potter | null> {
+// contact_email is not readable by anon/authenticated roles; keep it out of public selects.
+export type PublicPotter = Omit<Potter, "contact_email">;
+const PUBLIC_POTTER_COLUMNS =
+  "id, user_id, slug, display_name, studio_name, headline, bio, bio_source_audio, avatar_path, location_label, instagram, website_url, studio_address, opening_hours, stripe_account_id, stripe_charges_ok, stripe_payouts_ok, plan, commission_bps, onboarding_step, is_published, created_at, updated_at";
+
+export async function getPotterBySlug(slug: string): Promise<PublicPotter | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("potters")
-    .select("*")
+    .select(PUBLIC_POTTER_COLUMNS)
     .eq("slug", slug)
     .single();
   return data ?? null;
 }
 
-export async function getAllPotters(): Promise<Potter[]> {
+export async function getAllPotters(): Promise<PublicPotter[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("potters")
-    .select("*")
+    .select(PUBLIC_POTTER_COLUMNS)
     .eq("is_published", true)
     .order("display_name");
   return data ?? [];

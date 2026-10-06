@@ -15,8 +15,11 @@ function isValidEmail(email: string): boolean {
 }
 
 export async function POST(req: Request) {
-  const { potterId, courseId, courseTitle, senderName, senderEmail, message } =
+  const { potterId, courseId, courseTitle, pieceTitle, senderName, senderEmail, message, website } =
     await req.json();
+
+  // Honeypot: bots fill the hidden field; pretend success.
+  if (website) return Response.json({ success: true });
 
   if (!potterId || !senderName?.trim() || !senderEmail?.trim() || !message?.trim()) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
@@ -28,13 +31,16 @@ export async function POST(req: Request) {
   const admin = createAdminClient();
   const { data: potter } = await admin
     .from("potters")
-    .select("display_name, user_id")
+    .select("display_name, user_id, contact_email")
     .eq("id", potterId)
     .single();
   if (!potter) return Response.json({ error: "Potter not found." }, { status: 404 });
 
-  const { data: authUser } = await admin.auth.admin.getUserById(potter.user_id);
-  const potterEmail = authUser?.user?.email;
+  let potterEmail = potter.contact_email as string | null;
+  if (!potterEmail) {
+    const { data: authUser } = await admin.auth.admin.getUserById(potter.user_id);
+    potterEmail = authUser?.user?.email ?? null;
+  }
   if (!potterEmail) return Response.json({ error: "Could not find potter email." }, { status: 500 });
 
   await admin.from("contact_enquiries").insert({
@@ -42,20 +48,23 @@ export async function POST(req: Request) {
     course_id: courseId ?? null,
     sender_name: senderName.trim(),
     sender_email: senderEmail.trim(),
-    message: message.trim(),
+    message: pieceTitle ? `[Re: ${pieceTitle}]\n\n${message.trim()}` : message.trim(),
   });
 
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) return Response.json({ success: true, emailSent: false });
 
   const resend = new Resend(resendKey);
-  const subject = courseTitle
-    ? `Ceramics Gallery: Enquiry about "${escapeHtml(courseTitle)}"`
-    : `Ceramics Gallery: Message from ${escapeHtml(senderName)}`;
+  const about = pieceTitle ?? courseTitle;
+  const oneLine = (t: string) => t.replace(/[\r\n]+/g, " ").slice(0, 120);
+  const subject = about
+    ? `Ceramics Gallery: Enquiry about "${oneLine(about)}"`
+    : `Ceramics Gallery: Message from ${oneLine(senderName)}`;
 
   const html = `
     <p><strong>From:</strong> ${escapeHtml(senderName)} &lt;${escapeHtml(senderEmail)}&gt;</p>
     ${courseTitle ? `<p><strong>Course:</strong> ${escapeHtml(courseTitle)}</p>` : ""}
+    ${pieceTitle ? `<p><strong>Piece:</strong> ${escapeHtml(pieceTitle)}</p>` : ""}
     <p><strong>Message:</strong></p>
     <blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555">
       ${escapeHtml(message.trim()).replace(/\n/g, "<br>")}
@@ -67,6 +76,7 @@ export async function POST(req: Request) {
   await resend.emails.send({
     from: "Ceramics Gallery <noreply@ceramicsgallery.co.uk>",
     to: potterEmail,
+    bcc: "richard@eventstuff.ltd",
     replyTo: senderEmail,
     subject,
     html,

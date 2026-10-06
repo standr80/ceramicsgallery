@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getPotterBySlug, getPiecesForPotter } from "@/lib/data/potters";
 import { PieceCard } from "@/components/piece/PieceCard";
 import { getPublicImageUrl } from "@/lib/utils/images";
+import { EnquiryButton } from "@/components/potter/EnquiryButton";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +64,16 @@ export default async function PotterPage({ params }: Props) {
             {potter.headline && <p className="text-xl text-stone-600 mt-2">{potter.headline}</p>}
             {potter.location_label && <p className="text-sm text-stone-400 mt-2">{potter.location_label}</p>}
             {potter.bio && <p className="text-stone-600 mt-4 max-w-2xl leading-relaxed">{potter.bio}</p>}
+            <div className="mt-5">
+              <EnquiryButton
+                potterId={potter.id}
+                potterName={potter.studio_name ?? potter.display_name}
+                label="Send a message"
+              />
+            </div>
 
-            {(potter.studio_address || potter.opening_hours || potter.contact_email) && (
-              <div className="mt-6 grid gap-6 sm:grid-cols-3 text-sm">
+            {(potter.studio_address || potter.opening_hours) && (
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 max-w-xl text-sm">
                 {potter.studio_address && (
                   <div>
                     <p className="font-semibold text-stone-800 mb-1">Studio</p>
@@ -76,14 +84,6 @@ export default async function PotterPage({ params }: Props) {
                   <div>
                     <p className="font-semibold text-stone-800 mb-1">Opening hours</p>
                     <p className="text-stone-600 whitespace-pre-line">{potter.opening_hours}</p>
-                  </div>
-                )}
-                {potter.contact_email && (
-                  <div>
-                    <p className="font-semibold text-stone-800 mb-1">Email</p>
-                    <a href={`mailto:${potter.contact_email}`} className="text-clay-700 underline underline-offset-2 break-all">
-                      {potter.contact_email}
-                    </a>
                   </div>
                 )}
               </div>

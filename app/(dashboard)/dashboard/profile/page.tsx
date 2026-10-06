@@ -79,7 +79,7 @@ export default async function ProfilePage({ searchParams }: Props) {
           <textarea id="opening_hours" name="opening_hours" rows={3} defaultValue={potter.opening_hours ?? ""} className="input-field resize-y" placeholder={"Sat–Sun 10am–4pm\nWeekdays by appointment"} />
         </div>
         <div>
-          <label htmlFor="contact_email" className="block text-sm font-medium mb-1.5">Contact email <span className="text-stone-400 font-normal">(shown to buyers for enquiries)</span></label>
+          <label htmlFor="contact_email" className="block text-sm font-medium mb-1.5">Contact email <span className="text-stone-400 font-normal">(private — buyer messages are sent here)</span></label>
           <input id="contact_email" name="contact_email" type="email" defaultValue={potter.contact_email ?? accountEmail ?? ""} className="input-field" placeholder="hello@yourstudio.co.uk" />
         </div>
         <div>

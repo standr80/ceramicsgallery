@@ -484,3 +484,10 @@ on conflict (code) do nothing;
 --   insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 --   values ('piece-images','piece-images',true,10485760,
 --           array['image/jpeg','image/png','image/webp','image/heic']);
+
+-- contact_email is private: hidden from anon/authenticated; read server-side via service role.
+revoke select on potters from anon, authenticated;
+grant select (id, user_id, slug, display_name, studio_name, headline, bio, bio_source_audio,
+  avatar_path, location_label, location, instagram, website_url, studio_address, opening_hours,
+  stripe_account_id, stripe_charges_ok, stripe_payouts_ok, plan, commission_bps, onboarding_step,
+  is_published, created_at, updated_at) on potters to anon, authenticated;
