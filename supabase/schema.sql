@@ -3,7 +3,7 @@
 -- Money is stored in pence (integer). All timestamps are timestamptz.
 
 create extension if not exists "pgcrypto";
-create extension if not exists "postgis";
+create extension if not exists "postgis" schema extensions;
 
 -- ─────────────────────────────────────────────
 -- Enums
@@ -28,7 +28,7 @@ create table potters (
   bio_source_audio     text,
   avatar_path          text,
   location_label       text,
-  location             geography(point, 4326),
+  location             extensions.geography(point, 4326),
   instagram            text,
   website_url          text,
   contact_email        text,
@@ -159,7 +159,7 @@ create table courses (
   includes         text,
   venue_name       text,
   venue_address    text,
-  location         geography(point, 4326),
+  location         extensions.geography(point, 4326),
   is_online        boolean not null default false,
   max_places       int not null default 6,
   min_age          smallint,
