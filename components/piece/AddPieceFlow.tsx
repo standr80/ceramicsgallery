@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createPiece, publishPiece, attachImages } from "@/app/actions/pieces";
+import { prepareImage } from "@/lib/utils/prepare-image";
 
 type Screen = "photos" | "drafting" | "review" | "live";
 
@@ -55,6 +56,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [draftFailed, setDraftFailed] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [converting, setConverting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const accent = "#9A4527";
@@ -71,7 +73,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
       const tempPaths: string[] = [];
 
       for (const file of files) {
-        const ext = file.name.split(".").pop();
+        const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `temp/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("piece-images")
@@ -143,10 +145,19 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
     }
   }
 
-  function addFiles(incoming: FileList | null) {
-    if (!incoming) return;
-    const next = [...files, ...Array.from(incoming)].slice(0, 3);
-    setFiles(next);
+  async function addFiles(incoming: FileList | null) {
+    if (!incoming || incoming.length === 0) return;
+    const picked = Array.from(incoming).slice(0, Math.max(0, 3 - files.length));
+    setConverting(true);
+    setError(null);
+    try {
+      const prepared = await Promise.all(picked.map(async (f) => (await prepareImage(f)).file));
+      setFiles((current) => [...current, ...prepared].slice(0, 3));
+    } catch {
+      setError("Couldn't read one of those photos. Try a JPEG or PNG instead.");
+    } finally {
+      setConverting(false);
+    }
   }
 
   const set = (key: keyof Draft) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -195,7 +206,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M3 8h3l2-3h8l2 3h3v12H3z" /><circle cx="12" cy="13.5" r="3.5" />
         </svg>
-        <span className="text-lg font-semibold">Tap to add photos</span>
+        <span className="text-lg font-semibold">{converting ? "Preparing photos…" : "Tap to add photos"}</span>
         <span className="text-sm text-stone-400">or drag and drop</span>
       </button>
       <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
@@ -227,7 +238,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
 
       <button
         type="button"
-        disabled={files.length === 0}
+        disabled={files.length === 0 || converting}
         onClick={handleContinue}
         className="btn-primary w-full py-3.5 text-base disabled:opacity-40 disabled:cursor-not-allowed"
       >

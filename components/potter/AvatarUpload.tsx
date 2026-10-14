@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getPublicImageUrl } from "@/lib/utils/images";
+import { prepareImage } from "@/lib/utils/prepare-image";
 
 export function AvatarUpload({ initialPath }: { initialPath: string | null }) {
   const [path, setPath] = useState(initialPath ?? "");
@@ -11,15 +12,22 @@ export function AvatarUpload({ initialPath }: { initialPath: string | null }) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function upload(files: FileList | null) {
-    const file = files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
+    const original = files?.[0];
+    if (!original) return;
+    if (!original.type.startsWith("image/") && !/\.hei[cf]$/i.test(original.name)) {
       setError("Please choose an image file.");
       return;
     }
     setUploading(true);
     setError(null);
-    const ext = file.name.split(".").pop();
+    let file: File, ext: string;
+    try {
+      ({ file, ext } = await prepareImage(original));
+    } catch {
+      setUploading(false);
+      setError("Couldn't read that photo. Try a JPEG or PNG instead.");
+      return;
+    }
     const newPath = `avatars/${crypto.randomUUID()}.${ext}`;
     const { error: upErr } = await createClient().storage.from("piece-images").upload(newPath, file);
     setUploading(false);

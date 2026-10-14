@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { attachImages, deletePieceImage } from "@/app/actions/pieces";
 import { getPublicImageUrl } from "@/lib/utils/images";
+import { prepareImage } from "@/lib/utils/prepare-image";
 import type { Piece, PieceImage } from "@/types/database";
 
 const CATEGORIES = ["vase", "bowl", "mug", "plate", "jar", "teapot", "sculpture", "other"];
@@ -59,8 +60,8 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
     try {
       const supabase = createClient();
       const tempPaths: string[] = [];
-      for (const file of files) {
-        const ext = file.name.split(".").pop();
+      for (const original of files) {
+        const { file, ext } = await prepareImage(original);
         const path = `temp/${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage.from("piece-images").upload(path, file);
         if (error) throw new Error(error.message);

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/data/pieces";
 import { penceToDisplay } from "@/lib/stripe";
 import { EnquiryButton } from "@/components/potter/EnquiryButton";
+import { PieceGallery } from "@/components/piece/PieceGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -36,8 +37,7 @@ export default async function PiecePage({ params }: Props) {
     studio_name: string | null;
     stripe_charges_ok: boolean;
   };
-  const coverPath = images?.[0]?.processed_path ?? images?.[0]?.original_path;
-  const coverUrl = coverPath ? getPublicImageUrl(coverPath) : null;
+  const imageUrls = (images ?? []).map((img) => getPublicImageUrl(img.processed_path ?? img.original_path));
 
   return (
     <div className="py-12 px-4">
@@ -51,16 +51,7 @@ export default async function PiecePage({ params }: Props) {
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="aspect-square rounded-2xl overflow-hidden bg-clay-100 flex items-center justify-center">
-            {coverUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={coverUrl} alt={piece.title} className="w-full h-full object-cover" />
-            ) : (
-              <svg width="80" height="100" viewBox="0 0 64 80" aria-hidden="true">
-                <path d="M24 6h16v6c0 4 12 10 12 30 0 18-9 32-20 32S12 60 12 42c0-20 12-26 12-30z" fill="#d4b599" />
-              </svg>
-            )}
-          </div>
+          <PieceGallery urls={imageUrls} title={piece.title} />
 
           <div className="flex flex-col gap-5">
             <div>
