@@ -5,11 +5,18 @@ import { StudioAddButton } from "@/components/piece/StudioAddButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function StudioPage() {
-  const [potter, pieces] = await Promise.all([getCurrentPotter(), getMyPieces()]);
+interface Props { searchParams: Promise<{ password?: string }> }
+
+export default async function StudioPage({ searchParams }: Props) {
+  const [potter, pieces, { password }] = await Promise.all([getCurrentPotter(), getMyPieces(), searchParams]);
 
   return (
     <div>
+      {password === "updated" && (
+        <div className="mb-6 text-sm text-green-800 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+          Your password has been changed.
+        </div>
+      )}
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display text-3xl font-semibold text-clay-900">Your pots</h1>
         <StudioAddButton />

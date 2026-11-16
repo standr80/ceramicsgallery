@@ -32,7 +32,10 @@ export default function LoginPage() {
             <input id="email" name="email" type="email" required className="input-field" placeholder="you@example.com" />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1.5">Password</label>
+            <div className="flex items-baseline justify-between mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium">Password</label>
+              <Link href="/forgot-password" className="text-sm text-clay-700 hover:underline">Forgot password?</Link>
+            </div>
             <input id="password" name="password" type="password" required className="input-field" placeholder="Your password" />
           </div>
           <button type="submit" disabled={loading} className="btn-primary w-full py-3 mt-2 disabled:opacity-50">
@@ -41,6 +44,9 @@ export default function LoginPage() {
         </form>
 
         <p className="text-sm text-stone-500 text-center mt-6">
+          <Link href="/forgot-email" className="text-clay-700 hover:underline">Forgot which email you used?</Link>
+        </p>
+        <p className="text-sm text-stone-500 text-center mt-3">
           Don't have an account?{" "}
           <Link href="/signup" className="text-clay-700 font-medium hover:underline">Join as a potter</Link>
         </p>
