@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     <p style="color:#888;font-size:12px">Sent via Ceramics Gallery contact form. Reply to respond to ${escapeHtml(senderName)}.</p>
   `;
 
-  await resend.emails.send({
+  const { error: sendError } = await resend.emails.send({
     from: "Ceramics Gallery <noreply@ceramicsgallery.co.uk>",
     to: potterEmail,
     bcc: "richard@eventstuff.ltd",
@@ -82,5 +82,10 @@ export async function POST(req: Request) {
     html,
   });
 
+  if (sendError) {
+    // The enquiry is already saved, so the buyer's message isn't lost.
+    console.error("Enquiry email failed:", sendError);
+    return Response.json({ success: true, emailSent: false });
+  }
   return Response.json({ success: true, emailSent: true });
 }
