@@ -1,7 +1,10 @@
 export type PieceStatus = "draft" | "live" | "reserved" | "sold" | "archived";
 export type OrderStatus = "pending" | "paid" | "dispatched" | "collected" | "completed" | "refunded" | "cancelled";
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "refunded";
-export type CourseFormat = "taster" | "one_day" | "weekend" | "weekly" | "one_to_one" | "online";
+export type CourseFormat = "taster" | "one_day" | "weekend" | "weekly" | "one_to_one" | "private_group" | "online";
+export type BookingMode = "dates" | "on_request" | "ongoing";
+export type CancellationPolicy = "flexible" | "standard" | "strict" | "custom";
+export type BookingRequestStatus = "pending" | "confirmed" | "declined" | "cancelled";
 export type CourseLevel = "beginner" | "improver" | "intermediate" | "advanced" | "all";
 export type Plan = "free" | "pro" | "studio";
 
@@ -133,8 +136,29 @@ export interface Course {
   max_places: number;
   min_age: number | null;
   is_published: boolean;
+  booking_mode: BookingMode;
+  summary: string | null;
+  what_youll_make: string | null;
+  prerequisites: string | null;
+  included: string[];
+  pieces_fired: number | null;
+  extras: string | null;
+  collection_info: string | null;
+  private_price_pence: number | null;
+  private_max_people: number | null;
+  schedule_text: string | null;
+  sessions_count: number | null;
+  cancellation_policy: CancellationPolicy;
+  cancellation_text: string | null;
+  external_booking_url: string | null;
+  image_paths: string[];
   created_at: string;
   updated_at: string;
+}
+
+export interface Meeting {
+  starts_at: string;
+  ends_at: string;
 }
 
 export interface CourseSession {
@@ -145,6 +169,24 @@ export interface CourseSession {
   places_total: number;
   places_booked: number;
   is_cancelled: boolean;
+  meetings: Meeting[];
+}
+
+export interface BookingRequest {
+  id: string;
+  course_id: string;
+  session_id: string | null;
+  potter_id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  places: number;
+  preferred_dates: string | null;
+  message: string | null;
+  status: BookingRequestStatus;
+  potter_note: string | null;
+  created_at: string;
+  responded_at: string | null;
 }
 
 export interface Customer {

@@ -5,6 +5,8 @@ import { getPublicImageUrl } from "@/lib/utils/images";
 import { EnquiryButton } from "@/components/potter/EnquiryButton";
 import { Vessel } from "@/components/brand/Vessel";
 import { DemoNotice } from "@/components/potter/DemoNotice";
+import { getCoursesForPotter } from "@/lib/data/courses";
+import { CourseCard } from "@/components/course/CourseCard";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +49,7 @@ export default async function PotterPage({ params }: Props) {
   }
 
   const name = potter.studio_name ?? potter.display_name;
+  const courses = await getCoursesForPotter(potter.id);
   return (
     <div>
       <section className="border-b border-ink/10 bg-clay-100/60">
@@ -110,6 +113,17 @@ export default async function PotterPage({ params }: Props) {
           </div>
         )}
       </section>
+      {courses.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-20">
+          <div className="flex items-baseline gap-4 mb-8 border-b border-ink/15 pb-5">
+            <span className="font-display italic text-terracotta text-xl">{courses.length}</span>
+            <h2 className="font-display text-4xl text-ink leading-none">Classes & workshops</h2>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-4">
+            {courses.map((c) => <CourseCard key={c.id} course={c} showPotter={false} />)}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
