@@ -21,6 +21,11 @@ const config: Config = {
           800: "#6b463a",
           900: "#593c33",
         },
+        ink: { DEFAULT: "#221b17", soft: "#3a302a" },
+        paper: "#f5efe6",
+        terracotta: { DEFAULT: "#c0532d", dark: "#9c3f1f", light: "#e8a184" },
+        celadon: { DEFAULT: "#8ea98a", light: "#c9d8c3", dark: "#5f7a5c" },
+        tenmoku: "#4a2c1d",
         stone: {
           50: "#f7f6f4",
           100: "#ebe8e4",
@@ -30,6 +35,10 @@ const config: Config = {
           500: "#948875",
         },
       },
+      keyframes: {
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
+      },
+      animation: { marquee: "marquee 40s linear infinite" },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
