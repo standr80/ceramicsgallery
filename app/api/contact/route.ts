@@ -31,10 +31,11 @@ export async function POST(req: Request) {
   const admin = createAdminClient();
   const { data: potter } = await admin
     .from("potters")
-    .select("display_name, user_id, contact_email")
+    .select("display_name, user_id, contact_email, is_demo")
     .eq("id", potterId)
     .single();
   if (!potter) return Response.json({ error: "Potter not found." }, { status: 404 });
+  if (potter.is_demo) return Response.json({ error: "This is an example potter, so messages are switched off." }, { status: 400 });
 
   let potterEmail = potter.contact_email as string | null;
   if (!potterEmail) {

@@ -4,7 +4,7 @@ import type { Potter, GalleryPiece } from "@/types/database";
 // contact_email is not readable by anon/authenticated roles; keep it out of public selects.
 export type PublicPotter = Omit<Potter, "contact_email">;
 const PUBLIC_POTTER_COLUMNS =
-  "id, user_id, slug, display_name, studio_name, headline, bio, bio_source_audio, avatar_path, location_label, instagram, website_url, studio_address, opening_hours, stripe_account_id, stripe_charges_ok, stripe_payouts_ok, plan, commission_bps, onboarding_step, is_published, created_at, updated_at";
+  "id, user_id, slug, display_name, studio_name, headline, bio, bio_source_audio, avatar_path, location_label, instagram, website_url, studio_address, opening_hours, stripe_account_id, stripe_charges_ok, stripe_payouts_ok, plan, commission_bps, onboarding_step, is_published, is_demo, created_at, updated_at";
 
 export async function getPotterBySlug(slug: string): Promise<PublicPotter | null> {
   const supabase = await createClient();

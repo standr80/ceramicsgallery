@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/data/pieces";
 import { penceToDisplay } from "@/lib/stripe";
 import { EnquiryButton } from "@/components/potter/EnquiryButton";
+import { DemoNotice } from "@/components/potter/DemoNotice";
 import { PieceGallery } from "@/components/piece/PieceGallery";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export default async function PiecePage({ params }: Props) {
   const supabase = await createClient();
   const { data: piece } = await supabase
     .from("pieces")
-    .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok)")
+    .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok, is_demo)")
     .eq("id", pieceId)
     .eq("potters.slug", potterSlug)
     .in("status", ["live", "sold"])
@@ -36,6 +37,7 @@ export default async function PiecePage({ params }: Props) {
     display_name: string;
     studio_name: string | null;
     stripe_charges_ok: boolean;
+    is_demo: boolean;
   };
   const imageUrls = (images ?? []).map((img) => getPublicImageUrl(img.processed_path ?? img.original_path));
 
@@ -84,7 +86,9 @@ export default async function PiecePage({ params }: Props) {
               </p>
             )}
 
-            {piece.status === "sold" ? (
+            {potter.is_demo ? (
+              <DemoNotice />
+            ) : piece.status === "sold" ? (
               <div className="card p-4 text-center text-stone-500">This piece has been sold.</div>
             ) : (
               <div className="flex items-center gap-3">

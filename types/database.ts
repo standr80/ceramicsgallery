@@ -28,6 +28,7 @@ export interface Potter {
   commission_bps: number;
   onboarding_step: string;
   is_published: boolean;
+  is_demo: boolean;
   created_at: string;
   updated_at: string;
 }

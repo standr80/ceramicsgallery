@@ -5,7 +5,7 @@ import { ConfirmButton } from "@/components/admin/ConfirmButton";
 
 type Potter = {
   id: string; user_id: string; slug: string; display_name: string; studio_name: string | null;
-  is_published: boolean; stripe_charges_ok: boolean; created_at: string;
+  is_published: boolean; is_demo: boolean; stripe_charges_ok: boolean; created_at: string;
 };
 type Piece = {
   id: string; title: string; status: string; price_pence: number | null; created_at: string;
@@ -24,7 +24,7 @@ export default async function AdminPage() {
   const admin = createAdminClient();
   const [pottersRes, piecesRes, enquiriesRes, usersRes] = await Promise.all([
     admin.from("potters")
-      .select("id, user_id, slug, display_name, studio_name, is_published, stripe_charges_ok, created_at")
+      .select("id, user_id, slug, display_name, studio_name, is_published, is_demo, stripe_charges_ok, created_at")
       .order("created_at", { ascending: false }),
     admin.from("pieces")
       .select("id, title, status, price_pence, created_at, potters(slug, display_name)")
@@ -83,6 +83,7 @@ export default async function AdminPage() {
                 <tr key={p.id} className="border-b last:border-0">
                   <td className="p-3">
                     <Link href={`/admin/potters/${p.id}`} className="font-medium text-clay-700 hover:underline">{p.studio_name ?? p.display_name}</Link>
+                    {p.is_demo && <span className="ml-2 text-[10px] uppercase tracking-wider bg-celadon-light text-celadon-dark rounded px-1.5 py-0.5">Demo</span>}
                     <span className="block text-xs text-stone-400">/{p.slug}</span>
                   </td>
                   <td className="p-3 text-stone-600">{emailById.get(p.user_id) || "—"}</td>

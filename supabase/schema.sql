@@ -41,6 +41,7 @@ create table potters (
   commission_bps       int  not null default 1200,
   onboarding_step      text not null default 'profile',
   is_published         boolean not null default false,
+  is_demo              boolean not null default false,  -- example potter: enquiries and buying disabled
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()
 );
@@ -490,4 +491,4 @@ revoke select on potters from anon, authenticated;
 grant select (id, user_id, slug, display_name, studio_name, headline, bio, bio_source_audio,
   avatar_path, location_label, location, instagram, website_url, studio_address, opening_hours,
   stripe_account_id, stripe_charges_ok, stripe_payouts_ok, plan, commission_bps, onboarding_step,
-  is_published, created_at, updated_at) on potters to anon, authenticated;
+  is_published, is_demo, created_at, updated_at) on potters to anon, authenticated;

@@ -4,6 +4,7 @@ import { PieceCard } from "@/components/piece/PieceCard";
 import { getPublicImageUrl } from "@/lib/utils/images";
 import { EnquiryButton } from "@/components/potter/EnquiryButton";
 import { Vessel } from "@/components/brand/Vessel";
+import { DemoNotice } from "@/components/potter/DemoNotice";
 
 export const dynamic = "force-dynamic";
 
@@ -67,7 +68,11 @@ export default async function PotterPage({ params }: Props) {
             {potter.headline && <p className="font-display italic text-2xl text-terracotta mt-4">{potter.headline}</p>}
             {potter.bio && <p className="text-ink/70 mt-5 max-w-2xl leading-relaxed text-lg">{potter.bio}</p>}
             <div className="mt-7">
-              <EnquiryButton potterId={potter.id} potterName={name} label="Send a message" />
+              {potter.is_demo ? (
+                <DemoNotice />
+              ) : (
+                <EnquiryButton potterId={potter.id} potterName={name} label="Send a message" />
+              )}
             </div>
 
             {(potter.studio_address || potter.opening_hours) && (
