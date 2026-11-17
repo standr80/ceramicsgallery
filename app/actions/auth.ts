@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isReservedSlug } from "@/lib/reserved-slugs";
 
 function toSlug(value: string): string {
   return value
@@ -19,6 +20,8 @@ export async function signUp(formData: FormData) {
   const displayName = formData.get("display_name") as string;
   const studioName = (formData.get("studio_name") as string) || null;
   const slug = (formData.get("slug") as string) || toSlug(displayName);
+
+  if (isReservedSlug(slug)) return { error: "That page address is reserved. Please choose another." };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({ email, password });

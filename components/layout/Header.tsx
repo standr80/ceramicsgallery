@@ -14,6 +14,7 @@ export async function Header() {
         </Link>
         <nav className="flex items-center gap-5 text-sm font-medium">
           <Link href="/shop" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Shop</Link>
+          <Link href="/potters" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Potters</Link>
           <Link href="/courses" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Courses</Link>
           {potter ? (
             <>

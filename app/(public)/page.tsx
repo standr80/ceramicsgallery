@@ -86,7 +86,7 @@ export default async function HomePage() {
       {potters.length > 0 && (
         <section className="py-20 sm:py-24 px-4 sm:px-6 bg-celadon-light/50 border-y border-ink/10">
           <div className="mx-auto max-w-6xl">
-            <SectionHead index="02" title="Meet the potters" />
+            <SectionHead index="02" title="Meet the potters" link={{ href: "/potters", label: "All potters" }} />
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {potters.map((potter, i) => {
                 const name = potter.studio_name ?? potter.display_name;

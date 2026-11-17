@@ -16,8 +16,9 @@ export function Footer() {
             <p className="kicker text-terracotta-light col-span-1">Make</p>
             <Link href="/shop" className="text-paper/75 hover:text-paper">Shop</Link>
             <Link href="/signup" className="text-paper/75 hover:text-paper">Join as a potter</Link>
-            <Link href="/courses" className="text-paper/75 hover:text-paper">Courses</Link>
+            <Link href="/potters" className="text-paper/75 hover:text-paper">Potters</Link>
             <Link href="/login" className="text-paper/75 hover:text-paper">Potter sign in</Link>
+            <Link href="/courses" className="text-paper/75 hover:text-paper">Courses</Link>
           </div>
         </div>
         <div className="mt-14 pt-6 border-t border-paper/15 flex flex-col sm:flex-row justify-between gap-2 text-xs text-paper/45">
