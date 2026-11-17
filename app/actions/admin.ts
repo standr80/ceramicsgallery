@@ -21,6 +21,12 @@ export async function setPotterPublished(potterId: string, published: boolean) {
   revalidatePath("/admin", "layout");
 }
 
+export async function setPotterDemo(potterId: string, demo: boolean) {
+  const admin = await requireAdmin();
+  await admin.from("potters").update({ is_demo: demo }).eq("id", potterId);
+  revalidatePath("/", "layout");
+}
+
 export async function setPieceStatus(pieceId: string, status: "live" | "draft" | "archived") {
   const admin = await requireAdmin();
   await admin.from("pieces").update({ status }).eq("id", pieceId);

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { setPotterPublished, setPieceStatus, signInAsPotter } from "@/app/actions/admin";
+import { setPotterPublished, setPotterDemo, setPieceStatus, signInAsPotter } from "@/app/actions/admin";
 import { ConfirmButton } from "@/components/admin/ConfirmButton";
 
 const fmtDate = (d: string | null | undefined) =>
@@ -54,11 +54,19 @@ export default async function AdminPotterPage({ params }: { params: Promise<{ po
               <span className={potter.is_published ? "text-green-700" : "text-stone-400"}>
                 {potter.is_published ? "Published" : "Hidden"}
               </span>
+              {potter.is_demo && <> · <span className="text-celadon-dark">Demo</span></>}
             </p>
           </div>
           <div className="flex gap-2">
             <form action={setPotterPublished.bind(null, potter.id, !potter.is_published)}>
               <button className="btn-ghost text-sm">{potter.is_published ? "Unpublish" : "Publish"}</button>
+            </form>
+            <form action={setPotterDemo.bind(null, potter.id, !potter.is_demo)}>
+              <button className="btn-ghost text-sm" title={potter.is_demo
+                ? "Show this potter as real: enquiry and booking forms appear, and messages go to their account email"
+                : "Mark as demo: forms are replaced by a demo notice"}>
+                {potter.is_demo ? "Turn demo off" : "Make demo"}
+              </button>
             </form>
             <form action={signInAsPotter.bind(null, potter.id)}>
               <ConfirmButton
