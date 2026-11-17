@@ -44,7 +44,10 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
               <span className={`font-semibold rounded-full px-2.5 py-1 text-xs ${course.is_published ? "bg-green-100 text-green-800" : "bg-stone-200 text-stone-600"}`}>
                 {course.is_published ? "Published" : "Draft"}
               </span>
-              {course.is_published && (
+              {course.is_published && !potter.is_published && (
+                <span className="ml-3 text-amber-700">Not visible yet: your potter page is unpublished. <Link href="/dashboard/profile" className="underline">Publish it</Link></span>
+              )}
+              {course.is_published && potter.is_published && (
                 <Link href={`/courses/${course.id}`} className="ml-3 text-terracotta hover:underline">View public page →</Link>
               )}
             </p>
