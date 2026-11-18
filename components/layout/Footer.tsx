@@ -20,6 +20,7 @@ export function Footer() {
             <Link href="/login" className="text-paper/75 hover:text-paper">Potter sign in</Link>
             <Link href="/courses" className="text-paper/75 hover:text-paper">Courses</Link>
             <Link href="/news" className="text-paper/75 hover:text-paper col-start-1">News</Link>
+            <Link href="/merch" className="text-paper/75 hover:text-paper col-start-1">Merch</Link>
           </div>
         </div>
         <div className="mt-14 pt-6 border-t border-paper/15 flex flex-col sm:flex-row justify-between gap-2 text-xs text-paper/70">

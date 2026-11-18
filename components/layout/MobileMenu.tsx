@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/potters", label: "Potters" },
   { href: "/courses", label: "Courses" },
   { href: "/news", label: "News" },
+  { href: "/merch", label: "Merch" },
 ];
 
 export function MobileMenu({ signedIn, admin = false }: { signedIn: boolean; admin?: boolean }) {
