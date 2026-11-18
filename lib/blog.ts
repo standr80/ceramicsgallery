@@ -26,8 +26,8 @@ export interface Post extends PostSummary {
 
 export const PER_PAGE = 12;
 
-export async function getPosts(page = 1, tag?: string): Promise<{ posts: PostSummary[]; totalPages: number }> {
-  const qs = new URLSearchParams({ page: String(page), per_page: String(PER_PAGE), type: "blog" });
+export async function getPosts(page = 1, tag?: string, perPage = PER_PAGE): Promise<{ posts: PostSummary[]; totalPages: number }> {
+  const qs = new URLSearchParams({ page: String(page), per_page: String(perPage), type: "blog" });
   if (tag) qs.set("tag", tag);
   try {
     const res = await fetch(`${API}/${TENANT}/posts?${qs}`, { next: { revalidate: REVALIDATE } });

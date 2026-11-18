@@ -1,3 +1,5 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -6,45 +8,109 @@ import { penceToDisplay } from "@/lib/stripe";
 import { EnquiryButton } from "@/components/potter/EnquiryButton";
 import { DemoNotice } from "@/components/potter/DemoNotice";
 import { PieceGallery } from "@/components/piece/PieceGallery";
+import { JsonLd, SITE } from "@/components/seo/JsonLd";
 
 export const dynamic = "force-dynamic";
 
 interface Props { params: Promise<{ potterSlug: string; pieceSlug: string }> }
 
-export default async function PiecePage({ params }: Props) {
-  const { potterSlug, pieceSlug: pieceId } = await params;
+const clip = (text: string, max: number) => {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t.replace(/[.!]?$/, ".");
+  return t.slice(0, t.lastIndexOf(" ", max)).replace(/[,;:.]$/, "") + "…";
+};
 
+type PiecePotter = {
+  id: string; slug: string; display_name: string; studio_name: string | null;
+  stripe_charges_ok: boolean; is_demo: boolean; is_published: boolean;
+};
+
+// Shared by the page and its metadata, so the database is only asked once per request.
+const getPiece = cache(async (potterSlug: string, pieceId: string) => {
+  if (!/^[0-9a-f-]{36}$/i.test(pieceId)) return null;
   const supabase = await createClient();
   const { data: piece } = await supabase
     .from("pieces")
-    .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok, is_demo)")
+    .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok, is_demo, is_published)")
     .eq("id", pieceId)
     .eq("potters.slug", potterSlug)
     .in("status", ["live", "sold"])
     .single();
-
-  if (!piece) notFound();
-
+  if (!piece) return null;
   const { data: images } = await supabase
     .from("piece_images")
     .select("*")
     .eq("piece_id", pieceId)
     .order("position");
+  const potter = piece.potters as PiecePotter;
+  const photos = (images ?? []).map((img, i, all) => ({
+    url: getPublicImageUrl(img.processed_path ?? img.original_path),
+    alt: img.alt_text || (all.length > 1 ? `${piece.title}, photo ${i + 1} of ${all.length}` : piece.title),
+  }));
+  return { piece, potter, photos };
+});
 
-  const potter = piece.potters as {
-    id: string;
-    slug: string;
-    display_name: string;
-    studio_name: string | null;
-    stripe_charges_ok: boolean;
-    is_demo: boolean;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { potterSlug, pieceSlug } = await params;
+  const data = await getPiece(potterSlug, pieceSlug);
+  if (!data) return {};
+  const { piece, potter, photos } = data;
+  const maker = potter.studio_name ?? potter.display_name;
+  const price = piece.price_pence != null ? ` ${penceToDisplay(piece.price_pence)}.` : "";
+  const description = (piece.description
+    ? clip(piece.description, 130)
+    : `Handmade ${piece.title.toLowerCase()} by ${maker}.`) + price;
+  const url = `/${potter.slug}/${piece.id}`;
+  return {
+    title: `${piece.title} by ${maker} | Ceramics Gallery`,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: `${piece.title} by ${maker}`, description, url, images: photos.slice(0, 1).map((p) => p.url) },
+    robots: potter.is_demo || !potter.is_published ? { index: false } : undefined,
   };
-  const imageUrls = (images ?? []).map((img) => getPublicImageUrl(img.processed_path ?? img.original_path));
+}
+
+export default async function PiecePage({ params }: Props) {
+  const { potterSlug, pieceSlug } = await params;
+  const data = await getPiece(potterSlug, pieceSlug);
+  if (!data) notFound();
+  const { piece, potter, photos } = data;
+  const imageUrls = photos.map((p) => p.url);
+
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: piece.title,
+    description: piece.description ?? undefined,
+    image: imageUrls,
+    url: `${SITE}/${potter.slug}/${piece.id}`,
+    brand: { "@type": "Brand", name: potter.studio_name ?? potter.display_name },
+    ...(piece.price_pence != null && {
+      offers: {
+        "@type": "Offer",
+        price: (piece.price_pence / 100).toFixed(2),
+        priceCurrency: "GBP",
+        availability: piece.status === "sold" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+        itemCondition: "https://schema.org/NewCondition",
+      },
+    }),
+  };
+  const crumbsLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Potters", item: `${SITE}/potters` },
+      { "@type": "ListItem", position: 2, name: potter.studio_name ?? potter.display_name, item: `${SITE}/${potter.slug}` },
+      { "@type": "ListItem", position: 3, name: piece.title },
+    ],
+  };
 
   return (
     <div className="py-12 px-4">
+      {!potter.is_demo && <JsonLd data={productLd} />}
+      <JsonLd data={crumbsLd} />
       <div className="mx-auto max-w-5xl">
-        <nav className="text-sm text-stone-400 mb-6">
+        <nav className="text-sm text-stone-600 mb-6">
           <Link href={`/${potterSlug}`} className="hover:text-clay-700 transition-colors">
             {potter.studio_name ?? potter.display_name}
           </Link>
@@ -53,7 +119,7 @@ export default async function PiecePage({ params }: Props) {
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <PieceGallery urls={imageUrls} title={piece.title} />
+          <PieceGallery urls={imageUrls} alts={photos.map((p) => p.alt)} title={piece.title} />
 
           <div className="flex flex-col gap-5">
             <div>
@@ -79,7 +145,7 @@ export default async function PiecePage({ params }: Props) {
             )}
 
             {(piece.height_cm || piece.width_cm) && (
-              <p className="text-sm text-stone-400">
+              <p className="text-sm text-stone-600">
                 {[piece.height_cm && `H ${piece.height_cm}cm`, piece.width_cm && `W ${piece.width_cm}cm`]
                   .filter(Boolean)
                   .join(" × ")}

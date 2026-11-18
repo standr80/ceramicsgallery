@@ -36,7 +36,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <Link href="/dashboard/courses" className="text-sm text-ink/55 hover:text-ink">← Courses</Link>
+        <Link href="/dashboard/courses" className="text-sm text-ink/65 hover:text-ink">← Courses</Link>
         <div className="flex flex-wrap items-end justify-between gap-4 mt-2">
           <div>
             <h1 className="font-display text-4xl text-ink">{course.title}</h1>
@@ -48,7 +48,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
                 <span className="ml-3 text-amber-700">Not visible yet: your potter page is unpublished. <Link href="/dashboard/profile" className="underline">Publish it</Link></span>
               )}
               {course.is_published && potter.is_published && (
-                <Link href={`/courses/${course.id}`} className="ml-3 text-terracotta hover:underline">View public page →</Link>
+                <Link href={`/courses/${course.id}`} className="ml-3 text-terracotta-dark hover:underline">View public page →</Link>
               )}
             </p>
           </div>
@@ -64,7 +64,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
             </form>
           </div>
         </div>
-        {error === "bookings" && <p className="mt-4 text-sm text-red-800 bg-red-50 border border-red-200 rounded-xl px-4 py-3">This course has open bookings, so it can&apos;t be deleted. Cancel its dates first, or unpublish it instead.</p>}
+        {error === "bookings" && <p role="alert" className="mt-4 text-sm text-red-800 bg-red-50 border border-red-200 rounded-xl px-4 py-3">This course has open bookings, so it can&apos;t be deleted. Cancel its dates first, or unpublish it instead.</p>}
         {saved && <p className="mt-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-xl px-4 py-3">Saved.{!course.is_published && " Publish it when you're ready for people to see it."}</p>}
       </div>
 
@@ -86,7 +86,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
         <section className="flex flex-col gap-4">
           <h2 className="flex items-baseline gap-3 border-b border-ink/15 pb-3">
             <span className="font-display text-2xl text-ink">Dates</span>
-            <span className="text-sm text-ink/50">{upcoming.length} upcoming</span>
+            <span className="text-sm text-ink/65">{upcoming.length} upcoming</span>
           </h2>
           {upcoming.length === 0 ? (
             <p className="text-sm text-ink/60">No upcoming dates. Add one below{!course.is_published ? ", then publish the course" : ""}.</p>
@@ -101,7 +101,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
                         {fmtDayLong(s.meetings[0].starts_at)}, {fmtTimeRange(s.meetings[0])}
                       </p>
                       {s.meetings.length > 1 && (
-                        <p className="text-sm text-ink/55">
+                        <p className="text-sm text-ink/65">
                           {s.meetings.length} weeks: {s.meetings.map((m) => fmtDay(m.starts_at)).join(" · ")}
                         </p>
                       )}
@@ -113,7 +113,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
                       </span>
                       <form action={cancelSession.bind(null, s.id, course.id)}>
                         <ConfirmButton
-                          className="text-ink/55 underline underline-offset-2 hover:text-red-700"
+                          className="text-ink/65 underline underline-offset-2 hover:text-red-700"
                           message={taken + s.requested > 0
                             ? `Cancel this date? The ${taken + s.requested} people booked will be emailed that it's cancelled.`
                             : "Remove this date?"}

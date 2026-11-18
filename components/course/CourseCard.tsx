@@ -23,11 +23,11 @@ export function CourseCard({ course, showPotter = true }: { course: PublicCourse
         )}
       </div>
       <div className="min-w-0 py-1 flex flex-col">
-        <p className="kicker text-ink/50">
+        <p className="kicker text-ink/65">
           {label(FORMATS, course.format)}{where ? ` · ${where}` : ""}
         </p>
         <h3 className="font-display text-2xl sm:text-3xl text-ink leading-tight mt-1 group-hover:text-terracotta transition-colors">{course.title}</h3>
-        {showPotter && <p className="text-sm text-ink/55">with {studio}</p>}
+        {showPotter && <p className="text-sm text-ink/65">with {studio}</p>}
         {course.summary && <p className="text-ink/70 text-sm sm:text-base mt-2 line-clamp-2">{course.summary}</p>}
 
         <div className="mt-auto pt-3 flex flex-wrap items-end justify-between gap-3">
@@ -39,18 +39,18 @@ export function CourseCard({ course, showPotter = true }: { course: PublicCourse
                     {fmtDay(s.starts_at)}{s.meetings.length > 1 ? ` (${s.meetings.length} wks)` : ""}
                   </span>
                 ))}
-                {course.sessions.length > 3 && <span className="text-ink/50 py-0.5">+{course.sessions.length - 3} more</span>}
+                {course.sessions.length > 3 && <span className="text-ink/65 py-0.5">+{course.sessions.length - 3} more</span>}
               </div>
             )}
             {course.booking_mode === "on_request" && <span>Dates to suit you</span>}
             {course.booking_mode === "ongoing" && <span>Weekly classes · join any time</span>}
-            <span className="block text-ink/50 mt-1">
+            <span className="block text-ink/65 mt-1">
               {[label(LEVELS, course.level), fmtDuration(course.duration_minutes)].filter(Boolean).join(" · ")}
             </span>
           </div>
           <p className="font-display text-2xl text-ink leading-none">
             {fmtPrice(course.price_pence)}
-            <span className="text-sm font-body text-ink/50">{course.booking_mode === "ongoing" ? ` / ${course.sessions_count ?? ""} sessions` : " pp"}</span>
+            <span className="text-sm font-body text-ink/65">{course.booking_mode === "ongoing" ? ` / ${course.sessions_count ?? ""} sessions` : " pp"}</span>
           </p>
         </div>
       </div>

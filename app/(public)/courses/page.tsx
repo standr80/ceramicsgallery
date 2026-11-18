@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Pottery Courses & Workshops | Ceramics Gallery",
   description: "Pottery tasters, weekend courses, 1:1 lessons and weekly classes with independent British potters.",
+  alternates: { canonical: "/courses" },
 };
 
 interface Props { searchParams: Promise<{ technique?: string; level?: string; format?: string; q?: string }> }
@@ -53,11 +54,11 @@ export default async function CoursesPage({ searchParams }: Props) {
             <FilterGroup title="Technique" items={TECHNIQUES} current={filters.technique} href={(v) => href("technique", v)} />
             <FilterGroup title="Format" items={FORMATS} current={filters.format} href={(v) => href("format", v)} />
             <FilterGroup title="Level" items={LEVELS.filter((l) => l.value !== "all")} current={filters.level} href={(v) => href("level", v)} />
-            {active && <Link href="/courses" className="text-terracotta underline underline-offset-2">Clear filters</Link>}
+            {active && <Link href="/courses" className="text-terracotta-dark underline underline-offset-2">Clear filters</Link>}
           </aside>
 
           <div>
-            <p className="text-sm text-ink/55 mb-4">{courses.length} {courses.length === 1 ? "course" : "courses"}</p>
+            <p className="text-sm text-ink/65 mb-4">{courses.length} {courses.length === 1 ? "course" : "courses"}</p>
             {courses.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-ink/20 p-10 text-center">
                 <p className="font-display text-3xl text-ink">Nothing matches just now</p>
@@ -80,7 +81,7 @@ function FilterGroup({ title, items, current, href }: {
 }) {
   return (
     <div>
-      <p className="kicker text-ink/50 mb-2">{title}</p>
+      <p className="kicker text-ink/65 mb-2">{title}</p>
       <div className="flex flex-wrap lg:flex-col gap-1.5 lg:gap-1">
         {items.map((i) => {
           const on = current === i.value;

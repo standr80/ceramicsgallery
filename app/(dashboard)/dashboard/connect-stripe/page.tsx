@@ -28,7 +28,7 @@ export default async function ConnectStripePage({
 
       <div className="card p-6 flex flex-col gap-4">
         <div className="flex items-center gap-4">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${potter.stripe_charges_ok ? "bg-green-100 text-green-700" : "bg-stone-100 text-stone-400"}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${potter.stripe_charges_ok ? "bg-green-100 text-green-700" : "bg-stone-100 text-stone-600"}`}>
             {potter.stripe_charges_ok ? "✓" : "1"}
           </div>
           <div>

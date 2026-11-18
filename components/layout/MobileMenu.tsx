@@ -32,7 +32,7 @@ export function MobileMenu({ signedIn, admin = false }: { signedIn: boolean; adm
   }, [open]);
 
   return (
-    <div className="sm:hidden">
+    <div className="md:hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -47,7 +47,7 @@ export function MobileMenu({ signedIn, admin = false }: { signedIn: boolean; adm
       </button>
 
       {open && mounted && createPortal(
-        <div id="mobile-menu" className="sm:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-paper border-t border-ink/10 px-6 py-8 flex flex-col">
+        <div id="mobile-menu" className="md:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-paper border-t border-ink/10 px-6 py-8 flex flex-col">
           <nav className="flex flex-col">
             {LINKS.map((l) => (
               <Link
@@ -73,7 +73,7 @@ export function MobileMenu({ signedIn, admin = false }: { signedIn: boolean; adm
                 <Link href="/login" className="btn-secondary py-3.5 text-base">Potter sign in</Link>
               </>
             )}
-            {admin && <Link href="/admin" className="text-center text-sm text-ink/50 py-2">Admin</Link>}
+            {admin && <Link href="/admin" className="text-center text-sm text-ink/65 py-2">Admin</Link>}
           </div>
         </div>,
         document.body,

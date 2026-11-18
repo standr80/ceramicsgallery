@@ -52,7 +52,7 @@ export function AddDatesForm({ courseId, defaultPlaces, multiWeek, defaultHours 
         )}
         <Submit />
       </div>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     </form>
   );
 }

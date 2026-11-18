@@ -95,7 +95,7 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
     <div className="max-w-2xl">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <a href="/dashboard/studio" className="text-stone-400 hover:text-stone-700 transition-colors">
+        <a href="/dashboard/studio" className="text-stone-600 hover:text-stone-700 transition-colors">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M19 12H5m7-7-7 7 7 7" />
           </svg>
@@ -117,7 +117,7 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
 
       {/* Images */}
       <div className="mb-8">
-        <p className="text-sm font-semibold mb-3">Photos <span className="text-stone-400 font-normal">({images.length}/3)</span></p>
+        <p className="text-sm font-semibold mb-3">Photos <span className="text-stone-600 font-normal">({images.length}/3)</span></p>
         <div className="grid grid-cols-3 gap-3">
           {images.map((img) => {
             const url = getPublicImageUrl(img.processed_path ?? img.original_path);
@@ -147,13 +147,13 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
               className="aspect-square rounded-xl border-2 border-dashed border-clay-200 flex flex-col items-center justify-center gap-1 hover:border-clay-400 transition-colors disabled:opacity-50 text-clay-300"
             >
               {uploading ? (
-                <span className="text-xs text-stone-400">Uploading…</span>
+                <span className="text-xs text-stone-600">Uploading…</span>
               ) : (
                 <>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M3 8h3l2-3h8l2 3h3v12H3z" /><circle cx="12" cy="13.5" r="3.5" />
                   </svg>
-                  <span className="text-xs text-stone-400">Add photo</span>
+                  <span className="text-xs text-stone-600">Add photo</span>
                 </>
               )}
             </button>

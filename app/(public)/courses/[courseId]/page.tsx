@@ -6,6 +6,7 @@ import { DemoNotice } from "@/components/potter/DemoNotice";
 import { PieceGallery } from "@/components/piece/PieceGallery";
 import { Vessel } from "@/components/brand/Vessel";
 import { getPublicImageUrl } from "@/lib/utils/images";
+import { JsonLd, SITE } from "@/components/seo/JsonLd";
 import {
   FORMATS, LEVELS, TECHNIQUES, INCLUDED, cancellationText, fmtDay, fmtDayLong, fmtDuration, fmtPrice, fmtTimeRange, label,
 } from "@/lib/courses/meta";
@@ -21,6 +22,9 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${course.title} with ${studio} | Ceramics Gallery`,
     description: course.summary ?? course.description?.slice(0, 160) ?? "",
+    alternates: { canonical: `/courses/${course.id}` },
+    ...(course.image_paths.length > 0 && { openGraph: { images: [getPublicImageUrl(course.image_paths[0])] } }),
+    robots: course.potter.is_demo ? { index: false } : undefined,
   };
 }
 
@@ -43,10 +47,38 @@ export default async function CoursePage({ params }: Props) {
   const included = INCLUDED.filter((i) => course.included.includes(i.value)).map((i) =>
     i.value === "firing" && course.pieces_fired ? `Firing of ${course.pieces_fired} piece${course.pieces_fired > 1 ? "s" : ""}` : i.label);
 
+  const offer = {
+    "@type": "Offer",
+    price: (course.price_pence / 100).toFixed(2),
+    priceCurrency: "GBP",
+    category: "Paid",
+  };
+  const courseLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.summary ?? course.description ?? course.title,
+    url: `${SITE}/courses/${course.id}`,
+    image: course.image_paths.map(getPublicImageUrl),
+    provider: { "@type": "Organization", name: studio, sameAs: `${SITE}/${p.slug}` },
+    offers: [offer],
+    hasCourseInstance: course.booking_mode === "dates" && course.sessions.length
+      ? course.sessions.map((s) => ({
+          "@type": "CourseInstance",
+          courseMode: course.is_online ? "Online" : "Onsite",
+          startDate: s.starts_at,
+          endDate: s.meetings[s.meetings.length - 1]?.ends_at ?? s.ends_at,
+          location: course.is_online ? undefined : { "@type": "Place", name: course.venue_name ?? studio, address: course.venue_address ?? p.studio_address ?? p.location_label ?? undefined },
+          offers: offer,
+        }))
+      : [{ "@type": "CourseInstance", courseMode: course.is_online ? "Online" : "Onsite", courseSchedule: course.schedule_text ? { "@type": "Schedule", repeatFrequency: "P1W", description: course.schedule_text } : undefined }],
+  };
+
   return (
     <div className="py-10 sm:py-14 px-4 sm:px-6">
+      {!p.is_demo && <JsonLd data={courseLd} />}
       <div className="mx-auto max-w-6xl">
-        <nav className="text-sm text-ink/50 mb-6">
+        <nav className="text-sm text-ink/65 mb-6">
           <Link href="/courses" className="hover:text-ink">Courses</Link> / <Link href={`/${p.slug}`} className="hover:text-ink">{studio}</Link>
         </nav>
 
@@ -79,7 +111,7 @@ export default async function CoursePage({ params }: Props) {
             <dl className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-ink/10 rounded-2xl overflow-hidden border border-ink/10">
               {facts.map(([k, v]) => (
                 <div key={k} className="bg-paper p-4">
-                  <dt className="kicker text-ink/45">{k}</dt>
+                  <dt className="kicker text-ink/65">{k}</dt>
                   <dd className="text-ink mt-1">{v}</dd>
                 </div>
               ))}
@@ -110,11 +142,11 @@ export default async function CoursePage({ params }: Props) {
 
             <section className="grid sm:grid-cols-2 gap-8 border-t border-ink/10 pt-8">
               <div>
-                <p className="kicker text-ink/45 mb-2">Where</p>
+                <p className="kicker text-ink/65 mb-2">Where</p>
                 <p className="text-ink/80 whitespace-pre-line">{venue || "Details on booking"}</p>
               </div>
               <div>
-                <p className="kicker text-ink/45 mb-2">Cancellations</p>
+                <p className="kicker text-ink/65 mb-2">Cancellations</p>
                 <p className="text-ink/80 text-sm">{cancellationText(course.cancellation_policy, course.cancellation_text)}</p>
               </div>
             </section>
@@ -124,7 +156,7 @@ export default async function CoursePage({ params }: Props) {
             <div>
               <p className="font-display text-5xl text-ink leading-none">
                 {fmtPrice(course.price_pence)}
-                <span className="text-base font-body text-ink/50">
+                <span className="text-base font-body text-ink/65">
                   {course.booking_mode === "ongoing" ? ` for ${course.sessions_count ?? ""} sessions` : " per person"}
                 </span>
               </p>
@@ -137,7 +169,7 @@ export default async function CoursePage({ params }: Props) {
 
             {course.booking_mode === "ongoing" && course.schedule_text && (
               <div className="rounded-2xl border border-ink/15 p-4">
-                <p className="kicker text-ink/45 mb-2">Weekly timetable</p>
+                <p className="kicker text-ink/65 mb-2">Weekly timetable</p>
                 <p className="text-ink/80 whitespace-pre-line">{course.schedule_text}</p>
               </div>
             )}

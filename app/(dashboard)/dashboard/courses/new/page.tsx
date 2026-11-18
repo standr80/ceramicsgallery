@@ -11,7 +11,7 @@ export default async function NewCoursePage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <Link href="/dashboard/courses" className="text-sm text-ink/55 hover:text-ink">← Courses</Link>
+        <Link href="/dashboard/courses" className="text-sm text-ink/65 hover:text-ink">← Courses</Link>
         <h1 className="font-display text-4xl text-ink mt-2">Add a course</h1>
       </div>
       <CourseForm studioAddress={potter.studio_address} />

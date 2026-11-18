@@ -26,7 +26,7 @@ export default function LoginPage() {
         <h1 className="font-display text-3xl font-semibold text-clay-900 mb-6">Sign in</h1>
 
         <form onSubmit={handleSubmit} method="POST" className="flex flex-col gap-4">
-          {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+          {error && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1.5">Email</label>
             <input id="email" name="email" type="email" required className="input-field" placeholder="you@example.com" />

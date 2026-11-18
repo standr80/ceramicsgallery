@@ -26,7 +26,7 @@ export default async function RequestsPage() {
   return (
     <div className="flex flex-col gap-8 max-w-3xl">
       <div>
-        <Link href="/dashboard/courses" className="text-sm text-ink/55 hover:text-ink">← Courses</Link>
+        <Link href="/dashboard/courses" className="text-sm text-ink/65 hover:text-ink">← Courses</Link>
         <h1 className="font-display text-4xl text-ink mt-2">Booking requests</h1>
         <p className="text-ink/60 mt-1">
           Places on dated courses are held for {HOLD_HOURS} hours while you decide. Confirming or declining emails the person for you.
@@ -35,7 +35,7 @@ export default async function RequestsPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="font-display text-2xl text-ink">To answer ({open.length})</h2>
-        {open.length === 0 ? <p className="text-sm text-ink/55">You&apos;re all caught up.</p> : open.map((r) => <RequestCard key={r.id} r={shape(r)} />)}
+        {open.length === 0 ? <p className="text-sm text-ink/65">You&apos;re all caught up.</p> : open.map((r) => <RequestCard key={r.id} r={shape(r)} />)}
       </section>
 
       {done.length > 0 && (

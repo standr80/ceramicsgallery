@@ -58,7 +58,7 @@ export default function SignupPage() {
         <p className="text-stone-500 mb-6">List your work and take payments in minutes.</p>
 
         <form onSubmit={handleSubmit} method="POST" className="flex flex-col gap-4">
-          {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+          {error && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
           <div>
             <label htmlFor="display_name" className="block text-sm font-medium mb-1.5">Your name</label>
@@ -68,7 +68,7 @@ export default function SignupPage() {
 
           <div>
             <label htmlFor="studio_name" className="block text-sm font-medium mb-1.5">
-              Studio name <span className="text-stone-400 font-normal">(optional)</span>
+              Studio name <span className="text-stone-600 font-normal">(optional)</span>
             </label>
             <input id="studio_name" name="studio_name" type="text" className="input-field" placeholder="e.g. Mudlark Studio" />
           </div>
@@ -76,12 +76,12 @@ export default function SignupPage() {
           <div>
             <label htmlFor="slug" className="block text-sm font-medium mb-1.5">Your gallery URL</label>
             <div className="flex items-center rounded-xl border border-stone-300 bg-white focus-within:border-clay-500 focus-within:ring-2 focus-within:ring-clay-500/20 overflow-hidden">
-              <span className="pl-3 pr-1 text-sm text-stone-400 whitespace-nowrap select-none">ceramicsgallery.co.uk/</span>
+              <span className="pl-3 pr-1 text-sm text-stone-600 whitespace-nowrap select-none">ceramicsgallery.co.uk/</span>
               <input id="slug" name="slug" type="text" required className="flex-1 py-2.5 pr-3 text-sm bg-transparent outline-none"
                 value={slug} onChange={(e) => { setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); setSlugEdited(true); }} />
             </div>
             <p className="mt-1 text-xs min-h-4">
-              {slugStatus === "checking" && <span className="text-stone-400">Checking…</span>}
+              {slugStatus === "checking" && <span className="text-stone-600">Checking…</span>}
               {slugStatus === "available" && <span className="text-green-600">✓ Available</span>}
               {slugStatus === "taken" && <span className="text-red-600">✗ Already taken</span>}
             </p>

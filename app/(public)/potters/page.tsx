@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Potters | Ceramics Gallery",
   description: "Meet the independent British potters selling on Ceramics Gallery.",
+  alternates: { canonical: "/potters" },
 };
 
 export default async function PottersPage() {
@@ -43,7 +44,7 @@ export default async function PottersPage() {
         </div>
 
         {sorted.length === 0 ? (
-          <p className="text-ink/55">No potters yet.</p>
+          <p className="text-ink/65">No potters yet.</p>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
             {sorted.map((potter, i) => {
@@ -81,11 +82,11 @@ export default async function PottersPage() {
                     })}
                   </div>
                   <div className="mt-4">
-                    <p className="kicker text-ink/50">{potter.location_label ?? "British potter"}</p>
+                    <p className="kicker text-ink/65">{potter.location_label ?? "British potter"}</p>
                     <h2 className="font-display text-3xl text-ink leading-tight mt-1 group-hover:text-terracotta transition-colors">
                       {name}
                     </h2>
-                    {potter.studio_name && <p className="text-sm text-ink/55">by {potter.display_name}</p>}
+                    {potter.studio_name && <p className="text-sm text-ink/65">by {potter.display_name}</p>}
                     {potter.headline && <p className="text-ink/70 mt-2 leading-snug line-clamp-2">{potter.headline}</p>}
                     <p className="text-sm font-semibold text-ink mt-3">
                       {info.count > 0 ? `${info.count} ${info.count === 1 ? "piece" : "pieces"} for sale →` : "Visit the studio →"}

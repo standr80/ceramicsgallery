@@ -31,7 +31,7 @@ export function CourseForm({ course, studioAddress }: Props) {
 
   return (
     <form action={submit} className="flex flex-col gap-10 max-w-3xl">
-      {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</p>}
 
       <Section n="1" title="The course">
         <Field label="Title" hint="e.g. “Pottery wheel taster” or “5-week beginners throwing course”">
@@ -72,7 +72,7 @@ export function CourseForm({ course, studioAddress }: Props) {
             <label key={m.value} className={`cursor-pointer rounded-2xl border p-4 transition-colors ${mode === m.value ? "border-ink bg-ink text-paper" : "border-ink/15 bg-white hover:border-ink/40"}`}>
               <input type="radio" name="booking_mode" value={m.value} checked={mode === m.value} onChange={() => setMode(m.value)} className="sr-only" />
               <span className="font-semibold block">{m.label}</span>
-              <span className={`text-sm ${mode === m.value ? "text-paper/70" : "text-ink/55"}`}>{m.hint}</span>
+              <span className={`text-sm ${mode === m.value ? "text-paper/70" : "text-ink/65"}`}>{m.hint}</span>
             </label>
           ))}
         </div>
@@ -91,7 +91,7 @@ export function CourseForm({ course, studioAddress }: Props) {
         )}
         <label className="flex items-start gap-3 text-sm">
           <input type="checkbox" checked={external} onChange={(e) => setExternal(e.target.checked)} className="mt-1" />
-          <span>I already take bookings on my own website. <span className="text-ink/55">Show a “Book on my website” button instead of our request form.</span></span>
+          <span>I already take bookings on my own website. <span className="text-ink/65">Show a “Book on my website” button instead of our request form.</span></span>
         </label>
         {external && (
           <Field label="Your booking page">
@@ -176,7 +176,7 @@ export function CourseForm({ course, studioAddress }: Props) {
 
       <div className="sticky bottom-0 -mx-4 px-4 py-4 bg-paper/95 backdrop-blur border-t border-ink/10 flex items-center gap-3">
         <SaveButton isNew={!course} />
-        <p className="text-sm text-ink/55">{course ? (course.is_published ? "Changes show straight away." : "Saved as a draft until you publish.") : "Saved as a draft. You can publish it next."}</p>
+        <p className="text-sm text-ink/65">{course ? (course.is_published ? "Changes show straight away." : "Saved as a draft until you publish.") : "Saved as a draft. You can publish it next."}</p>
       </div>
     </form>
   );
@@ -206,7 +206,7 @@ function Section({ n, title, children }: { n: string; title: string; children: R
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="block text-sm font-medium mb-1.5">{label}{hint && <span className="font-normal text-ink/50"> · {hint}</span>}</span>
+      <span className="block text-sm font-medium mb-1.5">{label}{hint && <span className="font-normal text-ink/65"> · {hint}</span>}</span>
       {children}
     </label>
   );
@@ -270,12 +270,12 @@ function CoursePhotos({ initial }: { initial: string[] }) {
         </div>
       ))}
       {paths.length < 6 && (
-        <button type="button" onClick={() => ref.current?.click()} disabled={busy} className="w-28 h-28 rounded-xl border-2 border-dashed border-ink/20 hover:border-ink/50 text-sm text-ink/55 flex items-center justify-center text-center px-2">
+        <button type="button" onClick={() => ref.current?.click()} disabled={busy} className="w-28 h-28 rounded-xl border-2 border-dashed border-ink/20 hover:border-ink/50 text-sm text-ink/65 flex items-center justify-center text-center px-2">
           {busy ? "Uploading…" : "+ Add photos"}
         </button>
       )}
       <input ref={ref} type="file" accept="image/*,.heic,.heif" multiple className="hidden" onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
-      {err && <p className="w-full text-sm text-red-700">{err}</p>}
+      {err && <p role="alert" className="w-full text-sm text-red-700">{err}</p>}
     </div>
   );
 }

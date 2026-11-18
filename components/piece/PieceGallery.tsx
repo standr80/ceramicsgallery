@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-export function PieceGallery({ urls, title }: { urls: string[]; title: string }) {
+export function PieceGallery({ urls, title, alts }: { urls: string[]; title: string; alts?: string[] }) {
+  const altFor = (i: number) => alts?.[i] || (urls.length > 1 ? `${title}, photo ${i + 1} of ${urls.length}` : title);
   const [active, setActive] = useState(0);
 
   if (urls.length === 0) {
@@ -21,7 +22,7 @@ export function PieceGallery({ urls, title }: { urls: string[]; title: string })
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={urls[active]}
-          alt={urls.length > 1 ? `${title}, photo ${active + 1} of ${urls.length}` : title}
+          alt={altFor(active)}
           className="w-full h-full object-cover"
         />
       </div>
@@ -32,7 +33,7 @@ export function PieceGallery({ urls, title }: { urls: string[]; title: string })
               key={url}
               type="button"
               onClick={() => setActive(i)}
-              aria-label={`Show photo ${i + 1}`}
+              aria-label={`Show photo ${i + 1}: ${altFor(i)}`}
               aria-current={i === active}
               className={`aspect-square rounded-xl overflow-hidden bg-clay-100 border-2 transition-colors ${
                 i === active ? "border-clay-600" : "border-transparent hover:border-clay-300"

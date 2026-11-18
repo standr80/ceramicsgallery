@@ -20,7 +20,7 @@ const statusStyle: Record<string, string> = {
   live: "bg-green-100 text-green-700",
   reserved: "bg-yellow-100 text-yellow-700",
   sold: "bg-clay-100 text-clay-700",
-  archived: "bg-stone-100 text-stone-400",
+  archived: "bg-stone-100 text-stone-600",
 };
 
 export function StudioPieceCard({ piece }: Props) {

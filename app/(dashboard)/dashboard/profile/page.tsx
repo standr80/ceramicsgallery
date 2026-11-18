@@ -55,11 +55,11 @@ export default async function ProfilePage({ searchParams }: Props) {
           <input id="display_name" name="display_name" type="text" required defaultValue={potter.display_name} className="input-field" />
         </div>
         <div>
-          <label htmlFor="studio_name" className="block text-sm font-medium mb-1.5">Studio name <span className="text-stone-400 font-normal">(optional)</span></label>
+          <label htmlFor="studio_name" className="block text-sm font-medium mb-1.5">Studio name <span className="text-stone-600 font-normal">(optional)</span></label>
           <input id="studio_name" name="studio_name" type="text" defaultValue={potter.studio_name ?? ""} className="input-field" />
         </div>
         <div>
-          <label htmlFor="headline" className="block text-sm font-medium mb-1.5">Headline <span className="text-stone-400 font-normal">(one line, shown under your name)</span></label>
+          <label htmlFor="headline" className="block text-sm font-medium mb-1.5">Headline <span className="text-stone-600 font-normal">(one line, shown under your name)</span></label>
           <input id="headline" name="headline" type="text" defaultValue={potter.headline ?? ""} className="input-field" placeholder="e.g. Wheel-thrown stoneware from rural Suffolk" />
         </div>
         <div>
@@ -71,23 +71,23 @@ export default async function ProfilePage({ searchParams }: Props) {
           <input id="location_label" name="location_label" type="text" defaultValue={potter.location_label ?? ""} className="input-field" placeholder="e.g. Bury St Edmunds, Suffolk" />
         </div>
         <div>
-          <label htmlFor="studio_address" className="block text-sm font-medium mb-1.5">Studio address <span className="text-stone-400 font-normal">(optional, shown on your page)</span></label>
+          <label htmlFor="studio_address" className="block text-sm font-medium mb-1.5">Studio address <span className="text-stone-600 font-normal">(optional, shown on your page)</span></label>
           <textarea id="studio_address" name="studio_address" rows={3} defaultValue={potter.studio_address ?? ""} className="input-field resize-y" placeholder={"The Old Barn\nMill Lane\nBury St Edmunds IP28 6AB"} />
         </div>
         <div>
-          <label htmlFor="opening_hours" className="block text-sm font-medium mb-1.5">Opening hours <span className="text-stone-400 font-normal">(optional)</span></label>
+          <label htmlFor="opening_hours" className="block text-sm font-medium mb-1.5">Opening hours <span className="text-stone-600 font-normal">(optional)</span></label>
           <textarea id="opening_hours" name="opening_hours" rows={3} defaultValue={potter.opening_hours ?? ""} className="input-field resize-y" placeholder={"Sat–Sun 10am–4pm\nWeekdays by appointment"} />
         </div>
         <div>
-          <label htmlFor="contact_email" className="block text-sm font-medium mb-1.5">Contact email <span className="text-stone-400 font-normal">(private — buyer messages are sent here)</span></label>
+          <label htmlFor="contact_email" className="block text-sm font-medium mb-1.5">Contact email <span className="text-stone-600 font-normal">(private — buyer messages are sent here)</span></label>
           <input id="contact_email" name="contact_email" type="email" defaultValue={potter.contact_email ?? accountEmail ?? ""} className="input-field" placeholder="hello@yourstudio.co.uk" />
         </div>
         <div>
-          <label htmlFor="instagram" className="block text-sm font-medium mb-1.5">Instagram handle <span className="text-stone-400 font-normal">(optional)</span></label>
+          <label htmlFor="instagram" className="block text-sm font-medium mb-1.5">Instagram handle <span className="text-stone-600 font-normal">(optional)</span></label>
           <input id="instagram" name="instagram" type="text" defaultValue={potter.instagram ?? ""} className="input-field" placeholder="@yourhandle" />
         </div>
         <div>
-          <label htmlFor="website_url" className="block text-sm font-medium mb-1.5">Website <span className="text-stone-400 font-normal">(optional)</span></label>
+          <label htmlFor="website_url" className="block text-sm font-medium mb-1.5">Website <span className="text-stone-600 font-normal">(optional)</span></label>
           <input id="website_url" name="website_url" type="url" defaultValue={potter.website_url ?? ""} className="input-field" placeholder="https://yourwebsite.co.uk" />
         </div>
         <div className="pt-2">

@@ -4,6 +4,21 @@ import { getGalleryPieces, getAllPotters } from "@/lib/data/potters";
 import { PieceCard } from "@/components/piece/PieceCard";
 import { Vessel } from "@/components/brand/Vessel";
 import { getPublicImageUrl } from "@/lib/utils/images";
+import { JsonLd, SITE } from "@/components/seo/JsonLd";
+
+export const metadata = {
+  title: "Ceramics Gallery | Handmade Pottery, Potters & Pottery Classes in the UK",
+  description: "Buy handmade pottery direct from independent British potters, meet the makers, and find pottery classes and workshops in their studios.",
+  alternates: { canonical: "/" },
+};
+
+const siteLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": `${SITE}/#org`, name: "Ceramics Gallery", url: SITE, logo: `${SITE}/opengraph-image` },
+    { "@type": "WebSite", "@id": `${SITE}/#site`, name: "Ceramics Gallery", url: SITE, inLanguage: "en-GB", publisher: { "@id": `${SITE}/#org` } },
+  ],
+};
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +30,7 @@ export default async function HomePage() {
 
   return (
     <div>
+      <JsonLd data={siteLd} />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-14 pb-20 sm:pt-20 sm:pb-28 grid lg:grid-cols-[1.15fr_1fr] gap-14 items-center">
@@ -105,7 +121,7 @@ export default async function HomePage() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-display text-2xl text-ink leading-tight group-hover:text-terracotta transition-colors line-clamp-1">{name}</p>
-                      <p className="text-sm text-ink/55 line-clamp-1">
+                      <p className="text-sm text-ink/65 line-clamp-1">
                         {potter.studio_name ? potter.display_name : null}
                         {potter.studio_name && potter.location_label ? " · " : null}
                         {potter.location_label}

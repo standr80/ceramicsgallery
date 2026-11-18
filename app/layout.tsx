@@ -17,6 +17,7 @@ const body = DM_Sans({
 
 export const metadata: Metadata = {
   title: "Ceramics Gallery | Handmade Pottery by UK Potters",
+  applicationName: "Ceramics Gallery",
   description:
     "Discover and buy unique handmade ceramics directly from British potters.",
   metadataBase: new URL("https://www.ceramicsgallery.co.uk"),
@@ -24,7 +25,11 @@ export const metadata: Metadata = {
     title: "Ceramics Gallery | Handmade Pottery by UK Potters",
     description: "Discover and buy unique handmade ceramics directly from British potters.",
     url: "https://www.ceramicsgallery.co.uk",
+    siteName: "Ceramics Gallery",
+    locale: "en_GB",
+    type: "website",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

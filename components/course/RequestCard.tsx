@@ -37,13 +37,13 @@ export function RequestCard({ r }: { r: Req }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold text-ink">
-            {r.name} <span className="font-normal text-ink/55">· {r.places} place{r.places > 1 ? "s" : ""}</span>
+            {r.name} <span className="font-normal text-ink/65">· {r.places} place{r.places > 1 ? "s" : ""}</span>
           </p>
           {r.courseTitle && <p className="text-sm text-ink/70">{r.courseTitle}</p>}
           <p className="text-sm text-ink/70">{r.when ?? r.preferred_dates ?? "No date given"}</p>
           <p className="text-sm mt-1">
-            <a href={`mailto:${r.email}`} className="text-terracotta hover:underline">{r.email}</a>
-            {r.phone && <> · <a href={`tel:${r.phone}`} className="text-terracotta hover:underline">{r.phone}</a></>}
+            <a href={`mailto:${r.email}`} className="text-terracotta-dark hover:underline">{r.email}</a>
+            {r.phone && <> · <a href={`tel:${r.phone}`} className="text-terracotta-dark hover:underline">{r.phone}</a></>}
           </p>
         </div>
         <span className={`text-xs font-semibold rounded-full px-2.5 py-1 capitalize ${STATUS[r.status]}`}>
@@ -51,8 +51,8 @@ export function RequestCard({ r }: { r: Req }) {
         </span>
       </div>
       {r.message && <p className="mt-3 text-sm text-ink/75 whitespace-pre-line border-l-2 border-clay-200 pl-3">{r.message}</p>}
-      {r.potter_note && r.status !== "pending" && <p className="mt-3 text-xs text-ink/50">Your note: {r.potter_note}</p>}
-      <p className="mt-3 text-xs text-ink/40">
+      {r.potter_note && r.status !== "pending" && <p className="mt-3 text-xs text-ink/65">Your note: {r.potter_note}</p>}
+      <p className="mt-3 text-xs text-ink/65">
         Received {new Date(r.created_at).toLocaleString("en-GB", { timeZone: "Europe/London", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}
       </p>
 
@@ -72,8 +72,8 @@ export function RequestCard({ r }: { r: Req }) {
               {busy === "declined" ? "Declining…" : "Decline"}
             </button>
           </div>
-          <p className="text-xs text-ink/45">We&apos;ll email {r.name.split(" ")[0]} your answer. Replies come straight to you.</p>
-          {error && <p className="text-sm text-red-700">{error}</p>}
+          <p className="text-xs text-ink/65">We&apos;ll email {r.name.split(" ")[0]} your answer. Replies come straight to you.</p>
+          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
         </div>
       )}
     </div>

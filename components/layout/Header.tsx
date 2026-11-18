@@ -13,26 +13,26 @@ export async function Header() {
         <Link href="/" className="font-display text-2xl font-semibold text-ink hover:text-terracotta transition-colors shrink-0">
           Ceramics <em className="font-normal text-terracotta">Gallery</em>
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-5 text-sm font-medium">
-          <Link href="/shop" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Shop</Link>
-          <Link href="/potters" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Potters</Link>
-          <Link href="/courses" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Courses</Link>
+        <nav className="flex items-center gap-3 md:gap-5 text-sm font-medium">
+          <Link href="/shop" className="text-ink/70 hover:text-terracotta transition-colors hidden md:block">Shop</Link>
+          <Link href="/potters" className="text-ink/70 hover:text-terracotta transition-colors hidden md:block">Potters</Link>
+          <Link href="/courses" className="text-ink/70 hover:text-terracotta transition-colors hidden md:block">Courses</Link>
           <Link href="/news" className="text-ink/70 hover:text-terracotta transition-colors hidden md:block">News</Link>
           {potter ? (
             <>
-              <Link href="/dashboard/studio" className="text-ink/70 hover:text-terracotta transition-colors hidden sm:block">Studio</Link>
-              <form action={signOut} className="hidden sm:block">
+              <Link href="/dashboard/studio" className="text-ink/70 hover:text-terracotta transition-colors hidden md:block">Studio</Link>
+              <form action={signOut} className="hidden md:block">
                 <button className="btn-ghost text-sm whitespace-nowrap">Sign out</button>
               </form>
             </>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost text-sm hidden sm:inline-flex">Sign in</Link>
-              <Link href="/signup" className="btn-primary text-sm hidden sm:inline-flex">Join as a potter</Link>
+              <Link href="/login" className="btn-ghost text-sm hidden md:inline-flex">Sign in</Link>
+              <Link href="/signup" className="btn-primary text-sm hidden md:inline-flex">Join as a potter</Link>
             </>
           )}
           {admin && (
-            <Link href="/admin" className="text-xs text-ink/50 hover:text-terracotta hidden sm:block">Admin</Link>
+            <Link href="/admin" className="text-xs text-ink/65 hover:text-terracotta hidden md:block">Admin</Link>
           )}
           <MobileMenu signedIn={!!potter} admin={admin} />
         </nav>

@@ -69,7 +69,7 @@ export function EnquiryButton({ potterId, potterName, pieceTitle, label = "Email
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-stone-600 hover:text-stone-700 hover:bg-stone-100"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />
@@ -113,7 +113,7 @@ export function EnquiryButton({ potterId, potterName, pieceTitle, label = "Email
                   />
                 </div>
                 <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-                {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+                {error && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
                 <button type="submit" disabled={status === "sending"} className="btn-primary w-full py-3 disabled:opacity-50">
                   {status === "sending" ? "Sending…" : "Send message"}
                 </button>

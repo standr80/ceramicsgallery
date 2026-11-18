@@ -39,7 +39,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
       type="button"
       onClick={onClose}
       aria-label="Close"
-      className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+      className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-stone-600 hover:text-stone-700 hover:bg-stone-100 transition-colors"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
         <path d="M18 6 6 18M6 6l12 12" />
@@ -207,7 +207,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
           <path d="M3 8h3l2-3h8l2 3h3v12H3z" /><circle cx="12" cy="13.5" r="3.5" />
         </svg>
         <span className="text-lg font-semibold">{converting ? "Preparing photos…" : "Tap to add photos"}</span>
-        <span className="text-sm text-stone-400">or drag and drop</span>
+        <span className="text-sm text-stone-600">or drag and drop</span>
       </button>
       <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
         onChange={(e) => addFiles(e.target.files)} />
@@ -273,7 +273,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
         <p className="text-stone-500 mt-1">Fill in your details. Change anything that isn't right.</p>
       </div>
 
-      {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
       <div className="flex flex-col gap-4">
         <div>
@@ -326,7 +326,7 @@ export function AddPieceFlow({ onDone }: { onDone: () => void }) {
             <label className="block text-xs text-stone-500 mb-1.5">Price (£)</label>
             <input type="number" inputMode="decimal" value={draft.price} onChange={set("price")} className="input-field text-lg font-semibold" placeholder="0.00" />
             {draft.priceLow != null && draft.priceHigh != null && (
-              <p className="text-xs text-stone-400 mt-1">
+              <p className="text-xs text-stone-600 mt-1">
                 Similar pieces: £{(draft.priceLow / 100).toFixed(0)}–£{(draft.priceHigh / 100).toFixed(0)}
               </p>
             )}

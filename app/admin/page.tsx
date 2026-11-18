@@ -84,14 +84,14 @@ export default async function AdminPage() {
                   <td className="p-3">
                     <Link href={`/admin/potters/${p.id}`} className="font-medium text-clay-700 hover:underline">{p.studio_name ?? p.display_name}</Link>
                     {p.is_demo && <span className="ml-2 text-[10px] uppercase tracking-wider bg-celadon-light text-celadon-dark rounded px-1.5 py-0.5">Demo</span>}
-                    <span className="block text-xs text-stone-400">/{p.slug}</span>
+                    <span className="block text-xs text-stone-600">/{p.slug}</span>
                   </td>
                   <td className="p-3 text-stone-600">{emailById.get(p.user_id) || "—"}</td>
                   <td className="p-3">{p.stripe_charges_ok ? "Stripe" : "Enquiry only"}</td>
                   <td className="p-3 text-stone-500 whitespace-nowrap">{fmtDate(p.created_at)}</td>
                   <td className="p-3">
                     <form action={setPotterPublished.bind(null, p.id, !p.is_published)} className="flex items-center gap-2">
-                      <span className={p.is_published ? "text-green-700" : "text-stone-400"}>{p.is_published ? "Published" : "Hidden"}</span>
+                      <span className={p.is_published ? "text-green-700" : "text-stone-600"}>{p.is_published ? "Published" : "Hidden"}</span>
                       <button className="text-xs underline text-stone-500 hover:text-clay-700">{p.is_published ? "Unpublish" : "Publish"}</button>
                     </form>
                   </td>
@@ -123,7 +123,7 @@ export default async function AdminPage() {
                       <td className="p-3 text-stone-500 whitespace-nowrap">{u.last_sign_in_at ? fmtDate(u.last_sign_in_at) : "Never"}</td>
                       <td className="p-3 text-right">
                         {isAdminUser ? (
-                          <span className="text-xs text-stone-400">Admin</span>
+                          <span className="text-xs text-stone-600">Admin</span>
                         ) : (
                           <form action={deleteOrphanAccount.bind(null, u.id)}>
                             <ConfirmButton

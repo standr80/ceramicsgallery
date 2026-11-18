@@ -34,7 +34,7 @@ export default function ForgotEmailPage() {
         </p>
 
         <form onSubmit={handleSubmit} method="POST" className="flex flex-col gap-4">
-          {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
+          {error && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
           <div>
             <label htmlFor="query" className="block text-sm font-medium mb-1.5">Page address, name or studio</label>
             <input id="query" name="query" type="text" required className="input-field" placeholder="ceramicsgallery.co.uk/your-name" />

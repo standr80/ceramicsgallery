@@ -45,7 +45,7 @@ export default async function PostPage({ params }: Props) {
     <article className="py-10 sm:py-14 px-4 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-3xl">
-        <nav className="text-sm text-ink/50 mb-6">
+        <nav className="text-sm text-ink/65 mb-6">
           <Link href="/news" className="hover:text-ink">← News</Link>
         </nav>
         <p className="kicker">{fmtPostDate(post.published_at)}{post.author ? ` · ${post.author}` : ""}</p>
@@ -58,7 +58,7 @@ export default async function PostPage({ params }: Props) {
           <div className="relative aspect-[16/9] rounded-3xl overflow-hidden bg-celadon-light">
             <Image src={post.hero_image} alt={post.hero_image_alt ?? ""} fill unoptimized priority sizes="(min-width: 1024px) 1024px, 100vw" className="object-cover" />
           </div>
-          {post.hero_image_credit && <figcaption className="text-xs text-ink/45 mt-2 text-right">{post.hero_image_credit}</figcaption>}
+          {post.hero_image_credit && <figcaption className="text-xs text-ink/65 mt-2 text-right">{post.hero_image_credit}</figcaption>}
         </figure>
       )}
 

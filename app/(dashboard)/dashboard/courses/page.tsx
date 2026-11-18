@@ -53,10 +53,10 @@ export default async function DashboardCoursesPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="font-semibold text-ink group-hover:text-terracotta line-clamp-1">{c.title}</p>
-                    <p className="text-sm text-ink/55">
+                    <p className="text-sm text-ink/65">
                       {label(FORMATS, c.format)} · {fmtPrice(c.price_pence)} · {label(BOOKING_MODES, c.booking_mode)}
                     </p>
-                    <p className="text-sm text-ink/55">
+                    <p className="text-sm text-ink/65">
                       {c.booking_mode === "dates"
                         ? next ? `Next: ${fmtDay(next.starts_at)} · ${booked}/${total} places taken across ${c.sessions.length} date${c.sessions.length > 1 ? "s" : ""}` : "No upcoming dates. Add some to show it in the directory."
                         : c.external_booking_url ? "Booked on your own website" : "Taking requests"}

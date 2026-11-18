@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit} method="POST" className="flex flex-col gap-4">
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">
+            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">
               {error}{" "}
               {error.includes("expired") && (
                 <Link href="/forgot-password" className="underline font-medium">Request a new link</Link>

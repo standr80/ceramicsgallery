@@ -76,9 +76,9 @@ export function RequestForm({ courseId, mode, sessions, potterName, maxPlaces }:
                 <input type="radio" name="session" value={s.id} disabled={full} checked={sessionId === s.id} onChange={() => { setSessionId(s.id); setPlaces(1); }} />
                 <span className="flex-1">
                   <span className="block font-medium">{s.label}</span>
-                  {s.sub && <span className="block text-ink/55 text-xs">{s.sub}</span>}
+                  {s.sub && <span className="block text-ink/65 text-xs">{s.sub}</span>}
                 </span>
-                <span className={`text-xs ${full ? "" : s.places_left <= 2 ? "text-terracotta font-semibold" : "text-ink/55"}`}>
+                <span className={`text-xs ${full ? "" : s.places_left <= 2 ? "text-terracotta font-semibold" : "text-ink/65"}`}>
                   {full ? "Full" : `${s.places_left} left`}
                 </span>
               </label>
@@ -106,19 +106,19 @@ export function RequestForm({ courseId, mode, sessions, potterName, maxPlaces }:
           <input name="email" type="email" required autoComplete="email" className="input-field mt-1.5" />
         </label>
       </div>
-      <label className="block text-sm font-medium">Phone <span className="font-normal text-ink/50">· optional</span>
+      <label className="block text-sm font-medium">Phone <span className="font-normal text-ink/65">· optional</span>
         <input name="phone" type="tel" autoComplete="tel" className="input-field mt-1.5" />
       </label>
-      <label className="block text-sm font-medium">Message <span className="font-normal text-ink/50">· optional</span>
+      <label className="block text-sm font-medium">Message <span className="font-normal text-ink/65">· optional</span>
         <textarea name="message" rows={3} className="input-field mt-1.5" placeholder="Any experience, access needs or questions" />
       </label>
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
-      {error && <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
       <button disabled={state === "sending"} className="btn-primary py-3.5 text-base disabled:opacity-50">
         {state === "sending" ? "Sending…" : "Send request"}
       </button>
-      <p className="text-xs text-ink/50 text-center">Free to request. {potterName} confirms by email and arranges payment with you.</p>
+      <p className="text-xs text-ink/65 text-center">Free to request. {potterName} confirms by email and arranges payment with you.</p>
     </form>
   );
 }

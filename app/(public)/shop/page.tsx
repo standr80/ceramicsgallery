@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Shop | Ceramics Gallery",
   description: "Browse handmade pottery from British potters.",
+  alternates: { canonical: "/shop" },
 };
 
 export default async function ShopPage() {

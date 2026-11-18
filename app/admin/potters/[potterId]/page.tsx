@@ -51,7 +51,7 @@ export default async function AdminPotterPage({ params }: { params: Promise<{ po
             <h1 className="font-display text-3xl font-semibold text-clay-900">{potter.studio_name ?? potter.display_name}</h1>
             <p className="text-stone-500 text-sm mt-1">
               {potter.display_name} · <Link href={`/${potter.slug}`} className="hover:underline">/{potter.slug}</Link> ·{" "}
-              <span className={potter.is_published ? "text-green-700" : "text-stone-400"}>
+              <span className={potter.is_published ? "text-green-700" : "text-stone-600"}>
                 {potter.is_published ? "Published" : "Hidden"}
               </span>
               {potter.is_demo && <> · <span className="text-celadon-dark">Demo</span></>}

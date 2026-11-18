@@ -63,12 +63,12 @@ export function AvatarUpload({ initialPath }: { initialPath: string | null }) {
           {uploading ? "Uploading…" : path ? "Change photo" : "Upload a photo"}
         </button>
         {path && !uploading && (
-          <button type="button" onClick={() => setPath("")} className="ml-3 text-stone-400 hover:text-stone-700">
+          <button type="button" onClick={() => setPath("")} className="ml-3 text-stone-600 hover:text-stone-700">
             Remove
           </button>
         )}
-        <p className="text-stone-400 mt-1">You, your studio or your work. Click Save profile to keep it.</p>
-        {error && <p className="text-red-600 mt-1">{error}</p>}
+        <p className="text-stone-600 mt-1">You, your studio or your work. Click Save profile to keep it.</p>
+        {error && <p role="alert" className="text-red-600 mt-1">{error}</p>}
       </div>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => upload(e.target.files)} />
     </div>

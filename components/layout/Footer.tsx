@@ -22,7 +22,7 @@ export function Footer() {
             <Link href="/news" className="text-paper/75 hover:text-paper col-start-1">News</Link>
           </div>
         </div>
-        <div className="mt-14 pt-6 border-t border-paper/15 flex flex-col sm:flex-row justify-between gap-2 text-xs text-paper/45">
+        <div className="mt-14 pt-6 border-t border-paper/15 flex flex-col sm:flex-row justify-between gap-2 text-xs text-paper/70">
           <p>© {new Date().getFullYear()} Ceramics Gallery · ceramicsgallery.co.uk</p>
           <p>Prices and availability set by each potter.</p>
         </div>
