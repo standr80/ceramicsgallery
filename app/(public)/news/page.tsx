@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getPosts, fmtPostDate } from "@/lib/blog";
 import { Vessel } from "@/components/brand/Vessel";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "News | Ceramics Gallery",

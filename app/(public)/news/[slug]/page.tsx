@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPost, fmtPostDate } from "@/lib/blog";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 interface Props { params: Promise<{ slug: string }> }
 

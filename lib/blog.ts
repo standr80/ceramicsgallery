@@ -1,9 +1,10 @@
 // Blog posts written by Clem in NBLB, read from its public Content API.
 // BLOG_TENANT can point local testing at another tenant that already has posts.
+// Not cached here: NBLB caches the feed at its edge for 5 minutes, and caching it a second
+// time on this side once left /news showing an empty list long after a post went live.
 
 const API = "https://www.nobrandleftbehind.com/api/content/v1/tenants";
 const TENANT = process.env.BLOG_TENANT || "ceramicsgallery";
-const REVALIDATE = 300;
 
 export interface PostSummary {
   id: string;
@@ -30,7 +31,7 @@ export async function getPosts(page = 1, tag?: string, perPage = PER_PAGE): Prom
   const qs = new URLSearchParams({ page: String(page), per_page: String(perPage), type: "blog" });
   if (tag) qs.set("tag", tag);
   try {
-    const res = await fetch(`${API}/${TENANT}/posts?${qs}`, { next: { revalidate: REVALIDATE } });
+    const res = await fetch(`${API}/${TENANT}/posts?${qs}`, { cache: "no-store" });
     if (!res.ok) return { posts: [], totalPages: 1 };
     const json = await res.json();
     return { posts: json.posts ?? [], totalPages: json.total_pages ?? 1 };
@@ -42,7 +43,7 @@ export async function getPosts(page = 1, tag?: string, perPage = PER_PAGE): Prom
 export async function getPost(slug: string): Promise<Post | null> {
   if (!/^[a-z0-9-]{1,200}$/i.test(slug)) return null;
   try {
-    const res = await fetch(`${API}/${TENANT}/posts/${slug}`, { next: { revalidate: REVALIDATE } });
+    const res = await fetch(`${API}/${TENANT}/posts/${slug}`, { cache: "no-store" });
     if (!res.ok) return null;
     const json = await res.json();
     const post = json.post ?? json;
