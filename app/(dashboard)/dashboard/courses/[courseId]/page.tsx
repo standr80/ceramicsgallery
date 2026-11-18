@@ -48,7 +48,7 @@ export default async function EditCoursePage({ params, searchParams }: Props) {
                 <span className="ml-3 text-amber-700">Not visible yet: your potter page is unpublished. <Link href="/dashboard/profile" className="underline">Publish it</Link></span>
               )}
               {course.is_published && potter.is_published && (
-                <Link href={`/courses/${course.id}`} className="ml-3 text-terracotta-dark hover:underline">View public page →</Link>
+                <Link href={`/courses/${course.slug}`} className="ml-3 text-terracotta-dark hover:underline">View public page →</Link>
               )}
             </p>
           </div>

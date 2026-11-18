@@ -20,7 +20,7 @@ function hashIndex(id: string) {
 }
 
 export function PieceCard({ piece, showPotter }: Props) {
-  const href = `/${piece.potter_slug}/${piece.id}`;
+  const href = `/${piece.potter_slug}/${piece.slug}`;
   const i = hashIndex(piece.id);
 
   return (
@@ -33,7 +33,6 @@ export function PieceCard({ piece, showPotter }: Props) {
             fill
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            unoptimized
           />
         ) : (
           <div className="absolute inset-0 flex items-end justify-center pb-[12%]">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPotterBySlug, getPiecesForPotter } from "@/lib/data/potters";
 import { PieceCard } from "@/components/piece/PieceCard";
@@ -76,8 +77,7 @@ export default async function PotterPage({ params }: Props) {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20 grid md:grid-cols-[auto_1fr] gap-10 items-start">
           <div className="relative w-40 h-48 sm:w-48 sm:h-56 rounded-t-[999px] rounded-b-3xl overflow-hidden bg-terracotta-light/60 shrink-0">
             {potter.avatar_path ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={getPublicImageUrl(potter.avatar_path)} alt={potter.display_name} className="absolute inset-0 w-full h-full object-cover" />
+              <Image src={getPublicImageUrl(potter.avatar_path)} alt={potter.display_name} fill priority sizes="(min-width: 640px) 192px, 160px" className="object-cover" />
             ) : (
               <div className="absolute inset-0 flex items-end justify-center pb-6">
                 <Vessel variant={0} fill="#9c3f1f" className="w-1/2" />

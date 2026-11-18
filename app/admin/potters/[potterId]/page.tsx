@@ -18,7 +18,7 @@ export default async function AdminPotterPage({ params }: { params: Promise<{ po
 
   const [{ data: authUser }, { data: pieces }, { data: enquiries }] = await Promise.all([
     admin.auth.admin.getUserById(potter.user_id),
-    admin.from("pieces").select("id, title, status, price_pence, created_at")
+    admin.from("pieces").select("id, slug, title, status, price_pence, created_at")
       .eq("potter_id", potterId).order("created_at", { ascending: false }),
     admin.from("contact_enquiries").select("id, sender_name, sender_email, message, created_at")
       .eq("potter_id", potterId).order("created_at", { ascending: false }).limit(50),
@@ -99,7 +99,7 @@ export default async function AdminPotterPage({ params }: { params: Promise<{ po
                 {pieces.map((p) => (
                   <tr key={p.id} className="border-b last:border-0">
                     <td className="p-3">
-                      <Link href={`/${potter.slug}/${p.id}`} className="font-medium text-clay-700 hover:underline">{p.title}</Link>
+                      <Link href={`/${potter.slug}/${p.slug}`} className="font-medium text-clay-700 hover:underline">{p.title}</Link>
                     </td>
                     <td className="p-3 tabular-nums">{fmtPrice(p.price_pence)}</td>
                     <td className="p-3 text-stone-500 whitespace-nowrap">{fmtDate(p.created_at)}</td>

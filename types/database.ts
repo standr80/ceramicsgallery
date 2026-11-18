@@ -80,6 +80,7 @@ export interface ShippingBand {
 
 export interface Piece {
   id: string;
+  slug: string;
   potter_id: string;
   status: PieceStatus;
   title: string;
@@ -120,6 +121,7 @@ export interface PieceImage {
 
 export interface Course {
   id: string;
+  slug: string;
   potter_id: string;
   title: string;
   description: string | null;
@@ -236,6 +238,7 @@ export interface Booking {
 // View types
 export interface GalleryPiece {
   id: string;
+  slug: string;
   title: string;
   description: string | null;
   price_pence: number | null;

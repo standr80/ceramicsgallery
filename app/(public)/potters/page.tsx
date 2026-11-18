@@ -68,7 +68,6 @@ export default async function PottersPage() {
                               src={getPublicImageUrl(cover)}
                               alt=""
                               fill
-                              unoptimized
                               sizes="(max-width: 640px) 60vw, 20vw"
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />

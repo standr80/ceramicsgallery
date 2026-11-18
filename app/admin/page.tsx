@@ -8,7 +8,7 @@ type Potter = {
   is_published: boolean; is_demo: boolean; stripe_charges_ok: boolean; created_at: string;
 };
 type Piece = {
-  id: string; title: string; status: string; price_pence: number | null; created_at: string;
+  id: string; slug: string; title: string; status: string; price_pence: number | null; created_at: string;
   potters: { slug: string; display_name: string } | null;
 };
 type Enquiry = {
@@ -27,7 +27,7 @@ export default async function AdminPage() {
       .select("id, user_id, slug, display_name, studio_name, is_published, is_demo, stripe_charges_ok, created_at")
       .order("created_at", { ascending: false }),
     admin.from("pieces")
-      .select("id, title, status, price_pence, created_at, potters(slug, display_name)")
+      .select("id, slug, title, status, price_pence, created_at, potters(slug, display_name)")
       .order("created_at", { ascending: false }).limit(50),
     admin.from("contact_enquiries")
       .select("id, sender_name, sender_email, message, created_at, potters(slug, display_name)")
@@ -156,7 +156,7 @@ export default async function AdminPage() {
                 <tr key={p.id} className="border-b last:border-0">
                   <td className="p-3">
                     {p.potters ? (
-                      <Link href={`/${p.potters.slug}/${p.id}`} className="font-medium text-clay-700 hover:underline">{p.title}</Link>
+                      <Link href={`/${p.potters.slug}/${p.slug}`} className="font-medium text-clay-700 hover:underline">{p.title}</Link>
                     ) : p.title}
                   </td>
                   <td className="p-3 text-stone-600">{p.potters?.display_name ?? "—"}</td>

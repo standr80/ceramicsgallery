@@ -57,7 +57,7 @@ export default async function BlogPage({ searchParams }: Props) {
             {lead && (
               <Link href={`/news/${lead.slug}`} className="group grid md:grid-cols-[1.3fr_1fr] gap-6 md:gap-10 items-center mb-14">
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-celadon-light">
-                  {lead.hero_image && <Image src={lead.hero_image} alt={lead.hero_image_alt ?? ""} fill unoptimized priority sizes="(min-width: 768px) 60vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />}
+                  {lead.hero_image && <Image src={lead.hero_image} alt={lead.hero_image_alt ?? ""} fill priority sizes="(min-width: 768px) 60vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />}
                 </div>
                 <div>
                   <p className="kicker text-ink/65">{fmtPostDate(lead.published_at)}</p>
@@ -72,7 +72,7 @@ export default async function BlogPage({ searchParams }: Props) {
               {rest.filter(Boolean).map((p) => p && (
                 <Link key={p.id} href={`/news/${p.slug}`} className="group flex flex-col">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-celadon-light">
-                    {p.hero_image && <Image src={p.hero_image} alt={p.hero_image_alt ?? ""} fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
+                    {p.hero_image && <Image src={p.hero_image} alt={p.hero_image_alt ?? ""} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
                   </div>
                   <p className="kicker text-ink/65 mt-4">{fmtPostDate(p.published_at)}</p>
                   <h3 className="font-display text-2xl text-ink leading-tight mt-1 group-hover:text-terracotta transition-colors">{p.title}</h3>

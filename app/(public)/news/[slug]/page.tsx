@@ -56,7 +56,7 @@ export default async function PostPage({ params }: Props) {
       {post.hero_image && (
         <figure className="mx-auto max-w-5xl mt-10">
           <div className="relative aspect-[16/9] rounded-3xl overflow-hidden bg-celadon-light">
-            <Image src={post.hero_image} alt={post.hero_image_alt ?? ""} fill unoptimized priority sizes="(min-width: 1024px) 1024px, 100vw" className="object-cover" />
+            <Image src={post.hero_image} alt={post.hero_image_alt ?? ""} fill priority sizes="(min-width: 1024px) 1024px, 100vw" className="object-cover" />
           </div>
           {post.hero_image_credit && <figcaption className="text-xs text-ink/65 mt-2 text-right">{post.hero_image_credit}</figcaption>}
         </figure>

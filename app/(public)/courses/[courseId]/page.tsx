@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { getPublishedCourse } from "@/lib/data/courses";
 import { RequestForm } from "@/components/course/RequestForm";
 import { DemoNotice } from "@/components/potter/DemoNotice";
@@ -22,15 +22,17 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${course.title} with ${studio} | Ceramics Gallery`,
     description: course.summary ?? course.description?.slice(0, 160) ?? "",
-    alternates: { canonical: `/courses/${course.id}` },
+    alternates: { canonical: `/courses/${course.slug}` },
     ...(course.image_paths.length > 0 && { openGraph: { images: [getPublicImageUrl(course.image_paths[0])] } }),
     robots: course.potter.is_demo ? { index: false } : undefined,
   };
 }
 
 export default async function CoursePage({ params }: Props) {
-  const course = await getPublishedCourse((await params).courseId);
+  const { courseId } = await params;
+  const course = await getPublishedCourse(courseId);
   if (!course) notFound();
+  if (courseId !== course.slug) permanentRedirect(`/courses/${course.slug}`);
   const p = course.potter;
   const studio = p.studio_name ?? p.display_name;
   const venue = course.is_online ? "Online" : [course.venue_name ?? studio, course.venue_address ?? p.studio_address].filter(Boolean).join("\n");
@@ -58,7 +60,7 @@ export default async function CoursePage({ params }: Props) {
     "@type": "Course",
     name: course.title,
     description: course.summary ?? course.description ?? course.title,
-    url: `${SITE}/courses/${course.id}`,
+    url: `${SITE}/courses/${course.slug}`,
     image: course.image_paths.map(getPublicImageUrl),
     provider: { "@type": "Organization", name: studio, sameAs: `${SITE}/${p.slug}` },
     offers: [offer],

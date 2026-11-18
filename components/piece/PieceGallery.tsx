@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export function PieceGallery({ urls, title, alts }: { urls: string[]; title: string; alts?: string[] }) {
   const altFor = (i: number) => alts?.[i] || (urls.length > 1 ? `${title}, photo ${i + 1} of ${urls.length}` : title);
@@ -18,12 +19,14 @@ export function PieceGallery({ urls, title, alts }: { urls: string[]; title: str
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="aspect-square rounded-2xl overflow-hidden bg-clay-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <div className="relative aspect-square rounded-2xl overflow-hidden bg-clay-100">
+        <Image
           src={urls[active]}
           alt={altFor(active)}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          sizes="(min-width: 1024px) 560px, (min-width: 768px) 50vw, 100vw"
+          className="object-cover"
         />
       </div>
       {urls.length > 1 && (
@@ -35,12 +38,11 @@ export function PieceGallery({ urls, title, alts }: { urls: string[]; title: str
               onClick={() => setActive(i)}
               aria-label={`Show photo ${i + 1}: ${altFor(i)}`}
               aria-current={i === active}
-              className={`aspect-square rounded-xl overflow-hidden bg-clay-100 border-2 transition-colors ${
+              className={`relative aspect-square rounded-xl overflow-hidden bg-clay-100 border-2 transition-colors ${
                 i === active ? "border-clay-600" : "border-transparent hover:border-clay-300"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              <Image src={url} alt="" fill sizes="140px" className="object-cover" />
             </button>
           ))}
         </div>

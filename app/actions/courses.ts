@@ -142,7 +142,7 @@ export async function duplicateCourse(courseId: string) {
   const own = await ownCourse(courseId);
   if (!own) return;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, created_at, updated_at, search, location, ...rest } = own.course;
+  const { id, slug, created_at, updated_at, search, location, ...rest } = own.course;
   const { data } = await createAdminClient()
     .from("courses")
     .insert({ ...rest, title: `${rest.title} (copy)`.slice(0, 120), is_published: false })
@@ -299,7 +299,7 @@ ${noteHtml}
       html: emailLayout(`<p>Hi ${escapeHtml(req.name)},</p>
 <p>Thanks for your interest in <strong>${escapeHtml(course.title)}</strong>. Unfortunately ${escapeHtml(studio)} can't offer you a place this time.</p>
 ${noteHtml}
-<p>You can see other dates and courses at <a href="${siteUrl()}/courses/${course.id}">ceramicsgallery.co.uk</a>.</p>`),
+<p>You can see other dates and courses at <a href="${siteUrl()}/courses/${course.slug}">ceramicsgallery.co.uk</a>.</p>`),
     });
   }
 

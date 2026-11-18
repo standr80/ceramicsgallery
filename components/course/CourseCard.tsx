@@ -12,10 +12,10 @@ export function CourseCard({ course, showPotter = true }: { course: PublicCourse
   const where = course.is_online ? "Online" : course.potter.location_label;
 
   return (
-    <Link href={`/courses/${course.id}`} className="group grid grid-cols-[110px_1fr] sm:grid-cols-[180px_1fr] gap-4 sm:gap-6 rounded-3xl border border-ink/10 bg-paper p-3 sm:p-4 hover:border-ink/35 transition-colors">
+    <Link href={`/courses/${course.slug}`} className="group grid grid-cols-[110px_1fr] sm:grid-cols-[180px_1fr] gap-4 sm:gap-6 rounded-3xl border border-ink/10 bg-paper p-3 sm:p-4 hover:border-ink/35 transition-colors">
       <div className="relative aspect-[4/5] rounded-t-[999px] rounded-b-2xl overflow-hidden bg-celadon-light">
         {cover ? (
-          <Image src={getPublicImageUrl(cover)} alt="" fill unoptimized sizes="180px" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+          <Image src={getPublicImageUrl(cover)} alt="" fill sizes="(min-width: 640px) 180px, 110px" className="object-cover transition-transform duration-700 group-hover:scale-105" />
         ) : (
           <div className="absolute inset-0 flex items-end justify-center pb-[12%]">
             <Vessel variant={course.title.length} fill="#5f7a5c" className="w-1/2" />

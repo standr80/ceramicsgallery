@@ -78,13 +78,15 @@ export async function getPublishedCourses(filters: CourseFilters = {}): Promise<
   return visible.sort((a, b) => next(a) - next(b) || a.title.localeCompare(b.title));
 }
 
-export async function getPublishedCourse(id: string): Promise<PublicCourse | null> {
-  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+/** Looks a course up by its slug, or by its id for old links (the page then redirects to the slug). */
+export async function getPublishedCourse(slugOrId: string): Promise<PublicCourse | null> {
+  const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+  if (!isId && !/^[a-z0-9-]{1,80}$/.test(slugOrId)) return null;
   const admin = createAdminClient();
   const { data } = await admin
     .from("courses")
     .select(`*, potter:potters!inner(${POTTER_COLS})`)
-    .eq("id", id)
+    .eq(isId ? "id" : "slug", slugOrId)
     .eq("is_published", true)
     .eq("potter.is_published", true)
     .maybeSingle();

@@ -114,7 +114,7 @@ export default async function HomePage() {
                   >
                     <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0 bg-clay-200 flex items-center justify-center">
                       {potter.avatar_path ? (
-                        <Image src={getPublicImageUrl(potter.avatar_path)} alt="" fill className="object-cover" unoptimized />
+                        <Image src={getPublicImageUrl(potter.avatar_path)} alt="" fill sizes="64px" className="object-cover" />
                       ) : (
                         <Vessel variant={i} className="w-8 text-clay-700" />
                       )}
@@ -187,7 +187,7 @@ function HeroCollage({ images }: { images: { src: string; alt: string }[] }) {
         return (
           <div key={i} className={`${f.cls} relative overflow-hidden rounded-t-[999px] rounded-b-3xl ${f.bg}`}>
             {img ? (
-              <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 25vw" unoptimized priority={i === 0} />
+              <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 25vw" priority={i === 0} />
             ) : (
               <div className="absolute inset-0 flex items-end justify-center pb-[10%]">
                 <Vessel variant={f.v} fill={f.fg} className="w-3/5" />

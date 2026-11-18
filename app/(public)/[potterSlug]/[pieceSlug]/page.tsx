@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/data/pieces";
@@ -26,13 +26,15 @@ type PiecePotter = {
 };
 
 // Shared by the page and its metadata, so the database is only asked once per request.
-const getPiece = cache(async (potterSlug: string, pieceId: string) => {
-  if (!/^[0-9a-f-]{36}$/i.test(pieceId)) return null;
+// Accepts the piece's slug, or its id for old links (the page then redirects to the slug).
+const getPiece = cache(async (potterSlug: string, slugOrId: string) => {
+  const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+  if (!isId && !/^[a-z0-9-]{1,80}$/.test(slugOrId)) return null;
   const supabase = await createClient();
   const { data: piece } = await supabase
     .from("pieces")
     .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok, is_demo, is_published)")
-    .eq("id", pieceId)
+    .eq(isId ? "id" : "slug", slugOrId)
     .eq("potters.slug", potterSlug)
     .in("status", ["live", "sold"])
     .single();
@@ -40,7 +42,7 @@ const getPiece = cache(async (potterSlug: string, pieceId: string) => {
   const { data: images } = await supabase
     .from("piece_images")
     .select("*")
-    .eq("piece_id", pieceId)
+    .eq("piece_id", piece.id)
     .order("position");
   const potter = piece.potters as PiecePotter;
   const photos = (images ?? []).map((img, i, all) => ({
@@ -60,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = (piece.description
     ? clip(piece.description, 130)
     : `Handmade ${piece.title.toLowerCase()} by ${maker}.`) + price;
-  const url = `/${potter.slug}/${piece.id}`;
+  const url = `/${potter.slug}/${piece.slug}`;
   return {
     title: `${piece.title} by ${maker} | Ceramics Gallery`,
     description,
@@ -75,6 +77,7 @@ export default async function PiecePage({ params }: Props) {
   const data = await getPiece(potterSlug, pieceSlug);
   if (!data) notFound();
   const { piece, potter, photos } = data;
+  if (pieceSlug !== piece.slug) permanentRedirect(`/${potter.slug}/${piece.slug}`);
   const imageUrls = photos.map((p) => p.url);
 
   const productLd = {
@@ -83,7 +86,7 @@ export default async function PiecePage({ params }: Props) {
     name: piece.title,
     description: piece.description ?? undefined,
     image: imageUrls,
-    url: `${SITE}/${potter.slug}/${piece.id}`,
+    url: `${SITE}/${potter.slug}/${piece.slug}`,
     brand: { "@type": "Brand", name: potter.studio_name ?? potter.display_name },
     ...(piece.price_pence != null && {
       offers: {

@@ -20,8 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const [{ data: pieces }, { data: courses }] = potterIds.length
     ? await Promise.all([
-        db.from("pieces").select("id, potter_id, updated_at").in("potter_id", potterIds).in("status", ["live", "sold"]),
-        db.from("courses").select("id, updated_at").in("potter_id", potterIds).eq("is_published", true),
+        db.from("pieces").select("slug, potter_id, updated_at").in("potter_id", potterIds).in("status", ["live", "sold"]),
+        db.from("courses").select("slug, updated_at").in("potter_id", potterIds).eq("is_published", true),
       ])
     : [{ data: [] }, { data: [] }];
 
@@ -40,8 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/news`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/signup`, changeFrequency: "monthly", priority: 0.4 },
     ...(potters ?? []).map((p) => ({ url: `${BASE}/${p.slug}`, lastModified: p.updated_at, changeFrequency: "weekly" as const, priority: 0.7 })),
-    ...(pieces ?? []).map((p) => ({ url: `${BASE}/${slugById.get(p.potter_id)}/${p.id}`, lastModified: p.updated_at, changeFrequency: "weekly" as const, priority: 0.6 })),
-    ...(courses ?? []).map((c) => ({ url: `${BASE}/courses/${c.id}`, lastModified: c.updated_at, changeFrequency: "weekly" as const, priority: 0.6 })),
+    ...(pieces ?? []).map((p) => ({ url: `${BASE}/${slugById.get(p.potter_id)}/${p.slug}`, lastModified: p.updated_at, changeFrequency: "weekly" as const, priority: 0.6 })),
+    ...(courses ?? []).map((c) => ({ url: `${BASE}/courses/${c.slug}`, lastModified: c.updated_at, changeFrequency: "weekly" as const, priority: 0.6 })),
     ...news.map((p) => ({ url: `${BASE}/news/${p.slug}`, lastModified: p.updated_at, changeFrequency: "monthly" as const, priority: 0.5 })),
   ];
 }
