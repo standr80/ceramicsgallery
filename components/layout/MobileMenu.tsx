@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/potters", label: "Potters" },
   { href: "/courses", label: "Courses" },
+  { href: "/news", label: "News" },
 ];
 
 export function MobileMenu({ signedIn, admin = false }: { signedIn: boolean; admin?: boolean }) {

@@ -2,7 +2,7 @@
 export const RESERVED_SLUGS = new Set([
   "admin", "api", "auth", "dashboard", "login", "signup", "logout", "forgot-password", "forgot-email",
   "reset-password", "shop", "potters", "courses", "about", "contact", "help", "terms", "privacy",
-  "blog", "search", "cart", "checkout", "settings", "static", "images", "public", "www", "ceramics-gallery",
+  "blog", "news", "journal", "search", "cart", "checkout", "settings", "static", "images", "public", "www", "ceramics-gallery",
 ]);
 
 export function isReservedSlug(slug: string) {
