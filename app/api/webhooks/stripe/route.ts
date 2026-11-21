@@ -8,17 +8,25 @@ export async function POST(req: Request) {
   const body = await req.text();
   const headersList = await headers();
   const sig = headersList.get("stripe-signature");
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  // Two Stripe endpoints post here, each with its own signing secret:
+  // the platform endpoint (checkout) and the Connect endpoint (potters' accounts).
+  const secrets = [process.env.STRIPE_WEBHOOK_SECRET, process.env.STRIPE_CONNECT_WEBHOOK_SECRET].filter(Boolean) as string[];
 
-  if (!sig || !webhookSecret) {
+  if (!sig || secrets.length === 0) {
     return Response.json({ error: "Missing signature or secret." }, { status: 400 });
   }
 
   const stripe = getStripe();
-  let event: ReturnType<typeof stripe.webhooks.constructEvent> extends Promise<infer T> ? T : ReturnType<typeof stripe.webhooks.constructEvent>;
-  try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-  } catch {
+  let event: ReturnType<typeof stripe.webhooks.constructEvent> | null = null;
+  for (const secret of secrets) {
+    try {
+      event = stripe.webhooks.constructEvent(body, sig, secret);
+      break;
+    } catch {
+      // try the next secret
+    }
+  }
+  if (!event) {
     return Response.json({ error: "Invalid signature." }, { status: 400 });
   }
 
