@@ -64,6 +64,7 @@ export async function publishProfile() {
     .eq("user_id", user.id);
 
   if (error) return { error: error.message };
-  revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/", "layout");
   return { success: true };
 }

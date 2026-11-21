@@ -37,6 +37,12 @@ export default async function ProfilePage({ searchParams }: Props) {
           <span className="text-sm font-medium text-green-700 bg-green-100 px-3 py-1 rounded-full">Published</span>
         )}
       </div>
+      {!potter.is_published && (
+        <p className="-mt-4 mb-8 text-sm text-stone-600">
+          Your page at <strong>ceramicsgallery.co.uk/{potter.slug}</strong> shows &ldquo;coming soon&rdquo; until you press <strong>Publish profile</strong>.
+          Nothing you add (pots, courses) is visible to visitors before then.
+        </p>
+      )}
 
       {saved && (
         <div className="mb-6 flex items-center gap-2 text-sm text-green-800 bg-green-50 border border-green-200 rounded-xl px-4 py-3">

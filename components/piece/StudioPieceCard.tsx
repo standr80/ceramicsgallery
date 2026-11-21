@@ -5,6 +5,8 @@ import { penceToDisplay } from "@/lib/stripe";
 
 interface Props {
   piece: PieceWithCover;
+  /** False while the potter's page is unpublished: "live" pots aren't visible yet. */
+  pageLive?: boolean;
 }
 
 const statusLabel: Record<string, string> = {
@@ -23,7 +25,8 @@ const statusStyle: Record<string, string> = {
   archived: "bg-stone-100 text-stone-600",
 };
 
-export function StudioPieceCard({ piece }: Props) {
+export function StudioPieceCard({ piece, pageLive = true }: Props) {
+  const waiting = piece.status === "live" && !pageLive;
   return (
     <Link href={`/dashboard/studio/${piece.id}`} className="group block card overflow-hidden hover:shadow-md transition-shadow">
       <div className="aspect-square bg-clay-100 flex items-center justify-center text-clay-300 overflow-hidden">
@@ -45,8 +48,11 @@ export function StudioPieceCard({ piece }: Props) {
           <h3 className="font-semibold text-stone-900 group-hover:text-clay-700 transition-colors line-clamp-2 text-sm leading-snug">
             {piece.title}
           </h3>
-          <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full ${statusStyle[piece.status] ?? ""}`}>
-            {statusLabel[piece.status] ?? piece.status}
+          <span
+            title={waiting ? "Shows on your page once you publish it" : undefined}
+            className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full ${waiting ? "bg-amber-100 text-amber-800" : statusStyle[piece.status] ?? ""}`}
+          >
+            {waiting ? "Ready" : statusLabel[piece.status] ?? piece.status}
           </span>
         </div>
         {piece.price_pence != null && (

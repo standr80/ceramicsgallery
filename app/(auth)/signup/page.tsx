@@ -12,14 +12,16 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [studioName, setStudioName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugEdited, setSlugEdited] = useState(false);
   const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!slugEdited) setSlug(toSlug(displayName));
-  }, [displayName, slugEdited]);
+    // Suggest the studio name for the address when there is one, otherwise the potter's name.
+    if (!slugEdited) setSlug(toSlug(studioName.trim() || displayName));
+  }, [displayName, studioName, slugEdited]);
 
   const checkSlug = useCallback((value: string) => {
     if (!value) { setSlugStatus("idle"); return; }
@@ -70,7 +72,8 @@ export default function SignupPage() {
             <label htmlFor="studio_name" className="block text-sm font-medium mb-1.5">
               Studio name <span className="text-stone-600 font-normal">(optional)</span>
             </label>
-            <input id="studio_name" name="studio_name" type="text" className="input-field" placeholder="e.g. Mudlark Studio" />
+            <input id="studio_name" name="studio_name" type="text" className="input-field" placeholder="e.g. Mudlark Studio"
+              value={studioName} onChange={(e) => setStudioName(e.target.value)} />
           </div>
 
           <div>
@@ -85,6 +88,7 @@ export default function SignupPage() {
               {slugStatus === "available" && <span className="text-green-600">✓ Available</span>}
               {slugStatus === "taken" && <span className="text-red-600">✗ Already taken</span>}
             </p>
+            <p className="text-xs text-stone-600">Your page goes live here once you publish your profile from your dashboard.</p>
           </div>
 
           <div>

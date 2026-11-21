@@ -30,7 +30,7 @@ export default async function StudioPage({ searchParams }: Props) {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {pieces.map((piece) => (
-            <StudioPieceCard key={piece.id} piece={piece} />
+            <StudioPieceCard key={piece.id} piece={piece} pageLive={!!potter?.is_published} />
           ))}
         </div>
       )}
