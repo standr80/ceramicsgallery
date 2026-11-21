@@ -210,10 +210,23 @@ export function PieceEditForm({ piece, images: initialImages, stripeConnected, o
               step="0.01"
             />
           </div>
+          <div>
+            <label htmlFor="shipping_band_id" className="block text-xs text-stone-500 mb-1.5">Postage (UK)</label>
+            <select id="shipping_band_id" name="shipping_band_id" defaultValue={piece.shipping_band_id ?? ""} className="input-field">
+              <option value="">I don&apos;t post this piece</option>
+              <option value="1">Small parcel, up to 2kg and 45cm: £5.95</option>
+              <option value="2">Medium parcel, up to 5kg and 61cm: £8.95</option>
+              <option value="3">Large parcel, up to 20kg and 1m: £12.95</option>
+            </select>
+            <p className="text-xs text-stone-600 mt-1">The buyer pays this on top of the price. Weigh it packed.</p>
+          </div>
           <label className="flex items-center gap-3 text-sm">
             <input type="checkbox" name="collection_available" value="true" defaultChecked={piece.collection_available} className="w-4 h-4 accent-clay-600" />
             Buyers can collect from my studio
           </label>
+          <p className="text-xs text-stone-600 -mt-2">
+            To sell online, the pot needs a price, postage or collection, and Stripe connected (Payments tab). Otherwise buyers can still message you.
+          </p>
         </div>
 
         <div className="pt-2">

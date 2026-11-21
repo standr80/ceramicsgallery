@@ -9,7 +9,7 @@ interface Props {
   label?: string;
 }
 
-export function EnquiryButton({ potterId, potterName, pieceTitle, label = "Email enquiry" }: Props) {
+export function EnquiryButton({ potterId, potterName, pieceTitle, label = "Email enquiry", className = "btn-primary" }: Props & { className?: string }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export function EnquiryButton({ potterId, potterName, pieceTitle, label = "Email
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="btn-primary inline-flex items-center gap-2">
+      <button type="button" onClick={() => setOpen(true)} className={`${className} inline-flex items-center gap-2`}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" />
         </svg>

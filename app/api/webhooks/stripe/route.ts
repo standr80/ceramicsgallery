@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { completeCheckout, expireCheckout } from "@/lib/orders";
+import type Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
 
@@ -42,12 +44,13 @@ export async function POST(req: Request) {
 
   await admin.from("stripe_events").insert({ id: event.id, type: event.type });
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as { id: string; metadata?: Record<string, string> };
-    const orderId = session.metadata?.order_id;
-    if (orderId) {
-      await admin.rpc("mark_order_paid", { p_order_id: orderId });
-    }
+  // Piece checkouts run on the potter's own Stripe account, so they arrive via the Connect endpoint.
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
+    await completeCheckout(event.data.object as Stripe.Checkout.Session);
+  }
+
+  if (event.type === "checkout.session.expired") {
+    await expireCheckout((event.data.object as Stripe.Checkout.Session).id);
   }
 
   if (event.type === "account.updated") {

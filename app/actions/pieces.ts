@@ -118,6 +118,7 @@ export async function updatePiece(pieceId: string, formData: FormData) {
       height_cm: formData.get("height_cm") ? Number(formData.get("height_cm")) : null,
       width_cm: formData.get("width_cm") ? Number(formData.get("width_cm")) : null,
       collection_available: formData.get("collection_available") === "true",
+      shipping_band_id: ["1", "2", "3"].includes(String(formData.get("shipping_band_id"))) ? Number(formData.get("shipping_band_id")) : null,
       ...(categoryId != null ? { category_id: categoryId } : {}),
     })
     .eq("id", pieceId)

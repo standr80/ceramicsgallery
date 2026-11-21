@@ -9,10 +9,15 @@ import { EnquiryButton } from "@/components/potter/EnquiryButton";
 import { DemoNotice } from "@/components/potter/DemoNotice";
 import { PieceGallery } from "@/components/piece/PieceGallery";
 import { JsonLd, SITE } from "@/components/seo/JsonLd";
+import { BuyBox } from "@/components/piece/BuyBox";
+import { getBuyablePiece, canBuyOnline, deliveryOptions, cancelCheckout } from "@/lib/orders";
 
 export const dynamic = "force-dynamic";
 
-interface Props { params: Promise<{ potterSlug: string; pieceSlug: string }> }
+interface Props {
+  params: Promise<{ potterSlug: string; pieceSlug: string }>;
+  searchParams: Promise<{ checkout?: string; order?: string }>;
+}
 
 const clip = (text: string, max: number) => {
   const t = text.replace(/\s+/g, " ").trim();
@@ -36,7 +41,7 @@ const getPiece = cache(async (potterSlug: string, slugOrId: string) => {
     .select("*, potters!inner(id, slug, display_name, studio_name, stripe_charges_ok, is_demo, is_published)")
     .eq(isId ? "id" : "slug", slugOrId)
     .eq("potters.slug", potterSlug)
-    .in("status", ["live", "sold"])
+    .in("status", ["live", "reserved", "sold"])
     .single();
   if (!piece) return null;
   const { data: images } = await supabase
@@ -52,7 +57,14 @@ const getPiece = cache(async (potterSlug: string, slugOrId: string) => {
   return { piece, potter, photos };
 });
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+// Back from Stripe without paying: release the hold before anything reads the piece.
+// Called from both the metadata and the page (whichever runs first); it's safe to repeat.
+async function releaseCancelled(sp: Awaited<Props["searchParams"]>) {
+  if (sp.checkout === "cancelled" && sp.order) await cancelCheckout(sp.order);
+}
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  await releaseCancelled(await searchParams);
   const { potterSlug, pieceSlug } = await params;
   const data = await getPiece(potterSlug, pieceSlug);
   if (!data) return {};
@@ -72,13 +84,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PiecePage({ params }: Props) {
-  const { potterSlug, pieceSlug } = await params;
+export default async function PiecePage({ params, searchParams }: Props) {
+  const [{ potterSlug, pieceSlug }, { checkout, order: cancelledOrder }] = await Promise.all([params, searchParams]);
+  await releaseCancelled({ checkout, order: cancelledOrder });
   const data = await getPiece(potterSlug, pieceSlug);
   if (!data) notFound();
   const { piece, potter, photos } = data;
   if (pieceSlug !== piece.slug) permanentRedirect(`/${potter.slug}/${piece.slug}`);
   const imageUrls = photos.map((p) => p.url);
+  const full = piece.status === "live" ? await getBuyablePiece(piece.id) : null;
+  const buyable = full && canBuyOnline(full) ? full : null;
 
   const productLd = {
     "@context": "https://schema.org",
@@ -93,7 +108,7 @@ export default async function PiecePage({ params }: Props) {
         "@type": "Offer",
         price: (piece.price_pence / 100).toFixed(2),
         priceCurrency: "GBP",
-        availability: piece.status === "sold" ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+        availability: piece.status === "sold" ? "https://schema.org/SoldOut" : piece.status === "reserved" ? "https://schema.org/LimitedAvailability" : "https://schema.org/InStock",
         itemCondition: "https://schema.org/NewCondition",
       },
     }),
@@ -159,6 +174,19 @@ export default async function PiecePage({ params }: Props) {
               <DemoNotice />
             ) : piece.status === "sold" ? (
               <div className="card p-4 text-center text-stone-500">This piece has been sold.</div>
+            ) : piece.status === "reserved" ? (
+              <div className="card p-4 text-center text-stone-600">
+                Someone is buying this piece right now. If they don&apos;t complete, it will be available again within half an hour.
+              </div>
+            ) : buyable ? (
+              <div className="flex flex-col gap-3">
+                {checkout === "cancelled" && (
+                  <p className="text-sm text-stone-600">Payment cancelled. Nothing was charged, and the piece is still available.</p>
+                )}
+                <BuyBox pieceId={piece.id} pricePence={piece.price_pence!} options={deliveryOptions(buyable)} />
+                <EnquiryButton potterId={potter.id} potterName={potter.studio_name ?? potter.display_name} pieceTitle={piece.title}
+                  label="Ask the potter a question" className="btn-secondary justify-center" />
+              </div>
             ) : (
               <div className="flex items-center gap-3">
                 <EnquiryButton
